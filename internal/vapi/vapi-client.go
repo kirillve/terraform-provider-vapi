@@ -1,4 +1,4 @@
-package provider
+package vapi
 
 import (
 	"bytes"
@@ -21,7 +21,7 @@ type APIClient struct {
 }
 
 // Uploads a file using multipart/form-data
-func (c *APIClient) uploadFile(fieldName, filePath string) ([]byte, error) {
+func (c *APIClient) UploadFile(fieldName, filePath string) ([]byte, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open file: %w", err)
@@ -79,7 +79,7 @@ func (c *APIClient) uploadFile(fieldName, filePath string) ([]byte, error) {
 }
 
 // Sends a request to the API
-func (c *APIClient) sendRequest(method, endpoint string, body interface{}) ([]byte, error) {
+func (c *APIClient) SendRequest(method, endpoint string, body interface{}) ([]byte, error) {
 	var buf bytes.Buffer
 	if body != nil {
 		if err := json.NewEncoder(&buf).Encode(body); err != nil {

@@ -2,44 +2,92 @@ package provider
 
 import (
 	"context"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/kirillve/terraform-provider-vapi/internal/vapi"
 	"net/http"
+
+	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/function"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
+	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
-// Provider function
-func Provider() *schema.Provider {
-	return &schema.Provider{
-		Schema: map[string]*schema.Schema{
-			"url": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "The base URL of the remote API.",
+// Ensure VAPIProvider satisfies various provider interfaces.
+var _ provider.Provider = &VAPIProvider{}
+var _ provider.ProviderWithFunctions = &VAPIProvider{}
+
+// VAPIProvider defines the provider implementation.
+type VAPIProvider struct {
+	// version is set to the provider version on release, "dev" when the
+	// provider is built and ran locally, and "test" when running acceptance
+	// testing.
+	version string
+}
+
+// ScaffoldingProviderModel describes the provider data model.
+type ScaffoldingProviderModel struct {
+	URL   string `tfsdk:"url"`
+	Token string `tfsdk:"token"`
+}
+
+func (p *VAPIProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
+	resp.TypeName = "vapi"
+	resp.Version = p.version
+}
+
+func (p *VAPIProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
+	resp.Schema = schema.Schema{
+		Attributes: map[string]schema.Attribute{
+			"url": schema.StringAttribute{
+				MarkdownDescription: "The base URL of the remote API.",
+				Required:            true,
 			},
-			"token": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Sensitive:   true,
-				Description: "The Bearer token used for API authentication.",
+			"token": schema.StringAttribute{
+				MarkdownDescription: "The Bearer token used for API authentication.",
+				Required:            true,
+				Sensitive:           true,
 			},
 		},
-		ResourcesMap: map[string]*schema.Resource{
-			"vapi_file": resourceVAPIFile(),
-		},
-		ConfigureContextFunc: providerConfigure,
 	}
 }
 
-// Provider configuration function
-func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-	remoteURL := d.Get("url").(string)
-	token := d.Get("token").(string)
+func (p *VAPIProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
+	var data ScaffoldingProviderModel
 
-	client := &APIClient{
-		BaseURL:    remoteURL,
-		Token:      token,
+	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	client := &vapi.APIClient{
+		BaseURL:    data.URL,
+		Token:      data.Token,
 		HTTPClient: &http.Client{},
 	}
 
-	return client, nil
+	resp.DataSourceData = client
+	resp.ResourceData = client
+}
+
+func (p *VAPIProvider) Resources(ctx context.Context) []func() resource.Resource {
+	return []func() resource.Resource{
+		NewVAPIFileResource,
+	}
+}
+
+func (p *VAPIProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
+	return []func() datasource.DataSource{}
+}
+
+func (p *VAPIProvider) Functions(ctx context.Context) []func() function.Function {
+	return []func() function.Function{}
+}
+
+func New(version string) func() provider.Provider {
+	return func() provider.Provider {
+		return &VAPIProvider{
+			version: version,
+		}
+	}
 }

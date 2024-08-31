@@ -1,5 +1,43 @@
-# vapi-provider
+# terraform-provider-vapi
 
-VAPI TF provider to upload files, manage tools and assistants going forward
+```shell
+go install
+```
 
-better than nothing and there is nothing embarrassing to use it 
+## Using the provider
+
+```hcl
+terraform {
+  required_providers {
+    vapi = {
+      source  = "local/vapi"
+      version = "0.2.0"
+    }
+  }
+}
+
+provider "vapi" {
+  url   = "https://api.vapi.ai"
+  token = "put-your-token-here"
+}
+
+resource "vapi_file" "test-file" {
+  file_path = "/tmp/file.txt"
+}
+```
+
+## Developing the Provider
+
+If you wish to work on the provider, you'll first need [Go](http://www.golang.org) installed on your machine (see [Requirements](#requirements) above).
+
+To compile the provider, run `go install`. This will build the provider and put the provider binary in the `$GOPATH/bin` directory.
+
+To generate or update documentation, run `go generate`.
+
+In order to run the full suite of Acceptance tests, run `make testacc`.
+
+*Note:* Acceptance tests create real resources, and often cost money to run.
+
+```shell
+make testacc
+```
