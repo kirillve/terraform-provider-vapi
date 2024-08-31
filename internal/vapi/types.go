@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-// FileResponse represents the structure of the API response
+// FileResponse represents the structure of the API response.
 type FileResponse struct {
 	ID           string                 `json:"id"`
 	Name         string                 `json:"name"`
@@ -21,7 +21,7 @@ type FileResponse struct {
 	UpdatedAt    string                 `json:"updatedAt"`
 }
 
-// UnmarshalJSON implements custom unmarshaling for FileResponse
+// UnmarshalJSON implements custom unmarshaling for FileResponse.
 func (fr *FileResponse) UnmarshalJSON(data []byte) error {
 	type Alias FileResponse
 	temp := &struct {

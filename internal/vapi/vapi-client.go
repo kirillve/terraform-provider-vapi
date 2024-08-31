@@ -20,7 +20,7 @@ type APIClient struct {
 	HTTPClient *http.Client
 }
 
-// Uploads a file using multipart/form-data
+// Uploads a file using multipart/form-data.
 func (c *APIClient) UploadFile(fieldName, filePath string) ([]byte, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -78,7 +78,7 @@ func (c *APIClient) UploadFile(fieldName, filePath string) ([]byte, error) {
 	return io.ReadAll(res.Body)
 }
 
-// Sends a request to the API
+// Sends a request to the API.
 func (c *APIClient) SendRequest(method, endpoint string, body interface{}) ([]byte, error) {
 	var buf bytes.Buffer
 	if body != nil {
