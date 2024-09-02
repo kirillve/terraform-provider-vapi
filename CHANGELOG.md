@@ -1,3 +1,8 @@
+## 0.3.4
+
+FIXES:
+  - improved VAPI files support - issue when target file manually deleted from the VAPI service
+
 ## 0.3.3
 
 FIXES:

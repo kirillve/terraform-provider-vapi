@@ -138,16 +138,18 @@ func (r *VAPIFileResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
-	response, _, err := r.client.UploadData("file", data.Filename.ValueString(), []byte(data.Content.ValueString()))
+	response, responseCode, err := r.client.UploadData("file", data.Filename.ValueString(), []byte(data.Content.ValueString()))
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to upload file: %s", err))
 		return
 	}
 
 	var fileResponse vapi.FileResponse
-	if err := json.Unmarshal(response, &fileResponse); err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to unmarshal response: %s", err))
-		return
+	if responseCode >= 200 && responseCode < 300 {
+		if err := json.Unmarshal(response, &fileResponse); err != nil {
+			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to unmarshal response: %s", err))
+			return
+		}
 	}
 
 	data.Id = types.StringValue(fileResponse.ID)

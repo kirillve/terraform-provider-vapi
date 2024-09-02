@@ -124,16 +124,18 @@ func (r *VAPITwilioPhoneNumberResource) Create(ctx context.Context, req resource
 		TwilioAuthToken:  data.TwilioAuthToken.ValueString(),
 	}
 
-	response, _, err := r.client.ImportTwilioPhoneNumber(requestData)
+	response, responseCode, err := r.client.ImportTwilioPhoneNumber(requestData)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create phone number: %s", err))
 		return
 	}
 
 	var twilioPhoneNumberResp vapi.TwilioPhoneNumber
-	if err := json.Unmarshal(response, &twilioPhoneNumberResp); err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to unmarshal response: %s", err))
-		return
+	if responseCode >= 200 && responseCode < 300 {
+		if err := json.Unmarshal(response, &twilioPhoneNumberResp); err != nil {
+			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to unmarshal response: %s", err))
+			return
+		}
 	}
 
 	updateVAPIPhoneNumberResourceData(&data, &twilioPhoneNumberResp)
