@@ -153,7 +153,7 @@ func (r *VAPIFileResource) Create(ctx context.Context, req resource.CreateReques
 	}
 
 	data.Id = types.StringValue(fileResponse.ID)
-	updateVAPIFileResourceData(&data, &fileResponse)
+	bindVAPIFileResourceData(&data, &fileResponse)
 
 	tflog.Trace(ctx, "created a file resource")
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -179,7 +179,7 @@ func (r *VAPIFileResource) Read(ctx context.Context, req resource.ReadRequest, r
 		}
 	}
 
-	updateVAPIFileResourceData(&data, &fileResponse)
+	bindVAPIFileResourceData(&data, &fileResponse)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -214,7 +214,7 @@ func (r *VAPIFileResource) ImportState(ctx context.Context, req resource.ImportS
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }
 
-func updateVAPIFileResourceData(data *VAPIFileResourceModel, fileResponse *vapi.FileResponse) {
+func bindVAPIFileResourceData(data *VAPIFileResourceModel, fileResponse *vapi.FileResponse) {
 	data.Name = types.StringValue(fileResponse.Name)
 	data.OriginalName = types.StringValue(fileResponse.OriginalName)
 	data.Bytes = types.Int64Value(fileResponse.Bytes)

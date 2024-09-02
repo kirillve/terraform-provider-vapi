@@ -14,7 +14,7 @@ Manages a file resource in the VAPI system.
 
 ```terraform
 resource "vapi_file" "test-vapi_file" {
-  content = file("/tmp/file.txt")
+  content  = file("/tmp/file.txt")
   filename = "file.txt"
 }
 ```

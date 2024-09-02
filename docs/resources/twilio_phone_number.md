@@ -14,10 +14,16 @@ Manages a phone number resource in the VAPI system.
 
 ```terraform
 resource "vapi_twilio_phone_number" "test-vapi_twilio_phone_number" {
-  name               = "test twilio phone number"
-  number             = "+11234567890"
-  twilio_account_sid = "sid"
-  twilio_auth_token  = "auth-token"
+  name                                           = "test twilio phone number"
+  number                                         = "+11234567890"
+  twilio_account_sid                             = "sid"
+  twilio_auth_token                              = "auth-token"
+  fallback_destination_type                      = "number"
+  fallback_destination_number_e164_check_enabled = bool
+  fallback_destination_number                    = "+11234567890"
+  fallback_destination_extension                 = "123"
+  fallback_destination_message                   = "Message"
+  fallback_destination_description               = "Description"
 }
 ```
 
@@ -30,6 +36,15 @@ resource "vapi_twilio_phone_number" "test-vapi_twilio_phone_number" {
 - `number` (String) The phone number.
 - `twilio_account_sid` (String, Sensitive) The Twilio account SID.
 - `twilio_auth_token` (String, Sensitive) The Twilio auth token.
+
+### Optional
+
+- `fallback_destination_description` (String) The FallbackDestination Description.
+- `fallback_destination_extension` (String) The FallbackDestination Extension.
+- `fallback_destination_message` (String) The FallbackDestination Message.
+- `fallback_destination_number` (String) The FallbackDestination Number.
+- `fallback_destination_number_e164_check_enabled` (String) The FallbackDestination E164 check.
+- `fallback_destination_type` (String) The FallbackDestination Type.
 
 ### Read-Only
 
