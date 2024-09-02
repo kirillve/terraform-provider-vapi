@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"mime"
 	"mime/multipart"
 	"net/http"
 	"net/textproto"
@@ -104,7 +103,43 @@ func (c *APIClient) SendRequest(method, endpoint string, body interface{}) ([]by
 	return io.ReadAll(res.Body)
 }
 
-func getMimeType(filename string) string {
-	ext := filepath.Ext(filename)
-	return mime.TypeByExtension(ext)
+// ImportTwilioPhoneNumber requests the creation of a new phone number.
+func (c *APIClient) ImportTwilioPhoneNumber(requestData ImportTwilioRequest) ([]byte, error) {
+	return c.SendRequest("POST", "phone-number", requestData)
+}
+
+// GetFile retrieves the details of a specific phone number by ID.
+func (c *APIClient) GetFile(id string) ([]byte, error) {
+	if len(id) == 0 {
+		return []byte{}, nil
+	}
+	endpoint := fmt.Sprintf("file/%s", id)
+	return c.SendRequest("GET", endpoint, nil)
+}
+
+// DeleteFile deletes a specific phone number by ID.
+func (c *APIClient) DeleteFile(id string) ([]byte, error) {
+	if len(id) == 0 {
+		return []byte{}, nil
+	}
+	endpoint := fmt.Sprintf("file/%s", id)
+	return c.SendRequest("DELETE", endpoint, nil)
+}
+
+// GetPhoneNumber retrieves the details of a specific phone number by ID.
+func (c *APIClient) GetPhoneNumber(id string) ([]byte, error) {
+	if len(id) == 0 {
+		return []byte{}, nil
+	}
+	endpoint := fmt.Sprintf("phone-number/%s", id)
+	return c.SendRequest("GET", endpoint, nil)
+}
+
+// DeletePhoneNumber deletes a specific phone number by ID.
+func (c *APIClient) DeletePhoneNumber(id string) ([]byte, error) {
+	if len(id) == 0 {
+		return []byte{}, nil
+	}
+	endpoint := fmt.Sprintf("phone-number/%s", id)
+	return c.SendRequest("DELETE", endpoint, nil)
 }

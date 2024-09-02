@@ -13,7 +13,7 @@ Manages a file resource in the VAPI system.
 ## Example Usage
 
 ```terraform
-resource "vapi_file" "test" {
+resource "vapi_file" "test-vapi_file" {
   file_path = "/tmp/file.txt"
 }
 ```

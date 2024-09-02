@@ -4,5 +4,5 @@ import (
 	"testing"
 )
 
-func TestAccExampleResource(t *testing.T) {
+func TestAccVAPIFileResource(t *testing.T) {
 }

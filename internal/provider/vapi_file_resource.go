@@ -148,7 +148,7 @@ func (r *VAPIFileResource) Create(ctx context.Context, req resource.CreateReques
 	}
 
 	data.Id = types.StringValue(fileResponse.ID)
-	updateResourceData(&data, &fileResponse)
+	updateVAPIFileResourceData(&data, &fileResponse)
 	data.Checksum = types.StringValue(checksum)
 
 	tflog.Trace(ctx, "created a file resource")
@@ -162,19 +162,21 @@ func (r *VAPIFileResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 
-	response, err := r.client.SendRequest("GET", "file/"+data.Id.ValueString(), nil)
+	response, err := r.client.GetFile(data.Id.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read file: %s", err))
 		return
 	}
 
 	var fileResponse vapi.FileResponse
-	if err := json.Unmarshal(response, &fileResponse); err != nil {
-		resp.Diagnostics.AddError("Parse Error", fmt.Sprintf("Unable to parse file response: %s", err))
-		return
+	if len(response) > 0 {
+		if err := json.Unmarshal(response, &fileResponse); err != nil {
+			resp.Diagnostics.AddError("Parse Error", fmt.Sprintf("Unable to parse file response: %s", err))
+			return
+		}
 	}
 
-	updateResourceData(&data, &fileResponse)
+	updateVAPIFileResourceData(&data, &fileResponse)
 
 	checksum, err := computeChecksum(data.FilePath.ValueString())
 	if err != nil {
@@ -200,7 +202,7 @@ func (r *VAPIFileResource) Update(ctx context.Context, req resource.UpdateReques
 	}
 
 	if localChecksum != data.Checksum.ValueString() {
-		_, err := r.client.SendRequest("DELETE", "file/"+data.Id.ValueString(), nil)
+		_, err := r.client.DeleteFile(data.Id.ValueString())
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete old file: %s", err))
 			return
@@ -219,7 +221,7 @@ func (r *VAPIFileResource) Update(ctx context.Context, req resource.UpdateReques
 		}
 
 		data.Id = types.StringValue(fileResponse.ID)
-		updateResourceData(&data, &fileResponse)
+		updateVAPIFileResourceData(&data, &fileResponse)
 		data.Checksum = types.StringValue(localChecksum)
 	}
 
@@ -256,7 +258,7 @@ func computeChecksum(filePath string) (string, error) {
 	return hex.EncodeToString(checksum[:]), nil
 }
 
-func updateResourceData(data *VAPIFileResourceModel, fileResponse *vapi.FileResponse) {
+func updateVAPIFileResourceData(data *VAPIFileResourceModel, fileResponse *vapi.FileResponse) {
 	data.Name = types.StringValue(fileResponse.Name)
 	data.OriginalName = types.StringValue(fileResponse.OriginalName)
 	data.Bytes = types.Int64Value(fileResponse.Bytes)

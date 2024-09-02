@@ -23,7 +23,6 @@ website/node_modules
 .idea
 *.iml
 *.test
-*.iml
 
 website/vendor
 
@@ -33,3 +32,4 @@ website/vendor
 
 # Keep windows files with windows line endings
 *.winfile eol=crlf
+tmp
