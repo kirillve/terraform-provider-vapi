@@ -170,8 +170,7 @@ func (r *VAPIFileResource) Read(ctx context.Context, req resource.ReadRequest, r
 
 	var fileResponse vapi.FileResponse
 	if err := json.Unmarshal(response, &fileResponse); err != nil {
-		//resp.Diagnostics.AddError("Parse Error", fmt.Sprintf("Unable to parse file response: %s", err))
-		//return
+		resp.Diagnostics.AddWarning("Parse Error", fmt.Sprintf("Unable to parse file response: %s", err))
 	}
 
 	updateVAPIFileResourceData(&data, &fileResponse)
@@ -214,8 +213,7 @@ func (r *VAPIFileResource) Update(ctx context.Context, req resource.UpdateReques
 
 		var fileResponse vapi.FileResponse
 		if err := json.Unmarshal(response, &fileResponse); err != nil {
-			//resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to unmarshal response: %s", err))
-			//return
+			resp.Diagnostics.AddWarning("Client Error", fmt.Sprintf("Unable to unmarshal response: %s", err))
 		}
 
 		data.Id = types.StringValue(fileResponse.ID)
