@@ -77,6 +77,7 @@ func (r *VAPITwilioPhoneNumberResource) Schema(ctx context.Context, req resource
 				MarkdownDescription: "The ID of the phone number.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
 			"org_id": schema.StringAttribute{

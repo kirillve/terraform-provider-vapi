@@ -48,7 +48,7 @@ func (c *APIClient) UploadData(fieldName, filename string, content []byte) ([]by
 	}
 
 	// Create the HTTP request
-	req, err := http.NewRequest("POST", c.BaseURL, body)
+	req, err := http.NewRequest("POST", c.BaseURL+"/file", body)
 	if err != nil {
 		return nil, 0, fmt.Errorf("error creating request: %v", err)
 	}

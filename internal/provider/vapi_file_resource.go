@@ -37,6 +37,7 @@ type VAPIFileResourceModel struct {
 	CreatedAt    types.String `tfsdk:"created_at"`
 	UpdatedAt    types.String `tfsdk:"updated_at"`
 	Id           types.String `tfsdk:"id"`
+	OrgID        types.String `tfsdk:"org_id"`
 	Status       types.String `tfsdk:"status"`
 	Bucket       types.String `tfsdk:"bucket"`
 	Purpose      types.String `tfsdk:"purpose"`
@@ -54,10 +55,16 @@ func (r *VAPIFileResource) Schema(ctx context.Context, req resource.SchemaReques
 			"content": schema.StringAttribute{
 				MarkdownDescription: "The file content to upload.",
 				Required:            true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 			"filename": schema.StringAttribute{
 				MarkdownDescription: "The filename for upload.",
 				Required:            true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 			"name": schema.StringAttribute{
 				MarkdownDescription: "The name of the file.",
@@ -103,11 +110,19 @@ func (r *VAPIFileResource) Schema(ctx context.Context, req resource.SchemaReques
 				MarkdownDescription: "The uploaded file purpose.",
 				Computed:            true,
 			},
+			"org_id": schema.StringAttribute{
+				MarkdownDescription: "The OrgId of the file.",
+				Computed:            true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
+			},
 			"id": schema.StringAttribute{
 				Computed:            true,
 				MarkdownDescription: "The ID of the file.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
 		},
@@ -150,9 +165,10 @@ func (r *VAPIFileResource) Create(ctx context.Context, req resource.CreateReques
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to unmarshal response: %s", err))
 			return
 		}
+	} else if responseCode == 404 {
+		fileResponse.ID = "TBD"
 	}
 
-	data.Id = types.StringValue(fileResponse.ID)
 	bindVAPIFileResourceData(&data, &fileResponse)
 
 	tflog.Trace(ctx, "created a file resource")
@@ -191,6 +207,28 @@ func (r *VAPIFileResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 
+	_, _, err := r.client.DeleteFile(data.Id.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete file: %s", err))
+		return
+	}
+
+	bindVAPIFileResourceData(&data, &vapi.FileResponse{})
+
+	response, responseCode, err := r.client.UploadData("file", data.Filename.ValueString(), []byte(data.Content.ValueString()))
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to upload file: %s", err))
+		return
+	}
+
+	var fileResponse vapi.FileResponse
+	if responseCode >= 200 && responseCode < 300 {
+		if err := json.Unmarshal(response, &fileResponse); err != nil {
+			resp.Diagnostics.AddWarning("Parse Error", fmt.Sprintf("Unable to parse file response: %s", err))
+		}
+	}
+
+	bindVAPIFileResourceData(&data, &fileResponse)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -201,7 +239,7 @@ func (r *VAPIFileResource) Delete(ctx context.Context, req resource.DeleteReques
 		return
 	}
 
-	_, _, err := r.client.SendRequest("DELETE", "file/"+data.Id.ValueString(), nil)
+	_, _, err := r.client.DeleteFile(data.Id.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete file: %s", err))
 		return
@@ -215,6 +253,8 @@ func (r *VAPIFileResource) ImportState(ctx context.Context, req resource.ImportS
 }
 
 func bindVAPIFileResourceData(data *VAPIFileResourceModel, fileResponse *vapi.FileResponse) {
+	data.Id = types.StringValue(fileResponse.ID)
+	data.OrgID = types.StringValue(fileResponse.OrgID)
 	data.Name = types.StringValue(fileResponse.Name)
 	data.OriginalName = types.StringValue(fileResponse.OriginalName)
 	data.Bytes = types.Int64Value(fileResponse.Bytes)

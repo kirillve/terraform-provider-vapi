@@ -35,6 +35,7 @@ resource "vapi_file" "test-vapi_file" {
 - `id` (String) The ID of the file.
 - `mimetype` (String) The MIME type of the file.
 - `name` (String) The name of the file.
+- `org_id` (String) The OrgId of the file.
 - `original_name` (String) The original name of the file.
 - `path` (String) The path to the file.
 - `purpose` (String) The uploaded file purpose.
