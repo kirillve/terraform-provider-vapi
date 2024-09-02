@@ -70,7 +70,7 @@ func (r *VAPITwilioPhoneNumberResource) Schema(ctx context.Context, req resource
 				Computed:            true,
 				MarkdownDescription: "The ID of the phone number.",
 				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
+					stringplanmodifier.RequiresReplace(),
 				},
 			},
 			"org_id": schema.StringAttribute{
@@ -124,8 +124,7 @@ func (r *VAPITwilioPhoneNumberResource) Create(ctx context.Context, req resource
 		TwilioAuthToken:  data.TwilioAuthToken.ValueString(),
 	}
 
-	response, err := r.client.ImportTwilioPhoneNumber(requestData)
-
+	response, _, err := r.client.ImportTwilioPhoneNumber(requestData)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create phone number: %s", err))
 		return
@@ -149,14 +148,14 @@ func (r *VAPITwilioPhoneNumberResource) Read(ctx context.Context, req resource.R
 		return
 	}
 
-	response, err := r.client.GetPhoneNumber(data.ID.ValueString())
+	response, responseCode, err := r.client.GetPhoneNumber(data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read phone number: %s", err))
 		return
 	}
 
 	var phoneNumberResp vapi.TwilioPhoneNumber
-	if len(response) > 0 {
+	if responseCode >= 200 && responseCode < 300 {
 		if err := json.Unmarshal(response, &phoneNumberResp); err != nil {
 			resp.Diagnostics.AddError("Parse Error", fmt.Sprintf("Unable to parse phone number response: %s", err))
 			return
@@ -176,24 +175,26 @@ func (r *VAPITwilioPhoneNumberResource) Update(ctx context.Context, req resource
 		return
 	}
 
-	response, err := r.client.GetPhoneNumber(data.ID.ValueString())
+	response, responseCode, err := r.client.GetPhoneNumber(data.ID.ValueString())
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read phone number: %s", err))
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Update :: Unable to read phone number: %s", err))
 		return
 	}
 
-	if err := json.Unmarshal(response, &phoneNumberResp); err != nil {
-		resp.Diagnostics.AddError("Parse Error", fmt.Sprintf("Unable to parse phone number response: %s", err))
-		return
+	if responseCode >= 200 && responseCode < 300 {
+		if err := json.Unmarshal(response, &phoneNumberResp); err != nil {
+			resp.Diagnostics.AddError("Parse Error", fmt.Sprintf("Update :: Unable to parse phone number response: %s", err))
+			return
+		}
 	}
 
 	if phoneNumberResp.Name != data.Name.String() ||
 		phoneNumberResp.Number != data.Number.String() ||
 		phoneNumberResp.TwilioAccountSid != data.TwilioAccountSid.String() ||
 		phoneNumberResp.TwilioAuthToken != data.TwilioAuthToken.String() {
-		_, err := r.client.DeletePhoneNumber(data.ID.ValueString())
+		_, _, err := r.client.DeletePhoneNumber(data.ID.ValueString())
 		if err != nil {
-			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete phone number: %s", err))
+			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Update :: Unable to delete phone number: %s", err))
 			return
 		}
 
@@ -205,17 +206,18 @@ func (r *VAPITwilioPhoneNumberResource) Update(ctx context.Context, req resource
 			TwilioAuthToken:  data.TwilioAuthToken.ValueString(),
 		}
 
-		response, err := r.client.ImportTwilioPhoneNumber(requestData)
+		response, responseCode, err := r.client.ImportTwilioPhoneNumber(requestData)
 
 		if err != nil {
-			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create phone number: %s", err))
+			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Update :: Unable to create phone number: %s", err))
 			return
 		}
 
-		var twilioPhoneNumberResp vapi.TwilioPhoneNumber
-		if err := json.Unmarshal(response, &twilioPhoneNumberResp); err != nil {
-			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to unmarshal response: %s", err))
-			return
+		if responseCode >= 200 && responseCode < 300 {
+			if err := json.Unmarshal(response, &phoneNumberResp); err != nil {
+				resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Update :: Unable to unmarshal response: %s", err))
+				return
+			}
 		}
 	}
 
@@ -230,7 +232,7 @@ func (r *VAPITwilioPhoneNumberResource) Delete(ctx context.Context, req resource
 		return
 	}
 
-	_, err := r.client.DeletePhoneNumber(data.ID.ValueString())
+	_, _, err := r.client.DeletePhoneNumber(data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete phone number: %s", err))
 		return

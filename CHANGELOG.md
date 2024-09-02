@@ -1,3 +1,9 @@
+## 0.3.3
+
+FIXES:
+  - improved VAPI files support - issue when target file manually deleted from the VAPI service
+  - improved VAPI Twilio Phone Number import - no fallback implemented
+
 ## 0.3.2
 
 FIXES:

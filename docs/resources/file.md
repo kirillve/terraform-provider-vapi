@@ -14,7 +14,8 @@ Manages a file resource in the VAPI system.
 
 ```terraform
 resource "vapi_file" "test-vapi_file" {
-  file_path = "/tmp/file.txt"
+  content = file("/tmp/file.txt")
+  filename = "file.txt"
 }
 ```
 
@@ -23,17 +24,20 @@ resource "vapi_file" "test-vapi_file" {
 
 ### Required
 
-- `file_path` (String) The local path of the file to upload.
+- `content` (String) The file content to upload.
+- `filename` (String) The filename for upload.
 
 ### Read-Only
 
+- `bucket` (String) The uploaded file bucket.
 - `bytes` (Number) The size of the file in bytes.
-- `checksum` (String) The SHA-256 checksum of the file.
 - `created_at` (String) The timestamp when the file was created.
 - `id` (String) The ID of the file.
 - `mimetype` (String) The MIME type of the file.
 - `name` (String) The name of the file.
 - `original_name` (String) The original name of the file.
 - `path` (String) The path to the file.
+- `purpose` (String) The uploaded file purpose.
+- `status` (String) The uploaded file status.
 - `updated_at` (String) The timestamp when the file was last updated.
 - `url` (String) The URL to access the file.

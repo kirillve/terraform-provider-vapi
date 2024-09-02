@@ -19,6 +19,9 @@ type FileResponse struct {
 	OrgID        string                 `json:"orgId"`
 	CreatedAt    string                 `json:"createdAt"`
 	UpdatedAt    string                 `json:"updatedAt"`
+	Status       string                 `json:"status"`
+	Purpose      string                 `json:"purpose"`
+	Bucket       string                 `json:"bucket"`
 }
 
 // UnmarshalJSON implements custom unmarshaling for FileResponse.

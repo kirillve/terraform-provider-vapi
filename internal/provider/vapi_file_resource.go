@@ -2,8 +2,6 @@ package provider
 
 import (
 	"context"
-	"crypto/sha256"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -14,7 +12,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/kirillve/terraform-provider-vapi/internal/vapi"
-	"os"
 )
 
 var _ resource.Resource = &VAPIFileResource{}
@@ -29,7 +26,8 @@ type VAPIFileResource struct {
 }
 
 type VAPIFileResourceModel struct {
-	FilePath     types.String `tfsdk:"file_path"`
+	Content      types.String `tfsdk:"content"`
+	Filename     types.String `tfsdk:"filename"`
 	Name         types.String `tfsdk:"name"`
 	OriginalName types.String `tfsdk:"original_name"`
 	Bytes        types.Int64  `tfsdk:"bytes"`
@@ -38,8 +36,10 @@ type VAPIFileResourceModel struct {
 	URL          types.String `tfsdk:"url"`
 	CreatedAt    types.String `tfsdk:"created_at"`
 	UpdatedAt    types.String `tfsdk:"updated_at"`
-	Checksum     types.String `tfsdk:"checksum"`
 	Id           types.String `tfsdk:"id"`
+	Status       types.String `tfsdk:"status"`
+	Bucket       types.String `tfsdk:"bucket"`
+	Purpose      types.String `tfsdk:"purpose"`
 }
 
 func (r *VAPIFileResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -51,8 +51,12 @@ func (r *VAPIFileResource) Schema(ctx context.Context, req resource.SchemaReques
 		MarkdownDescription: "Manages a file resource in the VAPI system.",
 
 		Attributes: map[string]schema.Attribute{
-			"file_path": schema.StringAttribute{
-				MarkdownDescription: "The local path of the file to upload.",
+			"content": schema.StringAttribute{
+				MarkdownDescription: "The file content to upload.",
+				Required:            true,
+			},
+			"filename": schema.StringAttribute{
+				MarkdownDescription: "The filename for upload.",
 				Required:            true,
 			},
 			"name": schema.StringAttribute{
@@ -87,18 +91,23 @@ func (r *VAPIFileResource) Schema(ctx context.Context, req resource.SchemaReques
 				MarkdownDescription: "The timestamp when the file was last updated.",
 				Computed:            true,
 			},
-			"checksum": schema.StringAttribute{
-				MarkdownDescription: "The SHA-256 checksum of the file.",
+			"status": schema.StringAttribute{
+				MarkdownDescription: "The uploaded file status.",
 				Computed:            true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
+			},
+			"bucket": schema.StringAttribute{
+				MarkdownDescription: "The uploaded file bucket.",
+				Computed:            true,
+			},
+			"purpose": schema.StringAttribute{
+				MarkdownDescription: "The uploaded file purpose.",
+				Computed:            true,
 			},
 			"id": schema.StringAttribute{
 				Computed:            true,
 				MarkdownDescription: "The ID of the file.",
 				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
+					stringplanmodifier.RequiresReplace(),
 				},
 			},
 		},
@@ -129,13 +138,7 @@ func (r *VAPIFileResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
-	checksum, err := computeChecksum(data.FilePath.ValueString())
-	if err != nil {
-		resp.Diagnostics.AddError("File Error", fmt.Sprintf("Unable to compute checksum: %s", err))
-		return
-	}
-
-	response, err := r.client.UploadFile("file", data.FilePath.ValueString())
+	response, _, err := r.client.UploadData("file", data.Filename.ValueString(), []byte(data.Content.ValueString()))
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to upload file: %s", err))
 		return
@@ -149,7 +152,6 @@ func (r *VAPIFileResource) Create(ctx context.Context, req resource.CreateReques
 
 	data.Id = types.StringValue(fileResponse.ID)
 	updateVAPIFileResourceData(&data, &fileResponse)
-	data.Checksum = types.StringValue(checksum)
 
 	tflog.Trace(ctx, "created a file resource")
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -162,25 +164,20 @@ func (r *VAPIFileResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 
-	response, err := r.client.GetFile(data.Id.ValueString())
+	response, responseCode, err := r.client.GetFile(data.Id.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read file: %s", err))
 		return
 	}
 
 	var fileResponse vapi.FileResponse
-	if err := json.Unmarshal(response, &fileResponse); err != nil {
-		resp.Diagnostics.AddWarning("Parse Error", fmt.Sprintf("Unable to parse file response: %s", err))
+	if responseCode >= 200 && responseCode < 300 {
+		if err := json.Unmarshal(response, &fileResponse); err != nil {
+			resp.Diagnostics.AddWarning("Parse Error", fmt.Sprintf("Unable to parse file response: %s", err))
+		}
 	}
 
 	updateVAPIFileResourceData(&data, &fileResponse)
-
-	checksum, err := computeChecksum(data.FilePath.ValueString())
-	if err != nil {
-		resp.Diagnostics.AddError("File Error", fmt.Sprintf("Unable to compute checksum: %s", err))
-		return
-	}
-	data.Checksum = types.StringValue(checksum)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -192,36 +189,6 @@ func (r *VAPIFileResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 
-	localChecksum, err := computeChecksum(data.FilePath.ValueString())
-	if err != nil {
-		resp.Diagnostics.AddError("File Error", fmt.Sprintf("Unable to compute checksum: %s", err))
-		return
-	}
-
-	if localChecksum != data.Checksum.ValueString() {
-		_, err := r.client.DeleteFile(data.Id.ValueString())
-		if err != nil {
-			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete old file: %s", err))
-			return
-		}
-
-		response, err := r.client.UploadFile("file", data.FilePath.ValueString())
-		if err != nil {
-			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to upload file: %s", err))
-			return
-		}
-
-		var fileResponse vapi.FileResponse
-		if err := json.Unmarshal(response, &fileResponse); err != nil {
-			resp.Diagnostics.AddWarning("Client Error", fmt.Sprintf("Unable to unmarshal response: %s", err))
-		}
-
-		data.Id = types.StringValue(fileResponse.ID)
-		updateVAPIFileResourceData(&data, &fileResponse)
-		data.Checksum = types.StringValue(localChecksum)
-	}
-
-	data.Checksum = types.StringValue(localChecksum)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -232,7 +199,7 @@ func (r *VAPIFileResource) Delete(ctx context.Context, req resource.DeleteReques
 		return
 	}
 
-	_, err := r.client.SendRequest("DELETE", "file/"+data.Id.ValueString(), nil)
+	_, _, err := r.client.SendRequest("DELETE", "file/"+data.Id.ValueString(), nil)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete file: %s", err))
 		return
@@ -245,15 +212,6 @@ func (r *VAPIFileResource) ImportState(ctx context.Context, req resource.ImportS
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }
 
-func computeChecksum(filePath string) (string, error) {
-	content, err := os.ReadFile(filePath)
-	if err != nil {
-		return "", fmt.Errorf("failed to read file %s: %s", filePath, err)
-	}
-	checksum := sha256.Sum256(content)
-	return hex.EncodeToString(checksum[:]), nil
-}
-
 func updateVAPIFileResourceData(data *VAPIFileResourceModel, fileResponse *vapi.FileResponse) {
 	data.Name = types.StringValue(fileResponse.Name)
 	data.OriginalName = types.StringValue(fileResponse.OriginalName)
@@ -263,4 +221,7 @@ func updateVAPIFileResourceData(data *VAPIFileResourceModel, fileResponse *vapi.
 	data.URL = types.StringValue(fileResponse.URL)
 	data.CreatedAt = types.StringValue(fileResponse.CreatedAt)
 	data.UpdatedAt = types.StringValue(fileResponse.UpdatedAt)
+	data.Status = types.StringValue(fileResponse.Status)
+	data.Bucket = types.StringValue(fileResponse.Bucket)
+	data.Purpose = types.StringValue(fileResponse.Purpose)
 }

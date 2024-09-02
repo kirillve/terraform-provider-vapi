@@ -6,3 +6,4 @@ The document generation tool looks for files in the following locations by defau
 
 * **provider/provider.tf** example file for the provider index page
 * **resources/vapi_file/resource.tf** example file for the named data source page
+* **resources/vapi_twilio_phone_number/resource.tf** example file for the named data source page
