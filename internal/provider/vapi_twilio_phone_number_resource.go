@@ -77,7 +77,6 @@ func (r *VAPITwilioPhoneNumberResource) Schema(ctx context.Context, req resource
 				MarkdownDescription: "The ID of the phone number.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
-					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
 			"org_id": schema.StringAttribute{
@@ -186,26 +185,42 @@ func (r *VAPITwilioPhoneNumberResource) Create(ctx context.Context, req resource
 
 func (r *VAPITwilioPhoneNumberResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data VAPITwilioPhoneNumberResourceModel
+	// Retrieve the current state
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
+	// Attempt to fetch the phone number details from the remote API
 	response, responseCode, err := r.client.GetPhoneNumber(data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read phone number: %s", err))
 		return
 	}
 
+	// Check if the phone number was not found (404 or similar status code)
+	if responseCode == 404 {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+
+	// Handle successful responses (e.g., 200 OK)
 	var phoneNumberResp vapi.TwilioPhoneNumber
 	if responseCode >= 200 && responseCode < 300 {
+		// Parse the response
 		if err := json.Unmarshal(response, &phoneNumberResp); err != nil {
 			resp.Diagnostics.AddError("Parse Error", fmt.Sprintf("Unable to parse phone number response: %s", err))
 			return
 		}
+		// Bind the phone number response data to the resource model
+		bindVAPIPhoneNumberResourceData(&data, &phoneNumberResp)
+	} else {
+		// Handle unexpected response codes
+		resp.Diagnostics.AddError("Unexpected Response", fmt.Sprintf("Unexpected status code: %d", responseCode))
+		return
 	}
 
-	bindVAPIPhoneNumberResourceData(&data, &phoneNumberResp)
+	// Update the state with the latest data
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 

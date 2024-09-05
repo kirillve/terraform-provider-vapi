@@ -1,3 +1,9 @@
+## 0.3.7
+
+FIXES:
+  - improved VAPI files support
+  - improved VAPI Twilio Phone Number import with fallback implemented
+
 ## 0.3.6
 
 FIXES:

@@ -122,7 +122,6 @@ func (r *VAPIFileResource) Schema(ctx context.Context, req resource.SchemaReques
 				MarkdownDescription: "The ID of the file.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
-					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
 		},
@@ -177,26 +176,41 @@ func (r *VAPIFileResource) Create(ctx context.Context, req resource.CreateReques
 
 func (r *VAPIFileResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data VAPIFileResourceModel
+	// Retrieve the current state
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
+	// Attempt to fetch the file details from the remote API
 	response, responseCode, err := r.client.GetFile(data.Id.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read file: %s", err))
 		return
 	}
 
+	// Check if the file was not found (404 or similar status code indicating missing resource)
+	if responseCode == 404 {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+
+	// Handle successful responses (e.g., 200 OK)
 	var fileResponse vapi.FileResponse
 	if responseCode >= 200 && responseCode < 300 {
+		// Parse the response
 		if err := json.Unmarshal(response, &fileResponse); err != nil {
 			resp.Diagnostics.AddWarning("Parse Error", fmt.Sprintf("Unable to parse file response: %s", err))
 		}
+		// Bind the file response data to the resource model
+		bindVAPIFileResourceData(&data, &fileResponse)
+	} else {
+		// Handle unexpected response codes
+		resp.Diagnostics.AddError("Unexpected Response", fmt.Sprintf("Unexpected status code: %d", responseCode))
+		return
 	}
 
-	bindVAPIFileResourceData(&data, &fileResponse)
-
+	// Update the state with the latest data
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
