@@ -164,10 +164,7 @@ func (r *VAPIFileResource) Create(ctx context.Context, req resource.CreateReques
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to unmarshal response: %s", err))
 			return
 		}
-	} else if responseCode == 404 {
-		fileResponse.ID = "TBD"
 	}
-
 	bindVAPIFileResourceData(&data, &fileResponse)
 
 	tflog.Trace(ctx, "created a file resource")
@@ -226,7 +223,6 @@ func (r *VAPIFileResource) Update(ctx context.Context, req resource.UpdateReques
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete file: %s", err))
 		return
 	}
-
 	bindVAPIFileResourceData(&data, &vapi.FileResponse{})
 
 	response, responseCode, err := r.client.UploadData("file", data.Filename.ValueString(), []byte(data.Content.ValueString()))
@@ -241,8 +237,8 @@ func (r *VAPIFileResource) Update(ctx context.Context, req resource.UpdateReques
 			resp.Diagnostics.AddWarning("Parse Error", fmt.Sprintf("Unable to parse file response: %s", err))
 		}
 	}
-
 	bindVAPIFileResourceData(&data, &fileResponse)
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 

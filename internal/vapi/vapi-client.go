@@ -108,11 +108,6 @@ func (c *APIClient) SendRequest(method, endpoint string, body interface{}) ([]by
 	return responseData, resp.StatusCode, nil
 }
 
-// ImportTwilioPhoneNumber requests the creation of a new phone number.
-func (c *APIClient) ImportTwilioPhoneNumber(requestData ImportTwilioRequest) ([]byte, int, error) {
-	return c.SendRequest("POST", "phone-number", requestData)
-}
-
 // GetFile retrieves the details of a specific phone number by ID.
 func (c *APIClient) GetFile(id string) ([]byte, int, error) {
 	if len(id) == 0 {
@@ -131,6 +126,11 @@ func (c *APIClient) DeleteFile(id string) ([]byte, int, error) {
 	return c.SendRequest("DELETE", endpoint, nil)
 }
 
+// ImportTwilioPhoneNumber requests the creation of a new phone number.
+func (c *APIClient) ImportTwilioPhoneNumber(requestData ImportTwilioRequest) ([]byte, int, error) {
+	return c.SendRequest("POST", "phone-number", requestData)
+}
+
 // GetPhoneNumber retrieves the details of a specific phone number by ID.
 func (c *APIClient) GetPhoneNumber(id string) ([]byte, int, error) {
 	if len(id) == 0 {
@@ -146,5 +146,28 @@ func (c *APIClient) DeletePhoneNumber(id string) ([]byte, int, error) {
 		return []byte{}, 404, nil
 	}
 	endpoint := fmt.Sprintf("phone-number/%s", id)
+	return c.SendRequest("DELETE", endpoint, nil)
+}
+
+// CreateToolFunction method.
+func (c *APIClient) CreateToolFunction(requestData FunctionRequest) ([]byte, int, error) {
+	return c.SendRequest("POST", "tool", requestData)
+}
+
+// GetToolFunction retrieves the details of a specific tool by ID.
+func (c *APIClient) GetToolFunction(id string) ([]byte, int, error) {
+	if len(id) == 0 {
+		return []byte{}, 404, nil
+	}
+	endpoint := fmt.Sprintf("tool/%s", id)
+	return c.SendRequest("GET", endpoint, nil)
+}
+
+// DeleteToolFunction deletes a specific tool by ID.
+func (c *APIClient) DeleteToolFunction(id string) ([]byte, int, error) {
+	if len(id) == 0 {
+		return []byte{}, 404, nil
+	}
+	endpoint := fmt.Sprintf("tool/%s", id)
 	return c.SendRequest("DELETE", endpoint, nil)
 }

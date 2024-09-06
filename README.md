@@ -10,19 +10,15 @@ go install
 terraform {
   required_providers {
     vapi = {
-      source  = "local/vapi"
-      version = "0.2.0"
+      source  = "kirillve/vapi"
+      version = "0.4.0"
     }
   }
 }
 
 provider "vapi" {
   url   = "https://api.vapi.ai"
-  token = "put-your-token-here"
-}
-
-resource "vapi_file" "test-file" {
-  file_path = "/tmp/file.txt"
+  token = "some-token"
 }
 ```
 
