@@ -1,7 +1,7 @@
 ## 0.4.0
 
 FEATURES:
-  - added VAPI tool support (function all only)
+  - added VAPI tool support (function call only)
 
 ## 0.3.7
 
