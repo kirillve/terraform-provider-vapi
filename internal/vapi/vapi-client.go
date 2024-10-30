@@ -18,7 +18,7 @@ type APIClient struct {
 	HTTPClient *http.Client
 }
 
-// Uploads a file using multipart/form-data.
+// UploadData Uploads a file using multipart/form-data.
 func (c *APIClient) UploadData(fieldName, filename string, content []byte) ([]byte, int, error) {
 	// Create a buffer to write our multipart data into
 	body := &bytes.Buffer{}
@@ -75,7 +75,7 @@ func (c *APIClient) UploadData(fieldName, filename string, content []byte) ([]by
 	return responseData, resp.StatusCode, nil
 }
 
-// Sends a request to the API.
+// SendRequest Sends a request to the API.
 func (c *APIClient) SendRequest(method, endpoint string, body interface{}) ([]byte, int, error) {
 	var buf bytes.Buffer
 	if body != nil {
@@ -169,5 +169,35 @@ func (c *APIClient) DeleteToolFunction(id string) ([]byte, int, error) {
 		return []byte{}, 404, nil
 	}
 	endpoint := fmt.Sprintf("tool/%s", id)
+	return c.SendRequest("DELETE", endpoint, nil)
+}
+
+// CreateAssistant creates a new assistant.
+func (c *APIClient) CreateAssistant(requestData CreateAssistantRequest) ([]byte, int, error) {
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(requestData); err != nil {
+		return nil, http.StatusInternalServerError, fmt.Errorf("failed to encode request data: %v", err)
+	}
+
+	return c.SendRequest("POST", "assistant", requestData)
+}
+
+// GetAssistant retrieves the details of a specific assistant by ID.
+func (c *APIClient) GetAssistant(id string) ([]byte, int, error) {
+	if id == "" {
+		return nil, http.StatusNotFound, fmt.Errorf("ID cannot be empty")
+	}
+
+	endpoint := fmt.Sprintf("assistant/%s", id)
+	return c.SendRequest("GET", endpoint, nil)
+}
+
+// DeleteAssistant deletes an existing assistant by ID.
+func (c *APIClient) DeleteAssistant(id string) ([]byte, int, error) {
+	if id == "" {
+		return nil, http.StatusNotFound, fmt.Errorf("ID cannot be empty")
+	}
+
+	endpoint := fmt.Sprintf("assistant/%s", id)
 	return c.SendRequest("DELETE", endpoint, nil)
 }

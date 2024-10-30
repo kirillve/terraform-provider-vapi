@@ -15,9 +15,9 @@ type Server struct {
 
 type Function struct {
 	Description string         `json:"description"`
-	Async       bool           `json:"async"`
-	Name        string         `json:"name"`
-	Parameters  FunctionParams `json:"parameters"`
+	Async       bool           `json:"async,omitempty"`
+	Name        string         `json:"name,omitempty"`
+	Parameters  FunctionParams `json:"parameters,omitempty"`
 }
 
 type FunctionParams struct {

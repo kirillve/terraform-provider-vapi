@@ -234,7 +234,11 @@ func (r *VAPIToolFunctionResource) Create(ctx context.Context, req resource.Crea
 			resp.Diagnostics.AddError("Parse Error", fmt.Sprintf("Unable to parse response: %s", err))
 			return
 		}
+	} else {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to parse response [%d]: %s", responseCode, string(response)))
+		return
 	}
+
 	bindVAPIToolFunctionResourceData(&data, &functionResponse)
 
 	tflog.Trace(ctx, "created a tool function resource")
@@ -267,9 +271,10 @@ func (r *VAPIToolFunctionResource) Read(ctx context.Context, req resource.ReadRe
 			return
 		}
 	} else {
-		resp.Diagnostics.AddError("Unexpected Response", fmt.Sprintf("Unexpected status code: %d", responseCode))
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to parse response [%d]: %s", responseCode, string(response)))
 		return
 	}
+
 	bindVAPIToolFunctionResourceData(&data, &functionResponse)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -331,7 +336,11 @@ func (r *VAPIToolFunctionResource) Update(ctx context.Context, req resource.Upda
 			resp.Diagnostics.AddError("Parse Error", fmt.Sprintf("Unable to parse response: %s", err))
 			return
 		}
+	} else {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to parse response [%d]: %s", responseCode, string(response)))
+		return
 	}
+
 	bindVAPIToolFunctionResourceData(&data, &functionResponse)
 
 	tflog.Trace(ctx, "created a tool function resource")

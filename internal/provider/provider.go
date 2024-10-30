@@ -72,6 +72,7 @@ func (p *VAPIProvider) Configure(ctx context.Context, req provider.ConfigureRequ
 
 func (p *VAPIProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
+		NewVAPIAssistantResource,
 		NewVAPIFileResource,
 		NewVAPIPhoneNumberResource,
 		NewVAPIToolFunctionResource,

@@ -1,3 +1,8 @@
+## 0.5.0
+
+FEATURES:
+  - added VAPI Assistant support
+
 ## 0.4.0
 
 FEATURES:

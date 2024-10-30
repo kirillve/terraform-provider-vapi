@@ -176,6 +176,7 @@ func (r *VAPITwilioPhoneNumberResource) Create(ctx context.Context, req resource
 		}
 	} else {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to parse response [%d]: %s", responseCode, string(response)))
+		return
 	}
 
 	bindVAPIPhoneNumberResourceData(&data, &twilioPhoneNumberResp)
@@ -215,8 +216,7 @@ func (r *VAPITwilioPhoneNumberResource) Read(ctx context.Context, req resource.R
 		// Bind the phone number response data to the resource model
 		bindVAPIPhoneNumberResourceData(&data, &phoneNumberResp)
 	} else {
-		// Handle unexpected response codes
-		resp.Diagnostics.AddError("Unexpected Response", fmt.Sprintf("Unexpected status code: %d", responseCode))
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to parse response [%d]: %s", responseCode, string(response)))
 		return
 	}
 
@@ -262,7 +262,8 @@ func (r *VAPITwilioPhoneNumberResource) Update(ctx context.Context, req resource
 			return
 		}
 	} else {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Update :: Unable parse response [%d]: %s", responseCode, string(response)))
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to parse response [%d]: %s", responseCode, string(response)))
+		return
 	}
 
 	bindVAPIPhoneNumberResourceData(&data, &phoneNumberResp)

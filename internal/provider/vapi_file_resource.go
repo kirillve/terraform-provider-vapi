@@ -164,7 +164,11 @@ func (r *VAPIFileResource) Create(ctx context.Context, req resource.CreateReques
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to unmarshal response: %s", err))
 			return
 		}
+	} else {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to parse response [%d]: %s", responseCode, string(response)))
+		return
 	}
+
 	bindVAPIFileResourceData(&data, &fileResponse)
 
 	tflog.Trace(ctx, "created a file resource")
@@ -202,8 +206,7 @@ func (r *VAPIFileResource) Read(ctx context.Context, req resource.ReadRequest, r
 		// Bind the file response data to the resource model
 		bindVAPIFileResourceData(&data, &fileResponse)
 	} else {
-		// Handle unexpected response codes
-		resp.Diagnostics.AddError("Unexpected Response", fmt.Sprintf("Unexpected status code: %d", responseCode))
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to parse response [%d]: %s", responseCode, string(response)))
 		return
 	}
 
@@ -236,7 +239,11 @@ func (r *VAPIFileResource) Update(ctx context.Context, req resource.UpdateReques
 		if err := json.Unmarshal(response, &fileResponse); err != nil {
 			resp.Diagnostics.AddWarning("Parse Error", fmt.Sprintf("Unable to parse file response: %s", err))
 		}
+	} else {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to parse response [%d]: %s", responseCode, string(response)))
+		return
 	}
+
 	bindVAPIFileResourceData(&data, &fileResponse)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
