@@ -106,7 +106,7 @@ type StopSpeakingPlan struct {
 	BackoffSeconds *float64 `json:"backoffSeconds,omitempty"`
 }
 
-// AnalysisPlan struct
+// AnalysisPlan struct.
 type AnalysisPlan struct {
 	SummaryPrompt           string                `json:"summaryPrompt"`
 	StructuredDataPrompt    string                `json:"structuredDataPrompt"`
@@ -115,7 +115,7 @@ type AnalysisPlan struct {
 	SuccessEvaluationRubric string                `json:"successEvaluationRubric"`
 }
 
-// StructuredDataSchema struct
+// StructuredDataSchema struct.
 type StructuredDataSchema struct {
 	Type       string               `json:"type"`
 	Properties map[string]*Property `json:"properties"`

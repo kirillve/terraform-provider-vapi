@@ -728,8 +728,6 @@ func bindVAPIAssistantResourceData(data *VAPIAssistantResourceModel, assistantRe
 			Model:    types.StringValue(assistantResponse.Transcriber.Model),
 			Keywords: ListValueFromStrings(assistantResponse.Transcriber.Keywords),
 		}
-	} else {
-		//data.Transcriber = nil
 	}
 
 	// Model configuration
@@ -741,8 +739,6 @@ func bindVAPIAssistantResourceData(data *VAPIAssistantResourceModel, assistantRe
 			Temperature:  types.Float64Value(assistantResponse.Model.Temperature),
 			ToolIds:      ListValueFromStrings(assistantResponse.Model.ToolIDs),
 		}
-	} else {
-		//data.Model = nil
 	}
 
 	// Voice configuration
@@ -754,8 +750,6 @@ func bindVAPIAssistantResourceData(data *VAPIAssistantResourceModel, assistantRe
 			Stability:       types.Float64Value(assistantResponse.Voice.Stability),
 			SimilarityBoost: types.Float64Value(assistantResponse.Voice.SimilarityBoost),
 		}
-	} else {
-		//data.Voice = nil
 	}
 
 	// Speaking Plans

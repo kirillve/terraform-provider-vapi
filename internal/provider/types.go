@@ -18,7 +18,9 @@ func ListValueFromStrings(strings []string) types.List {
 func ElementsAsString(list types.List) []string {
 	var result []string
 	for _, v := range list.Elements() {
-		result = append(result, v.(types.String).ValueString())
+		if str, ok := v.(types.String); ok {
+			result = append(result, str.ValueString())
+		}
 	}
 	return result
 }
