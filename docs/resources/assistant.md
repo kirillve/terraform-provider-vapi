@@ -67,6 +67,12 @@ resource "vapi_assistant" "example_assistant" {
     system_prompt = "System prompt"
     temperature   = 0.3
     provider      = "openai"
+    knowledge_base = {
+      file_ids = [
+        "920f2f78-1234-5678-afec-9a3a79b8f687"
+      ],
+      provider = "canonical"
+    }
   }
 
   voice = {
@@ -137,19 +143,27 @@ resource "vapi_assistant" "example_assistant" {
 - `background_denoising` (Boolean) Indicates whether background denoising is enabled.
 - `background_sound` (String) Background sound used during the call.
 - `client_messages` (List of String) List of messages from the client.
+- `dial_keypad_function_enabled` (Boolean) Dial Keypad Function enabled
 - `end_call_function_enabled` (Boolean) Enables the end call function.
 - `end_call_message` (String) Message to be used when ending the call.
 - `end_call_phrases` (List of String) List of phrases to end the call.
+- `fillers_enabled` (Boolean) Fillers enabled
 - `first_message` (String) Initial message sent to the client.
 - `first_message_mode` (String) Mode of the first message.
 - `forwarding_phone_number` (String) Phone number to which calls are forwarded.
 - `hipaa_enabled` (Boolean) Indicates whether HIPAA compliance is enabled.
+- `interruptions_enabled` (Boolean) Interruptions enabled
+- `keywords` (List of String) Keywords.
+- `language` (String) Language
+- `live_transcripts_enabled` (Boolean) Parent ID.
 - `max_duration_seconds` (Number) Maximum duration of the call in seconds.
 - `message_plan` (Attributes) Configuration for message plan. (see [below for nested schema](#nestedatt--message_plan))
 - `model` (Attributes) Configuration for the assistant model. (see [below for nested schema](#nestedatt--model))
 - `model_output_enabled` (Boolean) Indicates whether model output is enabled.
+- `num_words_to_interrupt_assistant` (Number) Num words to interrupt assistant
 - `phone_number_id` (String) ID of the phone number associated with the assistant.
 - `recording_enabled` (Boolean) Indicates if call recording is enabled.
+- `response_delay_seconds` (Number) Response Delay Seconds
 - `server_messages` (List of String) List of messages from the server.
 - `server_url` (String) Server URL.
 - `server_url_secret` (String) Server URL Secret.
@@ -163,6 +177,8 @@ resource "vapi_assistant" "example_assistant" {
 ### Read-Only
 
 - `id` (String) Unique identifier for the assistant resource.
+- `org_id` (String) Org identifier for the assistant resource.
+- `parent_id` (String) Parent ID.
 
 <a id="nestedatt--analysis_plan"></a>
 ### Nested Schema for `analysis_plan`
@@ -211,10 +227,22 @@ Required:
 
 Optional:
 
+- `knowledge_base` (Attributes) Knowledge base configuration for the assistant model. (see [below for nested schema](#nestedatt--model--knowledge_base))
+- `max_tokens` (Number) The maximum number of tokens allowed for the model's response.
 - `provider` (String) Provider for the assistant model: openai, azure-openai, together-ai, anyscale, openrouter, perplexity-ai, deepinfra, custom-llm, runpod, groq, vapi, anthropic, google
 - `system_prompt` (String) Prompt text used to guide the assistant model.
 - `temperature` (Number) Temperature setting for the model's response randomness.
 - `tool_ids` (List of String) List of tool IDs used by the model.
+
+<a id="nestedatt--model--knowledge_base"></a>
+### Nested Schema for `model.knowledge_base`
+
+Optional:
+
+- `file_ids` (List of String) List of file IDs in the knowledge base.
+- `provider` (String) Provider for the knowledge base.
+- `top_k` (Number) The maximum number of documents to retrieve from the knowledge base.
+
 
 
 <a id="nestedatt--start_speaking_plan"></a>
@@ -256,7 +284,7 @@ Required:
 
 Optional:
 
-- `keywords` (List of String) List of keywords to focus on during transcription.
+- `language` (String) Language used for transcription.
 - `model` (String) Model used for transcription.
 
 

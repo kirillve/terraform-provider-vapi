@@ -28,48 +28,66 @@ type VAPIAssistantResource struct {
 }
 
 type VAPIAssistantResourceModel struct {
-	ID                     types.String                    `tfsdk:"id"`
-	Name                   types.String                    `tfsdk:"name"`
-	FirstMessageMode       types.String                    `tfsdk:"first_message_mode"`
-	HipaaEnabled           types.Bool                      `tfsdk:"hipaa_enabled"`
-	ClientMessages         types.List                      `tfsdk:"client_messages"`
-	ServerMessages         types.List                      `tfsdk:"server_messages"`
-	SilenceTimeoutSeconds  types.Int64                     `tfsdk:"silence_timeout_seconds"`
-	MaxDurationSeconds     types.Int64                     `tfsdk:"max_duration_seconds"`
-	BackgroundSound        types.String                    `tfsdk:"background_sound"`
-	BackgroundDenoising    types.Bool                      `tfsdk:"background_denoising"`
-	ModelOutputEnabled     types.Bool                      `tfsdk:"model_output_enabled"`
-	FirstMessage           types.String                    `tfsdk:"first_message"`
-	VoicemailMessage       types.String                    `tfsdk:"voicemail_message"`
-	EndCallMessage         types.String                    `tfsdk:"end_call_message"`
-	ServerURL              types.String                    `tfsdk:"server_url"`
-	ServerURLSecret        types.String                    `tfsdk:"server_url_secret"`
-	EndCallPhrases         types.List                      `tfsdk:"end_call_phrases"`
-	Transcriber            *TranscriberResourceModel       `tfsdk:"transcriber"`
-	Model                  *ModelResourceModel             `tfsdk:"model"`
-	Voice                  *VoiceResourceModel             `tfsdk:"voice"`
-	StartSpeakingPlan      *StartSpeakingPlanResourceModel `tfsdk:"start_speaking_plan"`
-	StopSpeakingPlan       *StopSpeakingPlanResourceModel  `tfsdk:"stop_speaking_plan"`
-	AnalysisPlan           *AnalysisPlanResourceModel      `tfsdk:"analysis_plan"`
-	MessagePlan            *MessagePlanResourceModel       `tfsdk:"message_plan"`
-	EndCallFunctionEnabled types.Bool                      `tfsdk:"end_call_function_enabled"`
-	RecordingEnabled       types.Bool                      `tfsdk:"recording_enabled"`
-	ForwardingPhoneNumber  types.String                    `tfsdk:"forwarding_phone_number"`
-	PhoneNumberID          types.String                    `tfsdk:"phone_number_id"`
+	ID                           types.String                    `tfsdk:"id"`
+	OrgID                        types.String                    `tfsdk:"org_id"`
+	Name                         types.String                    `tfsdk:"name"`
+	FirstMessageMode             types.String                    `tfsdk:"first_message_mode"`
+	HipaaEnabled                 types.Bool                      `tfsdk:"hipaa_enabled"`
+	ClientMessages               types.List                      `tfsdk:"client_messages"`
+	ServerMessages               types.List                      `tfsdk:"server_messages"`
+	SilenceTimeoutSeconds        types.Float64                   `tfsdk:"silence_timeout_seconds"`
+	MaxDurationSeconds           types.Int64                     `tfsdk:"max_duration_seconds"`
+	BackgroundSound              types.String                    `tfsdk:"background_sound"`
+	BackgroundDenoising          types.Bool                      `tfsdk:"background_denoising"`
+	ModelOutputEnabled           types.Bool                      `tfsdk:"model_output_enabled"`
+	FirstMessage                 types.String                    `tfsdk:"first_message"`
+	VoicemailMessage             types.String                    `tfsdk:"voicemail_message"`
+	EndCallMessage               types.String                    `tfsdk:"end_call_message"`
+	ServerURL                    types.String                    `tfsdk:"server_url"`
+	ServerURLSecret              types.String                    `tfsdk:"server_url_secret"`
+	EndCallPhrases               types.List                      `tfsdk:"end_call_phrases"`
+	Transcriber                  *TranscriberResourceModel       `tfsdk:"transcriber"`
+	Model                        *ModelResourceModel             `tfsdk:"model"`
+	Voice                        *VoiceResourceModel             `tfsdk:"voice"`
+	StartSpeakingPlan            *StartSpeakingPlanResourceModel `tfsdk:"start_speaking_plan"`
+	StopSpeakingPlan             *StopSpeakingPlanResourceModel  `tfsdk:"stop_speaking_plan"`
+	AnalysisPlan                 *AnalysisPlanResourceModel      `tfsdk:"analysis_plan"`
+	MessagePlan                  *MessagePlanResourceModel       `tfsdk:"message_plan"`
+	EndCallFunctionEnabled       types.Bool                      `tfsdk:"end_call_function_enabled"`
+	RecordingEnabled             types.Bool                      `tfsdk:"recording_enabled"`
+	ForwardingPhoneNumber        types.String                    `tfsdk:"forwarding_phone_number"`
+	PhoneNumberID                types.String                    `tfsdk:"phone_number_id"`
+	Language                     types.String                    `tfsdk:"language"`
+	InterruptionsEnabled         types.Bool                      `tfsdk:"interruptions_enabled"`
+	DialKeypadFunctionEnabled    types.Bool                      `tfsdk:"dial_keypad_function_enabled"`
+	FillersEnabled               types.Bool                      `tfsdk:"fillers_enabled"`
+	ResponseDelaySeconds         types.Float64                   `tfsdk:"response_delay_seconds"`
+	NumWordsToInterruptAssistant types.Int64                     `tfsdk:"num_words_to_interrupt_assistant"`
+	LiveTranscriptsEnabled       types.Bool                      `tfsdk:"live_transcripts_enabled"`
+	Keywords                     types.List                      `tfsdk:"keywords"`
+	ParentID                     types.String                    `tfsdk:"parent_id"`
 }
 
 type TranscriberResourceModel struct {
 	Provider types.String `tfsdk:"provider"`
 	Model    types.String `tfsdk:"model"`
-	Keywords types.List   `tfsdk:"keywords"`
+	Language types.String `tfsdk:"language"`
 }
 
 type ModelResourceModel struct {
-	Model        types.String  `tfsdk:"model"`
-	SystemPrompt types.String  `tfsdk:"system_prompt"`
-	Provider     types.String  `tfsdk:"provider"`
-	Temperature  types.Float64 `tfsdk:"temperature"`
-	ToolIds      types.List    `tfsdk:"tool_ids"`
+	Model         types.String                `tfsdk:"model"`
+	SystemPrompt  types.String                `tfsdk:"system_prompt"`
+	Provider      types.String                `tfsdk:"provider"`
+	Temperature   types.Float64               `tfsdk:"temperature"`
+	MaxTokens     types.Int64                 `tfsdk:"max_tokens"`
+	ToolIDs       types.List                  `tfsdk:"tool_ids"`
+	KnowledgeBase *KnowledgeBaseResourceModel `tfsdk:"knowledge_base"`
+}
+
+type KnowledgeBaseResourceModel struct {
+	TopK     types.Int64  `tfsdk:"top_k"`
+	FileIDs  types.List   `tfsdk:"file_ids"`
+	Provider types.String `tfsdk:"provider"`
 }
 
 type VoiceResourceModel struct {
@@ -137,6 +155,13 @@ func (r *VAPIAssistantResource) Schema(ctx context.Context, req resource.SchemaR
 					stringplanmodifier.RequiresReplace(),
 				},
 			},
+			"org_id": schema.StringAttribute{
+				MarkdownDescription: "Org identifier for the assistant resource.",
+				Computed:            true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
+			},
 			"name": schema.StringAttribute{
 				MarkdownDescription: "Name of the assistant resource.",
 				Required:            true,
@@ -162,6 +187,7 @@ func (r *VAPIAssistantResource) Schema(ctx context.Context, req resource.SchemaR
 				ElementType:         types.StringType,
 				MarkdownDescription: "List of messages from the client.",
 				Optional:            true,
+				Computed:            true,
 				PlanModifiers: []planmodifier.List{
 					listplanmodifier.RequiresReplace(),
 				},
@@ -170,15 +196,16 @@ func (r *VAPIAssistantResource) Schema(ctx context.Context, req resource.SchemaR
 				ElementType:         types.StringType,
 				MarkdownDescription: "List of messages from the server.",
 				Optional:            true,
+				Computed:            true,
 				PlanModifiers: []planmodifier.List{
 					listplanmodifier.RequiresReplace(),
 				},
 			},
-			"silence_timeout_seconds": schema.Int64Attribute{
+			"silence_timeout_seconds": schema.Float64Attribute{
 				MarkdownDescription: "Timeout in seconds for silence.",
 				Optional:            true,
-				PlanModifiers: []planmodifier.Int64{
-					int64planmodifier.RequiresReplace(),
+				PlanModifiers: []planmodifier.Float64{
+					float64planmodifier.RequiresReplace(),
 				},
 			},
 			"max_duration_seconds": schema.Int64Attribute{
@@ -271,12 +298,11 @@ func (r *VAPIAssistantResource) Schema(ctx context.Context, req resource.SchemaR
 							stringplanmodifier.RequiresReplace(),
 						},
 					},
-					"keywords": schema.ListAttribute{
-						ElementType:         types.StringType,
-						MarkdownDescription: "List of keywords to focus on during transcription.",
+					"language": schema.StringAttribute{
+						MarkdownDescription: "Language used for transcription.",
 						Optional:            true,
-						PlanModifiers: []planmodifier.List{
-							listplanmodifier.RequiresReplace(),
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.RequiresReplace(),
 						},
 					},
 				},
@@ -307,6 +333,14 @@ func (r *VAPIAssistantResource) Schema(ctx context.Context, req resource.SchemaR
 							stringplanmodifier.RequiresReplace(),
 						},
 					},
+					"max_tokens": schema.Int64Attribute{
+						MarkdownDescription: "The maximum number of tokens allowed for the model's response.",
+						Optional:            true,
+						Computed:            true,
+						PlanModifiers: []planmodifier.Int64{
+							int64planmodifier.RequiresReplace(),
+						},
+					},
 					"temperature": schema.Float64Attribute{
 						MarkdownDescription: "Temperature setting for the model's response randomness.",
 						Optional:            true,
@@ -323,6 +357,36 @@ func (r *VAPIAssistantResource) Schema(ctx context.Context, req resource.SchemaR
 							listplanmodifier.RequiresReplace(),
 						},
 					},
+					"knowledge_base": schema.SingleNestedAttribute{
+						MarkdownDescription: "Knowledge base configuration for the assistant model.",
+						Optional:            true,
+						Attributes: map[string]schema.Attribute{
+							"top_k": schema.Int64Attribute{
+								MarkdownDescription: "The maximum number of documents to retrieve from the knowledge base.",
+								Optional:            true,
+								Computed:            true,
+								PlanModifiers: []planmodifier.Int64{
+									int64planmodifier.RequiresReplace(),
+								},
+							},
+							"file_ids": schema.ListAttribute{
+								ElementType:         types.StringType,
+								MarkdownDescription: "List of file IDs in the knowledge base.",
+								Optional:            true,
+								PlanModifiers: []planmodifier.List{
+									listplanmodifier.RequiresReplace(),
+								},
+							},
+							"provider": schema.StringAttribute{
+								MarkdownDescription: "Provider for the knowledge base.",
+								Optional:            true,
+								Computed:            true,
+								PlanModifiers: []planmodifier.String{
+									stringplanmodifier.RequiresReplace(),
+								},
+							},
+						},
+					},
 				},
 			},
 			"voice": schema.SingleNestedAttribute{
@@ -336,15 +400,15 @@ func (r *VAPIAssistantResource) Schema(ctx context.Context, req resource.SchemaR
 							stringplanmodifier.RequiresReplace(),
 						},
 					},
-					"provider": schema.StringAttribute{
-						MarkdownDescription: "Provider for the voice model.",
+					"voice_id": schema.StringAttribute{
+						MarkdownDescription: "ID of the voice model.",
 						Required:            true,
 						PlanModifiers: []planmodifier.String{
 							stringplanmodifier.RequiresReplace(),
 						},
 					},
-					"voice_id": schema.StringAttribute{
-						MarkdownDescription: "ID of the voice model.",
+					"provider": schema.StringAttribute{
+						MarkdownDescription: "Provider for the voice model.",
 						Required:            true,
 						PlanModifiers: []planmodifier.String{
 							stringplanmodifier.RequiresReplace(),
@@ -435,6 +499,7 @@ func (r *VAPIAssistantResource) Schema(ctx context.Context, req resource.SchemaR
 					"backoff_seconds": schema.Float64Attribute{
 						MarkdownDescription: "Backoff period in seconds before stopping.",
 						Optional:            true,
+						Computed:            true,
 						PlanModifiers: []planmodifier.Float64{
 							float64planmodifier.RequiresReplace(),
 						},
@@ -553,6 +618,79 @@ func (r *VAPIAssistantResource) Schema(ctx context.Context, req resource.SchemaR
 			"phone_number_id": schema.StringAttribute{
 				MarkdownDescription: "ID of the phone number associated with the assistant.",
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
+			},
+
+			"response_delay_seconds": schema.Float64Attribute{
+				MarkdownDescription: "Response Delay Seconds",
+				Optional:            true,
+				Computed:            true,
+				PlanModifiers: []planmodifier.Float64{
+					float64planmodifier.RequiresReplace(),
+				},
+			},
+			"dial_keypad_function_enabled": schema.BoolAttribute{
+				MarkdownDescription: "Dial Keypad Function enabled",
+				Optional:            true,
+				Computed:            true,
+				PlanModifiers: []planmodifier.Bool{
+					boolplanmodifier.RequiresReplace(),
+				},
+			},
+			"num_words_to_interrupt_assistant": schema.Int64Attribute{
+				MarkdownDescription: "Num words to interrupt assistant",
+				Optional:            true,
+				Computed:            true,
+				PlanModifiers: []planmodifier.Int64{
+					int64planmodifier.RequiresReplace(),
+				},
+			},
+			"interruptions_enabled": schema.BoolAttribute{
+				MarkdownDescription: "Interruptions enabled",
+				Optional:            true,
+				Computed:            true,
+				PlanModifiers: []planmodifier.Bool{
+					boolplanmodifier.RequiresReplace(),
+				},
+			},
+			"keywords": schema.ListAttribute{
+				ElementType:         types.StringType,
+				MarkdownDescription: "Keywords.",
+				Optional:            true,
+				Computed:            true,
+				PlanModifiers: []planmodifier.List{
+					listplanmodifier.RequiresReplace(),
+				},
+			},
+			"fillers_enabled": schema.BoolAttribute{
+				MarkdownDescription: "Fillers enabled",
+				Optional:            true,
+				Computed:            true,
+				PlanModifiers: []planmodifier.Bool{
+					boolplanmodifier.RequiresReplace(),
+				},
+			},
+			"language": schema.StringAttribute{
+				MarkdownDescription: "Language",
+				Optional:            true,
+				Computed:            true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
+			},
+			"live_transcripts_enabled": schema.BoolAttribute{
+				MarkdownDescription: "Parent ID.",
+				Optional:            true,
+				Computed:            true,
+				PlanModifiers: []planmodifier.Bool{
+					boolplanmodifier.RequiresReplace(),
+				},
+			},
+			"parent_id": schema.StringAttribute{
+				MarkdownDescription: "Parent ID.",
+				Computed:            true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
@@ -705,43 +843,27 @@ func (r *VAPIAssistantResource) Delete(ctx context.Context, req resource.DeleteR
 func bindVAPIAssistantResourceData(data *VAPIAssistantResourceModel, assistantResponse *vapi.Assistant) {
 	// Basic fields
 	data.ID = types.StringValue(assistantResponse.ID)
+	data.OrgID = types.StringValue(assistantResponse.OrgID)
 	data.Name = types.StringValue(assistantResponse.Name)
 	data.FirstMessageMode = types.StringValue(assistantResponse.FirstMessageMode)
 	data.HipaaEnabled = types.BoolValue(assistantResponse.HipaaEnabled)
-	data.SilenceTimeoutSeconds = types.Int64Value(int64(assistantResponse.SilenceTimeoutSeconds))
-	data.MaxDurationSeconds = types.Int64Value(int64(assistantResponse.MaxDurationSeconds))
-
-	// Lists and nested attributes
-	data.ClientMessages = ListValueFromStrings(assistantResponse.ClientMessages)
-	data.ServerMessages = ListValueFromStrings(assistantResponse.ServerMessages)
-	data.EndCallPhrases = ListValueFromStrings(assistantResponse.EndCallPhrases)
-
-	// Background and Voice
 	data.BackgroundSound = types.StringValue(assistantResponse.BackgroundSound)
 	data.BackgroundDenoising = types.BoolValue(assistantResponse.BackgroundDenoising)
 	data.ModelOutputEnabled = types.BoolValue(assistantResponse.ModelOutputEnabled)
+	data.Language = types.StringValue(assistantResponse.Language)
+	data.ForwardingPhoneNumber = types.StringValue(assistantResponse.ForwardingPhoneNumber)
+	data.InterruptionsEnabled = types.BoolValue(assistantResponse.InterruptionsEnabled)
+	data.EndCallFunctionEnabled = types.BoolValue(assistantResponse.EndCallFunctionEnabled)
+	data.DialKeypadFunctionEnabled = types.BoolValue(assistantResponse.DialKeypadFunctionEnabled)
+	data.FillersEnabled = types.BoolValue(assistantResponse.FillersEnabled)
+	data.SilenceTimeoutSeconds = types.Float64PointerValue(assistantResponse.SilenceTimeoutSeconds)
+	data.ResponseDelaySeconds = types.Float64PointerValue(assistantResponse.ResponseDelaySeconds)
+	data.NumWordsToInterruptAssistant = types.Int64PointerValue(assistantResponse.NumWordsToInterruptAssistant)
+	data.LiveTranscriptsEnabled = types.BoolPointerValue(assistantResponse.LiveTranscriptsEnabled)
+	data.Keywords = ListValueFromStrings(assistantResponse.Keywords)
+	data.ParentID = types.StringPointerValue(assistantResponse.ParentID)
 
-	// Transcriber model
-	if assistantResponse.Transcriber != nil {
-		data.Transcriber = &TranscriberResourceModel{
-			Provider: types.StringValue(assistantResponse.Transcriber.Provider),
-			Model:    types.StringValue(assistantResponse.Transcriber.Model),
-			Keywords: ListValueFromStrings(assistantResponse.Transcriber.Keywords),
-		}
-	}
-
-	// Model configuration
-	if assistantResponse.Model != nil {
-		data.Model = &ModelResourceModel{
-			Provider:     types.StringValue(assistantResponse.Model.Provider),
-			Model:        types.StringValue(assistantResponse.Model.Model),
-			SystemPrompt: types.StringValue(assistantResponse.Model.SystemPrompt),
-			Temperature:  types.Float64Value(assistantResponse.Model.Temperature),
-			ToolIds:      ListValueFromStrings(assistantResponse.Model.ToolIDs),
-		}
-	}
-
-	// Voice configuration
+	// Handle optional Voice struct
 	if assistantResponse.Voice != nil {
 		data.Voice = &VoiceResourceModel{
 			Model:           types.StringValue(assistantResponse.Voice.Model),
@@ -750,99 +872,226 @@ func bindVAPIAssistantResourceData(data *VAPIAssistantResourceModel, assistantRe
 			Stability:       types.Float64Value(assistantResponse.Voice.Stability),
 			SimilarityBoost: types.Float64Value(assistantResponse.Voice.SimilarityBoost),
 		}
+	} else {
+		data.Voice = nil
 	}
 
-	// Speaking Plans
-	data.StartSpeakingPlan = mapStartSpeakingPlan(assistantResponse.StartSpeakingPlan)
-	data.StopSpeakingPlan = mapStopSpeakingPlan(assistantResponse.StopSpeakingPlan)
-}
+	// Handle optional Model struct
+	if assistantResponse.Model != nil {
+		data.Model = &ModelResourceModel{
+			Model:        types.StringValue(assistantResponse.Model.Model),
+			SystemPrompt: types.StringValue(assistantResponse.Model.SystemPrompt),
+			Provider:     types.StringValue(assistantResponse.Model.Provider),
+			MaxTokens:    types.Int64Value(assistantResponse.Model.MaxTokens),
+			Temperature:  types.Float64Value(assistantResponse.Model.Temperature),
+			ToolIDs:      ListValueFromStrings(assistantResponse.Model.ToolIDs),
+			KnowledgeBase: func() *KnowledgeBaseResourceModel {
+				if assistantResponse.Model.KnowledgeBase != nil {
+					return &KnowledgeBaseResourceModel{
+						TopK:     types.Int64Value(assistantResponse.Model.KnowledgeBase.TopK),
+						FileIDs:  ListValueFromStrings(assistantResponse.Model.KnowledgeBase.FileIDs),
+						Provider: types.StringValue(assistantResponse.Model.KnowledgeBase.Provider),
+					}
+				}
+				return nil
+			}(),
+		}
+	} else {
+		data.Model = nil
+	}
 
-func mapStartSpeakingPlan(plan *vapi.StartSpeakingPlan) *StartSpeakingPlanResourceModel {
-	if plan == nil {
-		return nil
-	}
-	return &StartSpeakingPlanResourceModel{
-		WaitSeconds:             types.Float64Value(plan.WaitSeconds),
-		SmartEndpointingEnabled: types.BoolValue(plan.SmartEndpointingEnabled),
-		TranscriptionEndpointingPlan: &TranscriptionEndpointingPlanResourceModel{
-			OnPunctuationSeconds:   types.Float64Value(plan.TranscriptionEndpointingPlan.OnPunctuationSeconds),
-			OnNoPunctuationSeconds: types.Float64Value(plan.TranscriptionEndpointingPlan.OnNoPunctuationSeconds),
-			OnNumberSeconds:        types.Float64Value(plan.TranscriptionEndpointingPlan.OnNumberSeconds),
-		},
-	}
-}
+	data.RecordingEnabled = types.BoolValue(assistantResponse.RecordingEnabled)
+	data.FirstMessage = types.StringValue(assistantResponse.FirstMessage)
+	data.VoicemailMessage = types.StringValue(assistantResponse.VoicemailMessage)
+	data.EndCallFunctionEnabled = types.BoolValue(assistantResponse.EndCallFunctionEnabled)
 
-func mapStopSpeakingPlan(plan *vapi.StopSpeakingPlan) *StopSpeakingPlanResourceModel {
-	if plan == nil {
-		return nil
+	// Handle optional Transcriber struct
+	if assistantResponse.Transcriber != nil {
+		data.Transcriber = &TranscriberResourceModel{
+			Provider: types.StringValue(assistantResponse.Transcriber.Provider),
+			Model:    types.StringValue(assistantResponse.Transcriber.Model),
+			Language: types.StringValue(assistantResponse.Transcriber.Language),
+		}
+	} else {
+		data.Transcriber = nil
 	}
-	return &StopSpeakingPlanResourceModel{
-		NumWords:       types.Float64Value(plan.NumWords),
-		VoiceSeconds:   types.Float64Value(plan.VoiceSeconds),
-		BackoffSeconds: types.Float64PointerValue(plan.BackoffSeconds),
+
+	data.ServerURL = types.StringValue(assistantResponse.ServerURL)
+	//data.ServerURLSecret = types.StringValue(assistantResponse.ServerURLSecret)
+
+	data.ClientMessages = ListValueFromStrings(assistantResponse.ClientMessages)
+	//data.ServerMessages = ListValueFromStrings(assistantResponse.ServerMessages)
+	data.EndCallPhrases = ListValueFromStrings(assistantResponse.EndCallPhrases)
+
+	data.MaxDurationSeconds = types.Int64Value(assistantResponse.MaxDurationSeconds)
+
+	// Handle optional AnalysisPlan struct
+	if assistantResponse.AnalysisPlan != nil {
+		data.AnalysisPlan = &AnalysisPlanResourceModel{
+			SummaryPrompt:           types.StringValue(assistantResponse.AnalysisPlan.SummaryPrompt),
+			StructuredDataPrompt:    types.StringValue(assistantResponse.AnalysisPlan.StructuredDataPrompt),
+			StructuredDataSchema:    mapStructuredDataSchemaRequestToResourceModel(assistantResponse.AnalysisPlan.StructuredDataSchema),
+			SuccessEvaluationPrompt: types.StringValue(assistantResponse.AnalysisPlan.SuccessEvaluationPrompt),
+			SuccessEvaluationRubric: types.StringValue(assistantResponse.AnalysisPlan.SuccessEvaluationRubric),
+		}
+	} else {
+		data.AnalysisPlan = nil
+	}
+
+	// Handle optional StartSpeakingPlan struct
+	if assistantResponse.StartSpeakingPlan != nil {
+		data.StartSpeakingPlan = &StartSpeakingPlanResourceModel{
+			WaitSeconds:             types.Float64Value(assistantResponse.StartSpeakingPlan.WaitSeconds),
+			SmartEndpointingEnabled: types.BoolValue(assistantResponse.StartSpeakingPlan.SmartEndpointingEnabled),
+			TranscriptionEndpointingPlan: func() *TranscriptionEndpointingPlanResourceModel {
+				if assistantResponse.StartSpeakingPlan.TranscriptionEndpointingPlan != nil {
+					return &TranscriptionEndpointingPlanResourceModel{
+						OnPunctuationSeconds:   types.Float64Value(assistantResponse.StartSpeakingPlan.TranscriptionEndpointingPlan.OnPunctuationSeconds),
+						OnNoPunctuationSeconds: types.Float64Value(assistantResponse.StartSpeakingPlan.TranscriptionEndpointingPlan.OnNoPunctuationSeconds),
+						OnNumberSeconds:        types.Float64Value(assistantResponse.StartSpeakingPlan.TranscriptionEndpointingPlan.OnNumberSeconds),
+					}
+				}
+				return nil
+			}(),
+		}
+	} else {
+		data.StartSpeakingPlan = nil
+	}
+
+	// Handle optional StopSpeakingPlan struct
+	if assistantResponse.StopSpeakingPlan != nil {
+		data.StopSpeakingPlan = &StopSpeakingPlanResourceModel{
+			NumWords:       types.Float64Value(assistantResponse.StopSpeakingPlan.NumWords),
+			VoiceSeconds:   types.Float64Value(assistantResponse.StopSpeakingPlan.VoiceSeconds),
+			BackoffSeconds: types.Float64Value(assistantResponse.StopSpeakingPlan.BackoffSeconds),
+		}
+	} else {
+		data.StopSpeakingPlan = nil
 	}
 }
 
 func mapVAPIAssistantRequest(data *VAPIAssistantResourceModel) vapi.CreateAssistantRequest {
 	return vapi.CreateAssistantRequest{
-		Name:                  data.Name.ValueString(),
-		FirstMessageMode:      data.FirstMessageMode.ValueString(),
-		HipaaEnabled:          data.HipaaEnabled.ValueBool(),
-		ClientMessages:        ElementsAsString(data.ClientMessages),
-		ServerMessages:        ElementsAsString(data.ServerMessages),
-		SilenceTimeoutSeconds: int(data.SilenceTimeoutSeconds.ValueInt64()),
-		MaxDurationSeconds:    int(data.MaxDurationSeconds.ValueInt64()),
-		BackgroundSound:       data.BackgroundSound.ValueString(),
-		BackgroundDenoising:   data.BackgroundDenoising.ValueBool(),
-		ModelOutputEnabled:    data.ModelOutputEnabled.ValueBool(),
-		FirstMessage:          data.FirstMessage.ValueString(),
-		VoicemailMessage:      data.VoicemailMessage.ValueString(),
-		EndCallMessage:        data.EndCallMessage.ValueString(),
-		EndCallPhrases:        ElementsAsString(data.EndCallPhrases),
-		ServerURL:             data.ServerURL.ValueString(),
-		ServerURLSecret:       data.ServerURLSecret.ValueString(),
+		Name:                         data.Name.ValueString(),
+		FirstMessageMode:             data.FirstMessageMode.ValueString(),
+		HipaaEnabled:                 data.HipaaEnabled.ValueBool(),
+		BackgroundSound:              data.BackgroundSound.ValueString(),
+		BackgroundDenoising:          data.BackgroundDenoising.ValueBool(),
+		ModelOutputEnabled:           data.ModelOutputEnabled.ValueBool(),
+		Language:                     data.Language.ValueString(),
+		ForwardingPhoneNumber:        data.ForwardingPhoneNumber.ValueString(),
+		InterruptionsEnabled:         data.InterruptionsEnabled.ValueBool(),
+		EndCallFunctionEnabled:       data.EndCallFunctionEnabled.ValueBool(),
+		DialKeypadFunctionEnabled:    data.DialKeypadFunctionEnabled.ValueBool(),
+		FillersEnabled:               data.FillersEnabled.ValueBool(),
+		SilenceTimeoutSeconds:        data.SilenceTimeoutSeconds.ValueFloat64Pointer(),
+		ResponseDelaySeconds:         data.ResponseDelaySeconds.ValueFloat64Pointer(),
+		NumWordsToInterruptAssistant: data.NumWordsToInterruptAssistant.ValueInt64Pointer(),
+		LiveTranscriptsEnabled:       data.LiveTranscriptsEnabled.ValueBoolPointer(),
+		Keywords:                     ElementsAsString(data.Keywords),
 
-		Transcriber: vapi.Transcriber{
-			Provider: data.Transcriber.Provider.ValueString(),
-			Model:    data.Transcriber.Model.ValueString(),
-			Keywords: ElementsAsString(data.Transcriber.Keywords),
-		},
-		Model: vapi.Model{
-			Model:        data.Model.Model.ValueString(),
-			SystemPrompt: data.Model.SystemPrompt.ValueString(),
-			Temperature:  data.Model.Temperature.ValueFloat64(),
-			ToolIDs:      ElementsAsString(data.Model.ToolIds),
-			Provider:     data.Model.Provider.ValueString(),
-		},
-		Voice: vapi.Voice{
-			Model:           data.Voice.Model.ValueString(),
-			Provider:        data.Voice.Provider.ValueString(),
-			VoiceID:         data.Voice.VoiceID.ValueString(),
-			Stability:       data.Voice.Stability.ValueFloat64(),
-			SimilarityBoost: data.Voice.SimilarityBoost.ValueFloat64(),
-		},
-		StartSpeakingPlan: vapi.StartSpeakingPlan{
-			WaitSeconds:             data.StartSpeakingPlan.WaitSeconds.ValueFloat64(),
-			SmartEndpointingEnabled: data.StartSpeakingPlan.SmartEndpointingEnabled.ValueBool(),
-			TranscriptionEndpointingPlan: vapi.TranscriptionEndpointingPlan{
-				OnPunctuationSeconds:   data.StartSpeakingPlan.TranscriptionEndpointingPlan.OnPunctuationSeconds.ValueFloat64(),
-				OnNoPunctuationSeconds: data.StartSpeakingPlan.TranscriptionEndpointingPlan.OnNoPunctuationSeconds.ValueFloat64(),
-				OnNumberSeconds:        data.StartSpeakingPlan.TranscriptionEndpointingPlan.OnNumberSeconds.ValueFloat64(),
-			},
-		},
-		StopSpeakingPlan: vapi.StopSpeakingPlan{
-			NumWords:       data.StopSpeakingPlan.NumWords.ValueFloat64(),
-			VoiceSeconds:   data.StopSpeakingPlan.VoiceSeconds.ValueFloat64(),
-			BackoffSeconds: data.StopSpeakingPlan.BackoffSeconds.ValueFloat64Pointer(),
-		},
+		Voice: func() *vapi.Voice {
+			if data.Voice != nil {
+				return &vapi.Voice{
+					Model:           data.Voice.Model.ValueString(),
+					VoiceID:         data.Voice.VoiceID.ValueString(),
+					Provider:        data.Voice.Provider.ValueString(),
+					Stability:       data.Voice.Stability.ValueFloat64(),
+					SimilarityBoost: data.Voice.SimilarityBoost.ValueFloat64(),
+				}
+			}
+			return nil
+		}(),
 
-		AnalysisPlan: &vapi.AnalysisPlan{
-			SummaryPrompt:           data.AnalysisPlan.SummaryPrompt.ValueString(),
-			StructuredDataPrompt:    data.AnalysisPlan.StructuredDataPrompt.ValueString(),
-			StructuredDataSchema:    mapStructuredDataSchemaResourceModelToRequest(data.AnalysisPlan.StructuredDataSchema),
-			SuccessEvaluationPrompt: data.AnalysisPlan.SuccessEvaluationPrompt.ValueString(),
-			SuccessEvaluationRubric: data.AnalysisPlan.SuccessEvaluationRubric.ValueString(),
-		},
+		Model: func() *vapi.Model {
+			if data.Model != nil {
+				return &vapi.Model{
+					Model:        data.Model.Model.ValueString(),
+					SystemPrompt: data.Model.SystemPrompt.ValueString(),
+					Provider:     data.Model.Provider.ValueString(),
+					MaxTokens:    data.Model.MaxTokens.ValueInt64(),
+					Temperature:  data.Model.Temperature.ValueFloat64(),
+					ToolIDs:      ElementsAsString(data.Model.ToolIDs),
+					KnowledgeBase: func() *vapi.KnowledgeBase {
+						if data.Model.KnowledgeBase != nil {
+							return &vapi.KnowledgeBase{
+								TopK:     data.Model.KnowledgeBase.TopK.ValueInt64(),
+								FileIDs:  ElementsAsString(data.Model.KnowledgeBase.FileIDs),
+								Provider: data.Model.KnowledgeBase.Provider.ValueString(),
+							}
+						}
+						return nil
+					}(),
+				}
+			}
+			return nil
+		}(),
+
+		RecordingEnabled: data.RecordingEnabled.ValueBool(),
+		FirstMessage:     data.FirstMessage.ValueString(),
+		VoicemailMessage: data.VoicemailMessage.ValueString(),
+		EndCallMessage:   data.EndCallMessage.ValueString(),
+
+		Transcriber: func() *vapi.Transcriber {
+			if data.Transcriber != nil {
+				return &vapi.Transcriber{
+					Provider: data.Transcriber.Provider.ValueString(),
+					Model:    data.Transcriber.Model.ValueString(),
+					Language: data.Transcriber.Language.ValueString(),
+				}
+			}
+			return nil
+		}(),
+
+		ServerURL:          data.ServerURL.ValueString(),
+		ServerURLSecret:    data.ServerURLSecret.ValueString(),
+		ClientMessages:     ElementsAsString(data.ClientMessages),
+		EndCallPhrases:     ElementsAsString(data.EndCallPhrases),
+		MaxDurationSeconds: data.MaxDurationSeconds.ValueInt64(),
+
+		AnalysisPlan: func() *vapi.AnalysisPlan {
+			if data.AnalysisPlan != nil {
+				return &vapi.AnalysisPlan{
+					SummaryPrompt:           data.AnalysisPlan.SummaryPrompt.ValueString(),
+					StructuredDataPrompt:    data.AnalysisPlan.StructuredDataPrompt.ValueString(),
+					StructuredDataSchema:    mapStructuredDataSchemaResourceModelToRequest(data.AnalysisPlan.StructuredDataSchema),
+					SuccessEvaluationPrompt: data.AnalysisPlan.SuccessEvaluationPrompt.ValueString(),
+					SuccessEvaluationRubric: data.AnalysisPlan.SuccessEvaluationRubric.ValueString(),
+				}
+			}
+			return nil
+		}(),
+
+		StartSpeakingPlan: func() *vapi.StartSpeakingPlan {
+			if data.StartSpeakingPlan != nil {
+				return &vapi.StartSpeakingPlan{
+					WaitSeconds:             data.StartSpeakingPlan.WaitSeconds.ValueFloat64(),
+					SmartEndpointingEnabled: data.StartSpeakingPlan.SmartEndpointingEnabled.ValueBool(),
+					TranscriptionEndpointingPlan: func() *vapi.TranscriptionEndpointingPlan {
+						if data.StartSpeakingPlan.TranscriptionEndpointingPlan != nil {
+							return &vapi.TranscriptionEndpointingPlan{
+								OnPunctuationSeconds:   data.StartSpeakingPlan.TranscriptionEndpointingPlan.OnPunctuationSeconds.ValueFloat64(),
+								OnNoPunctuationSeconds: data.StartSpeakingPlan.TranscriptionEndpointingPlan.OnNoPunctuationSeconds.ValueFloat64(),
+								OnNumberSeconds:        data.StartSpeakingPlan.TranscriptionEndpointingPlan.OnNumberSeconds.ValueFloat64(),
+							}
+						}
+						return nil
+					}(),
+				}
+			}
+			return nil
+		}(),
+
+		StopSpeakingPlan: func() *vapi.StopSpeakingPlan {
+			if data.StopSpeakingPlan != nil {
+				return &vapi.StopSpeakingPlan{
+					NumWords:       data.StopSpeakingPlan.NumWords.ValueFloat64(),
+					VoiceSeconds:   data.StopSpeakingPlan.VoiceSeconds.ValueFloat64(),
+					BackoffSeconds: data.StopSpeakingPlan.BackoffSeconds.ValueFloat64(),
+				}
+			}
+			return nil
+		}(),
 	}
 }
 
@@ -861,6 +1110,25 @@ func mapStructuredDataSchemaResourceModelToRequest(data *StructuredDataSchemaRes
 
 	return &vapi.StructuredDataSchema{
 		Type:       data.Type.ValueString(),
+		Properties: properties,
+	}
+}
+
+func mapStructuredDataSchemaRequestToResourceModel(data *vapi.StructuredDataSchema) *StructuredDataSchemaResourceModel {
+	if data == nil {
+		return nil
+	}
+
+	properties := make(map[string]PropertyResourceModel)
+	for key, prop := range data.Properties {
+		properties[key] = PropertyResourceModel{
+			Type:        types.StringValue(prop.Type),
+			Description: types.StringValue(prop.Description),
+		}
+	}
+
+	return &StructuredDataSchemaResourceModel{
+		Type:       types.StringValue(data.Type),
 		Properties: properties,
 	}
 }

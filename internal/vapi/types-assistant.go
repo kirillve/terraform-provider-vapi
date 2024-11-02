@@ -1,112 +1,147 @@
 package vapi
 
-import "time"
-
 // CreateAssistantRequest represents the request body for creating an assistant.
 type CreateAssistantRequest struct {
-	Name                  string            `json:"name"`
-	FirstMessageMode      string            `json:"firstMessageMode,omitempty"`
-	HipaaEnabled          bool              `json:"hipaaEnabled,omitempty"`
-	ClientMessages        []string          `json:"clientMessages,omitempty"`
-	ServerMessages        []string          `json:"serverMessages,omitempty"`
-	SilenceTimeoutSeconds int               `json:"silenceTimeoutSeconds,omitempty"`
-	MaxDurationSeconds    int               `json:"maxDurationSeconds,omitempty"`
-	BackgroundSound       string            `json:"backgroundSound,omitempty"`
-	BackgroundDenoising   bool              `json:"backgroundDenoisingEnabled,omitempty"`
-	ModelOutputEnabled    bool              `json:"modelOutputInMessagesEnabled,omitempty"`
-	FirstMessage          string            `json:"firstMessage,omitempty"`
-	VoicemailMessage      string            `json:"voicemailMessage,omitempty"`
-	EndCallMessage        string            `json:"endCallMessage,omitempty"`
-	EndCallPhrases        []string          `json:"endCallPhrases,omitempty"`
-	CredentialIds         []string          `json:"credentialIds,omitempty"`
-	Transcriber           Transcriber       `json:"transcriber,omitempty"`
-	Model                 Model             `json:"model,omitempty"`
-	Voice                 Voice             `json:"voice,omitempty"`
-	StartSpeakingPlan     StartSpeakingPlan `json:"startSpeakingPlan,omitempty"`
-	StopSpeakingPlan      StopSpeakingPlan  `json:"stopSpeakingPlan,omitempty"`
-	ServerURL             string            `json:"serverUrl,omitempty"`
-	ServerURLSecret       string            `json:"serverUrlSecret,omitempty"`
-	AnalysisPlan          *AnalysisPlan     `json:"analysisPlan,omitempty"`
+	Name                         string             `json:"name"`
+	FirstMessageMode             string             `json:"firstMessageMode,omitempty"`
+	HipaaEnabled                 bool               `json:"hipaaEnabled,omitempty"`
+	ClientMessages               []string           `json:"clientMessages,omitempty"`
+	ServerMessages               []string           `json:"serverMessages,omitempty"`
+	BackgroundSound              string             `json:"backgroundSound,omitempty"`
+	BackgroundDenoising          bool               `json:"backgroundDenoisingEnabled,omitempty"`
+	ModelOutputEnabled           bool               `json:"modelOutputInMessagesEnabled,omitempty"`
+	Language                     string             `json:"language,omitempty"`
+	ForwardingPhoneNumber        string             `json:"forwardingPhoneNumber,omitempty"`
+	InterruptionsEnabled         bool               `json:"interruptionsEnabled,omitempty"`
+	EndCallFunctionEnabled       bool               `json:"endCallFunctionEnabled,omitempty"`
+	DialKeypadFunctionEnabled    bool               `json:"dialKeypadFunctionEnabled,omitempty"`
+	FillersEnabled               bool               `json:"fillersEnabled,omitempty"`
+	SilenceTimeoutSeconds        *float64           `json:"silenceTimeoutSeconds,omitempty"`
+	ResponseDelaySeconds         *float64           `json:"responseDelaySeconds,omitempty"`
+	NumWordsToInterruptAssistant *int64             `json:"numWordsToInterruptAssistant,omitempty"`
+	LiveTranscriptsEnabled       *bool              `json:"liveTranscriptsEnabled,omitempty"`
+	Keywords                     []string           `json:"keywords,omitempty"`
+	Voice                        *Voice             `json:"voice,omitempty"`
+	Model                        *Model             `json:"model,omitempty"`
+	RecordingEnabled             bool               `json:"recordingEnabled,omitempty"`
+	FirstMessage                 string             `json:"firstMessage,omitempty"`
+	VoicemailMessage             string             `json:"voicemailMessage,omitempty"`
+	EndCallMessage               string             `json:"endCallMessage,omitempty"`
+	Transcriber                  *Transcriber       `json:"transcriber,omitempty"`
+	ServerURL                    string             `json:"serverUrl,omitempty"`
+	ServerURLSecret              string             `json:"serverUrlSecret,omitempty"`
+	EndCallPhrases               []string           `json:"endCallPhrases,omitempty"`
+	MaxDurationSeconds           int64              `json:"maxDurationSeconds,omitempty"`
+	AnalysisPlan                 *AnalysisPlan      `json:"analysisPlan,omitempty"`
+	MessagePlan                  *MessagePlan       `json:"messagePlan,omitempty"`
+	StartSpeakingPlan            *StartSpeakingPlan `json:"startSpeakingPlan,omitempty"`
+	StopSpeakingPlan             *StopSpeakingPlan  `json:"stopSpeakingPlan,omitempty"`
 }
 
-// Assistant represents the response structure for an assistant.
+// Assistant struct
 type Assistant struct {
-	ID                    string             `json:"id"`
-	Name                  string             `json:"name"`
-	CreatedAt             *time.Time         `json:"createdAt,omitempty"`
-	UpdatedAt             *time.Time         `json:"updatedAt,omitempty"`
-	FirstMessageMode      string             `json:"firstMessageMode,omitempty"`
-	HipaaEnabled          bool               `json:"hipaaEnabled,omitempty"`
-	ClientMessages        []string           `json:"clientMessages,omitempty"`
-	ServerMessages        []string           `json:"serverMessages,omitempty"`
-	SilenceTimeoutSeconds int                `json:"silenceTimeoutSeconds,omitempty"`
-	MaxDurationSeconds    int                `json:"maxDurationSeconds,omitempty"`
-	BackgroundSound       string             `json:"backgroundSound,omitempty"`
-	BackgroundDenoising   bool               `json:"backgroundDenoisingEnabled,omitempty"`
-	ModelOutputEnabled    bool               `json:"modelOutputInMessagesEnabled,omitempty"`
-	FirstMessage          string             `json:"firstMessage,omitempty"`
-	VoicemailMessage      string             `json:"voicemailMessage,omitempty"`
-	EndCallMessage        string             `json:"endCallMessage,omitempty"`
-	EndCallPhrases        []string           `json:"endCallPhrases,omitempty"`
-	CredentialIds         []string           `json:"credentialIds,omitempty"`
-	Transcriber           *Transcriber       `json:"transcriber,omitempty"`
-	Model                 *Model             `json:"model,omitempty"`
-	Voice                 *Voice             `json:"voice,omitempty"`
-	StartSpeakingPlan     *StartSpeakingPlan `json:"startSpeakingPlan,omitempty"`
-	StopSpeakingPlan      *StopSpeakingPlan  `json:"stopSpeakingPlan,omitempty"`
-	ServerURL             string             `json:"serverUrl,omitempty"`
-	ServerURLSecret       string             `json:"serverUrlSecret,omitempty"`
-	AnalysisPlan          *AnalysisPlan      `json:"analysisPlan,omitempty"`
+	ID                           string             `json:"id,omitempty"`
+	OrgID                        string             `json:"orgId,omitempty"`
+	Name                         string             `json:"name,omitempty"`
+	FirstMessageMode             string             `json:"firstMessageMode,omitempty"`
+	HipaaEnabled                 bool               `json:"hipaaEnabled,omitempty"`
+	BackgroundSound              string             `json:"backgroundSound,omitempty"`
+	BackgroundDenoising          bool               `json:"backgroundDenoisingEnabled,omitempty"`
+	ModelOutputEnabled           bool               `json:"modelOutputInMessagesEnabled,omitempty"`
+	Language                     string             `json:"language,omitempty"`
+	ForwardingPhoneNumber        string             `json:"forwardingPhoneNumber,omitempty"`
+	InterruptionsEnabled         bool               `json:"interruptionsEnabled,omitempty"`
+	EndCallFunctionEnabled       bool               `json:"endCallFunctionEnabled,omitempty"`
+	DialKeypadFunctionEnabled    bool               `json:"dialKeypadFunctionEnabled,omitempty"`
+	FillersEnabled               bool               `json:"fillersEnabled,omitempty"`
+	SilenceTimeoutSeconds        *float64           `json:"silenceTimeoutSeconds,omitempty"`
+	ResponseDelaySeconds         *float64           `json:"responseDelaySeconds,omitempty"`
+	NumWordsToInterruptAssistant *int64             `json:"numWordsToInterruptAssistant,omitempty"`
+	LiveTranscriptsEnabled       *bool              `json:"liveTranscriptsEnabled,omitempty"`
+	Keywords                     []string           `json:"keywords,omitempty"`
+	ParentID                     *string            `json:"parentId,omitempty"`
+	Voice                        *Voice             `json:"voice,omitempty"`
+	Model                        *Model             `json:"model,omitempty"`
+	RecordingEnabled             bool               `json:"recordingEnabled,omitempty"`
+	FirstMessage                 string             `json:"firstMessage,omitempty"`
+	VoicemailMessage             string             `json:"voicemailMessage,omitempty"`
+	EndCallMessage               string             `json:"endCallMessage,omitempty"`
+	Transcriber                  *Transcriber       `json:"transcriber,omitempty"`
+	ServerURL                    string             `json:"serverUrl,omitempty"`
+	ServerURLSecret              string             `json:"serverUrlSecret,omitempty"`
+	ClientMessages               []string           `json:"clientMessages,omitempty"`
+	ServerMessages               []string           `json:"serverMessages,omitempty"`
+	EndCallPhrases               []string           `json:"endCallPhrases,omitempty"`
+	MaxDurationSeconds           int64              `json:"maxDurationSeconds,omitempty"`
+	AnalysisPlan                 *AnalysisPlan      `json:"analysisPlan,omitempty"`
+	MessagePlan                  *MessagePlan       `json:"messagePlan,omitempty"`
+	StartSpeakingPlan            *StartSpeakingPlan `json:"startSpeakingPlan,omitempty"`
+	StopSpeakingPlan             *StopSpeakingPlan  `json:"StopSpeakingPlan,omitempty"`
 }
 
-// Transcriber defines the transcriber settings.
-type Transcriber struct {
-	Provider string   `json:"provider,omitempty"`
-	Model    string   `json:"model,omitempty"`
-	Keywords []string `json:"keywords,omitempty"`
+// StopSpeakingPlan struct
+type StopSpeakingPlan struct {
+	NumWords       float64 `json:"numWords,omitempty"`
+	VoiceSeconds   float64 `json:"voiceSeconds,omitempty"`
+	BackoffSeconds float64 `json:"backoffSeconds,omitempty"`
 }
 
-// Model defines the assistant model settings.
-type Model struct {
-	Model        string   `json:"model,omitempty"`
-	SystemPrompt string   `json:"systemPrompt,omitempty"`
-	Temperature  float64  `json:"temperature,omitempty"`
-	ToolIDs      []string `json:"toolIds,omitempty"`
-	Provider     string   `json:"provider,omitempty"`
-	URL          string   `json:"url,omitempty"`
-}
-
-// Voice defines the voice settings for the assistant.
-type Voice struct {
-	Provider        string  `json:"provider,omitempty"`
-	VoiceID         string  `json:"voiceId,omitempty"`
-	Stability       float64 `json:"stability,omitempty"`
-	SimilarityBoost float64 `json:"similarityBoost,omitempty"`
-	Model           string  `json:"model,omitempty"`
-}
-
-// StartSpeakingPlan defines the configuration for starting speaking.
+// StartSpeakingPlan struct
 type StartSpeakingPlan struct {
-	WaitSeconds                  float64                      `json:"waitSeconds,omitempty"`
-	SmartEndpointingEnabled      bool                         `json:"smartEndpointingEnabled,omitempty"`
-	TranscriptionEndpointingPlan TranscriptionEndpointingPlan `json:"transcriptionEndpointingPlan,omitempty"`
+	WaitSeconds                  float64                       `json:"waitSeconds,omitempty"`
+	SmartEndpointingEnabled      bool                          `json:"smartEndpointingEnabled,omitempty"`
+	TranscriptionEndpointingPlan *TranscriptionEndpointingPlan `json:"transcriptionEndpointingPlan,omitempty"`
 }
 
-// TranscriptionEndpointingPlan defines the endpointing plan for transcription.
+// TranscriptionEndpointingPlan struct
 type TranscriptionEndpointingPlan struct {
 	OnPunctuationSeconds   float64 `json:"onPunctuationSeconds,omitempty"`
 	OnNoPunctuationSeconds float64 `json:"onNoPunctuationSeconds,omitempty"`
 	OnNumberSeconds        float64 `json:"onNumberSeconds,omitempty"`
 }
 
-// StopSpeakingPlan defines the configuration for stopping speaking.
-type StopSpeakingPlan struct {
-	NumWords       float64  `json:"numWords,omitempty"`
-	VoiceSeconds   float64  `json:"voiceSeconds,omitempty"`
-	BackoffSeconds *float64 `json:"backoffSeconds,omitempty"`
+// Voice struct
+type Voice struct {
+	Model           string  `json:"model,omitempty"`
+	VoiceID         string  `json:"voiceId,omitempty"`
+	Provider        string  `json:"provider,omitempty"`
+	Stability       float64 `json:"stability,omitempty"`
+	SimilarityBoost float64 `json:"similarityBoost,omitempty"`
 }
 
-// AnalysisPlan struct.
+// Model struct
+type Model struct {
+	Model         string         `json:"model"`
+	SystemPrompt  string         `json:"systemPrompt"`
+	Provider      string         `json:"provider"`
+	MaxTokens     int64          `json:"maxTokens,omitempty"`
+	Temperature   float64        `json:"temperature,omitempty"`
+	ToolIDs       []string       `json:"toolIds,omitempty"`
+	Messages      []Message      `json:"messages,omitempty"`
+	KnowledgeBase *KnowledgeBase `json:"knowledgeBase,omitempty"`
+}
+
+// Message struct
+type Message struct {
+	Role    string `json:"role"`
+	Content string `json:"content"`
+}
+
+// KnowledgeBase struct
+type KnowledgeBase struct {
+	TopK     int64    `json:"topK"`
+	FileIDs  []string `json:"fileIds"`
+	Provider string   `json:"provider"`
+}
+
+// Transcriber struct
+type Transcriber struct {
+	Model    string `json:"model"`
+	Language string `json:"language"`
+	Provider string `json:"provider"`
+}
+
+// AnalysisPlan struct
 type AnalysisPlan struct {
 	SummaryPrompt           string                `json:"summaryPrompt"`
 	StructuredDataPrompt    string                `json:"structuredDataPrompt"`
@@ -115,8 +150,18 @@ type AnalysisPlan struct {
 	SuccessEvaluationRubric string                `json:"successEvaluationRubric"`
 }
 
-// StructuredDataSchema struct.
+// StructuredDataSchema struct
 type StructuredDataSchema struct {
 	Type       string               `json:"type"`
 	Properties map[string]*Property `json:"properties"`
+}
+
+// MessagePlan struct
+type MessagePlan struct {
+	IdleMessages []string `json:"idleMessages"`
+}
+
+// Customer struct
+type Customer struct {
+	Number string `json:"number"`
 }

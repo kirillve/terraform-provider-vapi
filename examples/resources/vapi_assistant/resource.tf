@@ -52,6 +52,12 @@ resource "vapi_assistant" "example_assistant" {
     system_prompt = "System prompt"
     temperature   = 0.3
     provider      = "openai"
+    knowledge_base = {
+      file_ids = [
+        "920f2f78-1234-5678-afec-9a3a79b8f687"
+      ],
+      provider = "canonical"
+    }
   }
 
   voice = {

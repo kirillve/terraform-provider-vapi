@@ -1,3 +1,8 @@
+## 0.5.1
+
+FIXES:
+  - fixed VAPI Assistant support
+
 ## 0.5.0
 
 FEATURES:
