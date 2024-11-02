@@ -38,7 +38,7 @@ type CreateAssistantRequest struct {
 	StopSpeakingPlan             *StopSpeakingPlan  `json:"stopSpeakingPlan,omitempty"`
 }
 
-// Assistant struct
+// Assistant struct.
 type Assistant struct {
 	ID                           string             `json:"id,omitempty"`
 	OrgID                        string             `json:"orgId,omitempty"`
@@ -79,28 +79,28 @@ type Assistant struct {
 	StopSpeakingPlan             *StopSpeakingPlan  `json:"StopSpeakingPlan,omitempty"`
 }
 
-// StopSpeakingPlan struct
+// StopSpeakingPlan struct.
 type StopSpeakingPlan struct {
 	NumWords       float64 `json:"numWords,omitempty"`
 	VoiceSeconds   float64 `json:"voiceSeconds,omitempty"`
 	BackoffSeconds float64 `json:"backoffSeconds,omitempty"`
 }
 
-// StartSpeakingPlan struct
+// StartSpeakingPlan struct.
 type StartSpeakingPlan struct {
 	WaitSeconds                  float64                       `json:"waitSeconds,omitempty"`
 	SmartEndpointingEnabled      bool                          `json:"smartEndpointingEnabled,omitempty"`
 	TranscriptionEndpointingPlan *TranscriptionEndpointingPlan `json:"transcriptionEndpointingPlan,omitempty"`
 }
 
-// TranscriptionEndpointingPlan struct
+// TranscriptionEndpointingPlan struct.
 type TranscriptionEndpointingPlan struct {
 	OnPunctuationSeconds   float64 `json:"onPunctuationSeconds,omitempty"`
 	OnNoPunctuationSeconds float64 `json:"onNoPunctuationSeconds,omitempty"`
 	OnNumberSeconds        float64 `json:"onNumberSeconds,omitempty"`
 }
 
-// Voice struct
+// Voice struct.
 type Voice struct {
 	Model           string  `json:"model,omitempty"`
 	VoiceID         string  `json:"voiceId,omitempty"`
@@ -109,7 +109,7 @@ type Voice struct {
 	SimilarityBoost float64 `json:"similarityBoost,omitempty"`
 }
 
-// Model struct
+// Model struct.
 type Model struct {
 	Model         string         `json:"model"`
 	SystemPrompt  string         `json:"systemPrompt"`
@@ -121,27 +121,27 @@ type Model struct {
 	KnowledgeBase *KnowledgeBase `json:"knowledgeBase,omitempty"`
 }
 
-// Message struct
+// Message struct.
 type Message struct {
 	Role    string `json:"role"`
 	Content string `json:"content"`
 }
 
-// KnowledgeBase struct
+// KnowledgeBase struct.
 type KnowledgeBase struct {
 	TopK     int64    `json:"topK"`
 	FileIDs  []string `json:"fileIds"`
 	Provider string   `json:"provider"`
 }
 
-// Transcriber struct
+// Transcriber struct.
 type Transcriber struct {
 	Model    string `json:"model"`
 	Language string `json:"language"`
 	Provider string `json:"provider"`
 }
 
-// AnalysisPlan struct
+// AnalysisPlan struct.
 type AnalysisPlan struct {
 	SummaryPrompt           string                `json:"summaryPrompt"`
 	StructuredDataPrompt    string                `json:"structuredDataPrompt"`
@@ -150,18 +150,18 @@ type AnalysisPlan struct {
 	SuccessEvaluationRubric string                `json:"successEvaluationRubric"`
 }
 
-// StructuredDataSchema struct
+// StructuredDataSchema struct.
 type StructuredDataSchema struct {
 	Type       string               `json:"type"`
 	Properties map[string]*Property `json:"properties"`
 }
 
-// MessagePlan struct
+// MessagePlan struct.
 type MessagePlan struct {
 	IdleMessages []string `json:"idleMessages"`
 }
 
-// Customer struct
+// Customer struct.
 type Customer struct {
 	Number string `json:"number"`
 }
