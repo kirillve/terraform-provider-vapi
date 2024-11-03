@@ -1,11 +1,11 @@
 ## v0.5.4
 
-FEATURES:
+FIXES:
   - fixed VAPI Twilio AssistantID support
 
 ## v0.5.3
 
-FEATURES:
+FIXES:
   - fixed VAPI Twilio AssistantID support
 
 ## v0.5.2
