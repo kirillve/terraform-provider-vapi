@@ -44,6 +44,7 @@ type VAPITwilioPhoneNumberResourceModel struct {
 	FallbackExtension        types.String `tfsdk:"fallback_destination_extension"`
 	FallbackMessage          types.String `tfsdk:"fallback_destination_message"`
 	FallbackDescription      types.String `tfsdk:"fallback_destination_description"`
+	AssistantID              types.String `tfsdk:"assistant_id"`
 }
 
 func (r *VAPITwilioPhoneNumberResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -117,6 +118,10 @@ func (r *VAPITwilioPhoneNumberResource) Schema(ctx context.Context, req resource
 			},
 			"fallback_destination_description": schema.StringAttribute{
 				MarkdownDescription: "The FallbackDestination Description.",
+				Optional:            true,
+			},
+			"assistant_id": schema.StringAttribute{
+				MarkdownDescription: "This is the assistant that will be used for incoming calls to this phone number.",
 				Optional:            true,
 			},
 		},
@@ -240,6 +245,7 @@ func (r *VAPITwilioPhoneNumberResource) Update(ctx context.Context, req resource
 		Number:           data.Number.ValueString(),
 		TwilioAccountSID: data.TwilioAccountSid.ValueString(),
 		TwilioAuthToken:  data.TwilioAuthToken.ValueString(),
+		AssistantID:      data.AssistantID.ValueString(),
 		Fallback: &vapi.FallbackDestination{
 			Type:                   data.FallbackType.ValueString(),
 			NumberE164CheckEnabled: data.FallbackE164CheckEnabled.ValueString() == "true",
@@ -300,6 +306,7 @@ func bindVAPIPhoneNumberResourceData(data *VAPITwilioPhoneNumberResourceModel, p
 	data.TwilioAccountSid = types.StringValue(phoneNumberResp.TwilioAccountSid)
 	data.TwilioAuthToken = types.StringValue(phoneNumberResp.TwilioAuthToken)
 	data.PhoneProvider = types.StringValue(phoneNumberResp.Provider)
+	data.AssistantID = types.StringValue(phoneNumberResp.AssistantID)
 
 	if phoneNumberResp.Fallback != nil {
 		var numberE164CheckEnabled string

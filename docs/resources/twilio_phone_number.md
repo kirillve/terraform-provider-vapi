@@ -39,6 +39,7 @@ resource "vapi_twilio_phone_number" "test-vapi_twilio_phone_number" {
 
 ### Optional
 
+- `assistant_id` (String) This is the assistant that will be used for incoming calls to this phone number.
 - `fallback_destination_description` (String) The FallbackDestination Description.
 - `fallback_destination_extension` (String) The FallbackDestination Extension.
 - `fallback_destination_message` (String) The FallbackDestination Message.
