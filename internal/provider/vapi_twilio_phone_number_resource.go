@@ -157,6 +157,7 @@ func (r *VAPITwilioPhoneNumberResource) Create(ctx context.Context, req resource
 		Number:           data.Number.ValueString(),
 		TwilioAccountSID: data.TwilioAccountSid.ValueString(),
 		TwilioAuthToken:  data.TwilioAuthToken.ValueString(),
+		AssistantID:      data.AssistantID.ValueString(),
 		Fallback: &vapi.FallbackDestination{
 			Type:                   data.FallbackType.ValueString(),
 			NumberE164CheckEnabled: data.FallbackE164CheckEnabled.ValueString() == "true",
