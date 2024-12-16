@@ -6,12 +6,6 @@ import (
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/kirillve/terraform-provider-vapi/internal/vapi"
@@ -151,134 +145,79 @@ func (r *VAPIAssistantResource) Schema(ctx context.Context, req resource.SchemaR
 			"id": schema.StringAttribute{
 				MarkdownDescription: "Unique identifier for the assistant resource.",
 				Computed:            true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplace(),
-				},
 			},
 			"org_id": schema.StringAttribute{
 				MarkdownDescription: "Org identifier for the assistant resource.",
 				Computed:            true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplace(),
-				},
 			},
 			"name": schema.StringAttribute{
 				MarkdownDescription: "Name of the assistant resource.",
 				Required:            true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplace(),
-				},
 			},
 			"first_message_mode": schema.StringAttribute{
 				MarkdownDescription: "Mode of the first message.",
 				Optional:            true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplace(),
-				},
 			},
 			"hipaa_enabled": schema.BoolAttribute{
 				MarkdownDescription: "Indicates whether HIPAA compliance is enabled.",
 				Optional:            true,
-				PlanModifiers: []planmodifier.Bool{
-					boolplanmodifier.RequiresReplace(),
-				},
 			},
 			"client_messages": schema.ListAttribute{
 				ElementType:         types.StringType,
 				MarkdownDescription: "List of messages from the client.",
 				Optional:            true,
 				Computed:            true,
-				PlanModifiers: []planmodifier.List{
-					listplanmodifier.RequiresReplace(),
-				},
 			},
 			"server_messages": schema.ListAttribute{
 				ElementType:         types.StringType,
 				MarkdownDescription: "List of messages from the server.",
 				Optional:            true,
 				Computed:            true,
-				PlanModifiers: []planmodifier.List{
-					listplanmodifier.RequiresReplace(),
-				},
 			},
 			"silence_timeout_seconds": schema.Float64Attribute{
 				MarkdownDescription: "Timeout in seconds for silence.",
 				Optional:            true,
-				PlanModifiers: []planmodifier.Float64{
-					float64planmodifier.RequiresReplace(),
-				},
 			},
 			"max_duration_seconds": schema.Int64Attribute{
 				MarkdownDescription: "Maximum duration of the call in seconds.",
 				Optional:            true,
-				PlanModifiers: []planmodifier.Int64{
-					int64planmodifier.RequiresReplace(),
-				},
 			},
 			"background_sound": schema.StringAttribute{
 				MarkdownDescription: "Background sound used during the call.",
 				Optional:            true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplace(),
-				},
 			},
 			"background_denoising": schema.BoolAttribute{
 				MarkdownDescription: "Indicates whether background denoising is enabled.",
 				Optional:            true,
-				PlanModifiers: []planmodifier.Bool{
-					boolplanmodifier.RequiresReplace(),
-				},
 			},
 			"model_output_enabled": schema.BoolAttribute{
 				MarkdownDescription: "Indicates whether model output is enabled.",
 				Optional:            true,
-				PlanModifiers: []planmodifier.Bool{
-					boolplanmodifier.RequiresReplace(),
-				},
 			},
 			"first_message": schema.StringAttribute{
 				MarkdownDescription: "Initial message sent to the client.",
 				Optional:            true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplace(),
-				},
 			},
 			"voicemail_message": schema.StringAttribute{
 				MarkdownDescription: "Message to be used for voicemail.",
 				Optional:            true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplace(),
-				},
 			},
 			"end_call_message": schema.StringAttribute{
 				MarkdownDescription: "Message to be used when ending the call.",
 				Optional:            true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplace(),
-				},
 			},
 			"server_url": schema.StringAttribute{
 				MarkdownDescription: "Server URL.",
 				Optional:            true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplace(),
-				},
 			},
 			"server_url_secret": schema.StringAttribute{
 				MarkdownDescription: "Server URL Secret.",
 				Optional:            true,
-				Computed:            true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplace(),
-				},
 			},
 			"end_call_phrases": schema.ListAttribute{
 				ElementType:         types.StringType,
 				MarkdownDescription: "List of phrases to end the call.",
 				Optional:            true,
-				PlanModifiers: []planmodifier.List{
-					listplanmodifier.RequiresReplace(),
-				},
 			},
 			"transcriber": schema.SingleNestedAttribute{
 				MarkdownDescription: "Configuration for the transcriber model.",
@@ -287,23 +226,14 @@ func (r *VAPIAssistantResource) Schema(ctx context.Context, req resource.SchemaR
 					"provider": schema.StringAttribute{
 						MarkdownDescription: "Provider for the transcriber service.",
 						Required:            true,
-						PlanModifiers: []planmodifier.String{
-							stringplanmodifier.RequiresReplace(),
-						},
 					},
 					"model": schema.StringAttribute{
 						MarkdownDescription: "Model used for transcription.",
 						Optional:            true,
-						PlanModifiers: []planmodifier.String{
-							stringplanmodifier.RequiresReplace(),
-						},
 					},
 					"language": schema.StringAttribute{
 						MarkdownDescription: "Language used for transcription.",
 						Optional:            true,
-						PlanModifiers: []planmodifier.String{
-							stringplanmodifier.RequiresReplace(),
-						},
 					},
 				},
 			},
@@ -314,48 +244,30 @@ func (r *VAPIAssistantResource) Schema(ctx context.Context, req resource.SchemaR
 					"model": schema.StringAttribute{
 						MarkdownDescription: "The assistant model type.",
 						Required:            true,
-						PlanModifiers: []planmodifier.String{
-							stringplanmodifier.RequiresReplace(),
-						},
 					},
 					"system_prompt": schema.StringAttribute{
 						MarkdownDescription: "Prompt text used to guide the assistant model.",
 						Optional:            true,
-						PlanModifiers: []planmodifier.String{
-							stringplanmodifier.RequiresReplace(),
-						},
 					},
 					"provider": schema.StringAttribute{
 						MarkdownDescription: "Provider for the assistant model: openai, azure-openai, together-ai, anyscale, openrouter, perplexity-ai, deepinfra, custom-llm, runpod, groq, vapi, anthropic, google",
 						Optional:            true,
 						Computed:            true,
-						PlanModifiers: []planmodifier.String{
-							stringplanmodifier.RequiresReplace(),
-						},
 					},
 					"max_tokens": schema.Int64Attribute{
 						MarkdownDescription: "The maximum number of tokens allowed for the model's response.",
 						Optional:            true,
 						Computed:            true,
-						PlanModifiers: []planmodifier.Int64{
-							int64planmodifier.RequiresReplace(),
-						},
 					},
 					"temperature": schema.Float64Attribute{
 						MarkdownDescription: "Temperature setting for the model's response randomness.",
 						Optional:            true,
-						PlanModifiers: []planmodifier.Float64{
-							float64planmodifier.RequiresReplace(),
-						},
 					},
 					"tool_ids": schema.ListAttribute{
 						ElementType:         types.StringType,
 						MarkdownDescription: "List of tool IDs used by the model.",
 						Optional:            true,
 						Computed:            true,
-						PlanModifiers: []planmodifier.List{
-							listplanmodifier.RequiresReplace(),
-						},
 					},
 					"knowledge_base": schema.SingleNestedAttribute{
 						MarkdownDescription: "Knowledge base configuration for the assistant model.",
@@ -365,25 +277,16 @@ func (r *VAPIAssistantResource) Schema(ctx context.Context, req resource.SchemaR
 								MarkdownDescription: "The maximum number of documents to retrieve from the knowledge base.",
 								Optional:            true,
 								Computed:            true,
-								PlanModifiers: []planmodifier.Int64{
-									int64planmodifier.RequiresReplace(),
-								},
 							},
 							"file_ids": schema.ListAttribute{
 								ElementType:         types.StringType,
 								MarkdownDescription: "List of file IDs in the knowledge base.",
 								Optional:            true,
-								PlanModifiers: []planmodifier.List{
-									listplanmodifier.RequiresReplace(),
-								},
 							},
 							"provider": schema.StringAttribute{
 								MarkdownDescription: "Provider for the knowledge base.",
 								Optional:            true,
 								Computed:            true,
-								PlanModifiers: []planmodifier.String{
-									stringplanmodifier.RequiresReplace(),
-								},
 							},
 						},
 					},
@@ -396,37 +299,22 @@ func (r *VAPIAssistantResource) Schema(ctx context.Context, req resource.SchemaR
 					"model": schema.StringAttribute{
 						MarkdownDescription: "Model for the voice model.",
 						Required:            true,
-						PlanModifiers: []planmodifier.String{
-							stringplanmodifier.RequiresReplace(),
-						},
 					},
 					"voice_id": schema.StringAttribute{
 						MarkdownDescription: "ID of the voice model.",
 						Required:            true,
-						PlanModifiers: []planmodifier.String{
-							stringplanmodifier.RequiresReplace(),
-						},
 					},
 					"provider": schema.StringAttribute{
 						MarkdownDescription: "Provider for the voice model.",
 						Required:            true,
-						PlanModifiers: []planmodifier.String{
-							stringplanmodifier.RequiresReplace(),
-						},
 					},
 					"stability": schema.Float64Attribute{
 						MarkdownDescription: "Stability of the voice output.",
 						Optional:            true,
-						PlanModifiers: []planmodifier.Float64{
-							float64planmodifier.RequiresReplace(),
-						},
 					},
 					"similarity_boost": schema.Float64Attribute{
 						MarkdownDescription: "Boost factor for similarity in voice.",
 						Optional:            true,
-						PlanModifiers: []planmodifier.Float64{
-							float64planmodifier.RequiresReplace(),
-						},
 					},
 				},
 			},
@@ -437,16 +325,10 @@ func (r *VAPIAssistantResource) Schema(ctx context.Context, req resource.SchemaR
 					"wait_seconds": schema.Float64Attribute{
 						MarkdownDescription: "Seconds to wait before speaking starts.",
 						Optional:            true,
-						PlanModifiers: []planmodifier.Float64{
-							float64planmodifier.RequiresReplace(),
-						},
 					},
 					"smart_endpointing_enabled": schema.BoolAttribute{
 						MarkdownDescription: "Enable smart endpointing for better control.",
 						Optional:            true,
-						PlanModifiers: []planmodifier.Bool{
-							boolplanmodifier.RequiresReplace(),
-						},
 					},
 					"transcription_endpointing_plan": schema.SingleNestedAttribute{
 						MarkdownDescription: "Endpointing plan for transcription.",
@@ -455,23 +337,14 @@ func (r *VAPIAssistantResource) Schema(ctx context.Context, req resource.SchemaR
 							"on_punctuation_seconds": schema.Float64Attribute{
 								MarkdownDescription: "Delay in seconds for punctuation-based endpointing.",
 								Optional:            true,
-								PlanModifiers: []planmodifier.Float64{
-									float64planmodifier.RequiresReplace(),
-								},
 							},
 							"on_no_punctuation_seconds": schema.Float64Attribute{
 								MarkdownDescription: "Delay in seconds for no punctuation.",
 								Optional:            true,
-								PlanModifiers: []planmodifier.Float64{
-									float64planmodifier.RequiresReplace(),
-								},
 							},
 							"on_number_seconds": schema.Float64Attribute{
 								MarkdownDescription: "Delay in seconds for number-based endpointing.",
 								Optional:            true,
-								PlanModifiers: []planmodifier.Float64{
-									float64planmodifier.RequiresReplace(),
-								},
 							},
 						},
 					},
@@ -484,25 +357,16 @@ func (r *VAPIAssistantResource) Schema(ctx context.Context, req resource.SchemaR
 					"num_words": schema.Float64Attribute{
 						MarkdownDescription: "Number of words required to stop speaking.",
 						Optional:            true,
-						PlanModifiers: []planmodifier.Float64{
-							float64planmodifier.RequiresReplace(),
-						},
 					},
 					"voice_seconds": schema.Float64Attribute{
 						MarkdownDescription: "Duration in seconds to stop speaking.",
 						Optional:            true,
 						Computed:            true,
-						PlanModifiers: []planmodifier.Float64{
-							float64planmodifier.RequiresReplace(),
-						},
 					},
 					"backoff_seconds": schema.Float64Attribute{
 						MarkdownDescription: "Backoff period in seconds before stopping.",
 						Optional:            true,
 						Computed:            true,
-						PlanModifiers: []planmodifier.Float64{
-							float64planmodifier.RequiresReplace(),
-						},
 					},
 				},
 			},
@@ -513,16 +377,10 @@ func (r *VAPIAssistantResource) Schema(ctx context.Context, req resource.SchemaR
 					"summary_prompt": schema.StringAttribute{
 						MarkdownDescription: "Prompt for generating a summary.",
 						Optional:            true,
-						PlanModifiers: []planmodifier.String{
-							stringplanmodifier.RequiresReplace(),
-						},
 					},
 					"structured_data_prompt": schema.StringAttribute{
 						MarkdownDescription: "Prompt for structured data generation.",
 						Optional:            true,
-						PlanModifiers: []planmodifier.String{
-							stringplanmodifier.RequiresReplace(),
-						},
 					},
 					"structured_data_schema": schema.SingleNestedAttribute{
 						MarkdownDescription: "Schema for structured data.",
@@ -531,9 +389,6 @@ func (r *VAPIAssistantResource) Schema(ctx context.Context, req resource.SchemaR
 							"type": schema.StringAttribute{
 								MarkdownDescription: "Type of structured data.",
 								Optional:            true,
-								PlanModifiers: []planmodifier.String{
-									stringplanmodifier.RequiresReplace(),
-								},
 							},
 							"properties": schema.MapNestedAttribute{
 								MarkdownDescription: "Properties of structured data fields.",
@@ -543,16 +398,10 @@ func (r *VAPIAssistantResource) Schema(ctx context.Context, req resource.SchemaR
 										"type": schema.StringAttribute{
 											MarkdownDescription: "Type of the property.",
 											Optional:            true,
-											PlanModifiers: []planmodifier.String{
-												stringplanmodifier.RequiresReplace(),
-											},
 										},
 										"description": schema.StringAttribute{
 											MarkdownDescription: "Description of the property.",
 											Optional:            true,
-											PlanModifiers: []planmodifier.String{
-												stringplanmodifier.RequiresReplace(),
-											},
 										},
 									},
 								},
@@ -562,16 +411,10 @@ func (r *VAPIAssistantResource) Schema(ctx context.Context, req resource.SchemaR
 					"success_evaluation_prompt": schema.StringAttribute{
 						MarkdownDescription: "Prompt for success evaluation.",
 						Optional:            true,
-						PlanModifiers: []planmodifier.String{
-							stringplanmodifier.RequiresReplace(),
-						},
 					},
 					"success_evaluation_rubric": schema.StringAttribute{
 						MarkdownDescription: "Rubric for evaluating success.",
 						Optional:            true,
-						PlanModifiers: []planmodifier.String{
-							stringplanmodifier.RequiresReplace(),
-						},
 					},
 				},
 			},
@@ -584,9 +427,6 @@ func (r *VAPIAssistantResource) Schema(ctx context.Context, req resource.SchemaR
 						ElementType:         types.StringType,
 						MarkdownDescription: "List of idle messages.",
 						Optional:            true,
-						PlanModifiers: []planmodifier.List{
-							listplanmodifier.RequiresReplace(),
-						},
 					},
 				},
 			},
@@ -594,106 +434,68 @@ func (r *VAPIAssistantResource) Schema(ctx context.Context, req resource.SchemaR
 			"end_call_function_enabled": schema.BoolAttribute{
 				MarkdownDescription: "Enables the end call function.",
 				Optional:            true,
-				PlanModifiers: []planmodifier.Bool{
-					boolplanmodifier.RequiresReplace(),
-				},
 			},
 
 			"recording_enabled": schema.BoolAttribute{
 				MarkdownDescription: "Indicates if call recording is enabled.",
 				Optional:            true,
-				PlanModifiers: []planmodifier.Bool{
-					boolplanmodifier.RequiresReplace(),
-				},
 			},
 
 			"forwarding_phone_number": schema.StringAttribute{
 				MarkdownDescription: "Phone number to which calls are forwarded.",
 				Optional:            true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplace(),
-				},
 			},
 
 			"phone_number_id": schema.StringAttribute{
 				MarkdownDescription: "ID of the phone number associated with the assistant.",
 				Optional:            true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplace(),
-				},
+				Computed:            true,
 			},
 
 			"response_delay_seconds": schema.Float64Attribute{
 				MarkdownDescription: "Response Delay Seconds",
 				Optional:            true,
 				Computed:            true,
-				PlanModifiers: []planmodifier.Float64{
-					float64planmodifier.RequiresReplace(),
-				},
 			},
 			"dial_keypad_function_enabled": schema.BoolAttribute{
 				MarkdownDescription: "Dial Keypad Function enabled",
 				Optional:            true,
 				Computed:            true,
-				PlanModifiers: []planmodifier.Bool{
-					boolplanmodifier.RequiresReplace(),
-				},
 			},
 			"num_words_to_interrupt_assistant": schema.Int64Attribute{
 				MarkdownDescription: "Num words to interrupt assistant",
 				Optional:            true,
 				Computed:            true,
-				PlanModifiers: []planmodifier.Int64{
-					int64planmodifier.RequiresReplace(),
-				},
 			},
 			"interruptions_enabled": schema.BoolAttribute{
 				MarkdownDescription: "Interruptions enabled",
 				Optional:            true,
 				Computed:            true,
-				PlanModifiers: []planmodifier.Bool{
-					boolplanmodifier.RequiresReplace(),
-				},
 			},
 			"keywords": schema.ListAttribute{
 				ElementType:         types.StringType,
 				MarkdownDescription: "Keywords.",
 				Optional:            true,
 				Computed:            true,
-				PlanModifiers: []planmodifier.List{
-					listplanmodifier.RequiresReplace(),
-				},
 			},
 			"fillers_enabled": schema.BoolAttribute{
 				MarkdownDescription: "Fillers enabled",
 				Optional:            true,
 				Computed:            true,
-				PlanModifiers: []planmodifier.Bool{
-					boolplanmodifier.RequiresReplace(),
-				},
 			},
 			"language": schema.StringAttribute{
 				MarkdownDescription: "Language",
 				Optional:            true,
 				Computed:            true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplace(),
-				},
 			},
 			"live_transcripts_enabled": schema.BoolAttribute{
 				MarkdownDescription: "Parent ID.",
 				Optional:            true,
 				Computed:            true,
-				PlanModifiers: []planmodifier.Bool{
-					boolplanmodifier.RequiresReplace(),
-				},
 			},
 			"parent_id": schema.StringAttribute{
 				MarkdownDescription: "Parent ID.",
 				Computed:            true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplace(),
-				},
 			},
 		},
 	}
@@ -786,22 +588,21 @@ func (r *VAPIAssistantResource) Read(ctx context.Context, req resource.ReadReque
 
 // Update implements the update operation for the assistant resource.
 func (r *VAPIAssistantResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data VAPIAssistantResourceModel
+	var plan, data VAPIAssistantResourceModel
 
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	_, _, err := r.client.DeleteAssistant(data.ID.ValueString())
-	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete assistant: %s", err))
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	requestBody := mapVAPIAssistantRequest(&data)
+	requestBody := mapVAPIAssistantRequest(&plan)
 
-	response, responseCode, err := r.client.CreateAssistant(requestBody)
+	response, responseCode, err := r.client.UpdateAssistant(data.ID.ValueString(), requestBody)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update assistant: %s", err))
 		return
@@ -819,6 +620,7 @@ func (r *VAPIAssistantResource) Update(ctx context.Context, req resource.UpdateR
 	}
 
 	bindVAPIAssistantResourceData(&data, &assistantResponse)
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -920,10 +722,18 @@ func bindVAPIAssistantResourceData(data *VAPIAssistantResourceModel, assistantRe
 	//data.ServerURLSecret = types.StringValue(assistantResponse.ServerURLSecret)
 
 	data.ClientMessages = ListValueFromStrings(assistantResponse.ClientMessages)
-	//data.ServerMessages = ListValueFromStrings(assistantResponse.ServerMessages)
+	data.ServerMessages = ListValueFromStrings(assistantResponse.ServerMessages)
 	data.EndCallPhrases = ListValueFromStrings(assistantResponse.EndCallPhrases)
 
 	data.MaxDurationSeconds = types.Int64Value(assistantResponse.MaxDurationSeconds)
+
+	if assistantResponse.MessagePlan != nil {
+		data.MessagePlan = &MessagePlanResourceModel{
+			IdleMessages: ListValueFromStrings(assistantResponse.MessagePlan.IdleMessages),
+		}
+	} else {
+		data.MessagePlan = nil
+	}
 
 	// Handle optional AnalysisPlan struct
 	if assistantResponse.AnalysisPlan != nil {
@@ -989,6 +799,11 @@ func mapVAPIAssistantRequest(data *VAPIAssistantResourceModel) vapi.CreateAssist
 		NumWordsToInterruptAssistant: data.NumWordsToInterruptAssistant.ValueInt64Pointer(),
 		LiveTranscriptsEnabled:       data.LiveTranscriptsEnabled.ValueBoolPointer(),
 		Keywords:                     ElementsAsString(data.Keywords),
+		ServerMessages:               ElementsAsString(data.ServerMessages),
+
+		MessagePlan: &vapi.MessagePlan{
+			IdleMessages: ElementsAsString(data.MessagePlan.IdleMessages),
+		},
 
 		Voice: func() *vapi.Voice {
 			if data.Voice != nil {

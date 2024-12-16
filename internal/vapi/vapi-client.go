@@ -182,6 +182,22 @@ func (c *APIClient) CreateAssistant(requestData CreateAssistantRequest) ([]byte,
 	return c.SendRequest("POST", "assistant", requestData)
 }
 
+// UpdateAssistant updates assistant.
+func (c *APIClient) UpdateAssistant(id string, requestData CreateAssistantRequest) ([]byte, int, error) {
+
+	if id == "" {
+		return nil, http.StatusNotFound, fmt.Errorf("ID cannot be empty")
+	}
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(requestData); err != nil {
+		return nil, http.StatusInternalServerError, fmt.Errorf("failed to encode request data: %v", err)
+	}
+
+	endpoint := fmt.Sprintf("assistant/%s", id)
+	return c.SendRequest("PATCH", endpoint, requestData)
+}
+
 // GetAssistant retrieves the details of a specific assistant by ID.
 func (c *APIClient) GetAssistant(id string) ([]byte, int, error) {
 	if id == "" {
