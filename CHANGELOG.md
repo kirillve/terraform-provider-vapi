@@ -1,7 +1,7 @@
 ## v0.5.5
 
 FIXES:
-  - fixed VAPI Twilio AssistantID support
+  - fixed VAPI Assistant update support
 
 ## v0.5.4
 
