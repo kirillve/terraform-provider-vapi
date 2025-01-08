@@ -213,7 +213,6 @@ func (r *VAPIAssistantResource) Schema(ctx context.Context, req resource.SchemaR
 			"server_url_secret": schema.StringAttribute{
 				MarkdownDescription: "Server URL Secret.",
 				Optional:            true,
-				Computed:            true,
 			},
 			"end_call_phrases": schema.ListAttribute{
 				ElementType:         types.StringType,
@@ -547,7 +546,7 @@ func (r *VAPIAssistantResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	bindVAPIAssistantResourceData(&data, &assistantResponse)
+	mapResponseObject(&data, &assistantResponse)
 	tflog.Trace(ctx, "created an assistant resource")
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -583,27 +582,29 @@ func (r *VAPIAssistantResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 
-	bindVAPIAssistantResourceData(&data, &assistantResponse)
+	mapResponseObject(&data, &assistantResponse)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 // Update implements the update operation for the assistant resource.
 func (r *VAPIAssistantResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var plan, data VAPIAssistantResourceModel
+	var state, data VAPIAssistantResourceModel
 
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
+		resp.Diagnostics.AddError("Failed to read state", fmt.Sprintf("Errors: %v", resp.Diagnostics.Errors()))
 		return
 	}
 
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
+		resp.Diagnostics.AddError("Failed to read plan", fmt.Sprintf("Errors: %v", resp.Diagnostics.Errors()))
 		return
 	}
 
-	requestBody := mapVAPIAssistantRequest(&plan)
+	requestBody := mapVAPIAssistantRequest(&data)
 
-	response, responseCode, err := r.client.UpdateAssistant(data.ID.ValueString(), requestBody)
+	response, responseCode, err := r.client.UpdateAssistant(state.ID.ValueString(), requestBody)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update assistant: %s", err))
 		return
@@ -620,7 +621,7 @@ func (r *VAPIAssistantResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 
-	bindVAPIAssistantResourceData(&data, &assistantResponse)
+	mapResponseObject(&data, &assistantResponse)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -643,7 +644,7 @@ func (r *VAPIAssistantResource) Delete(ctx context.Context, req resource.DeleteR
 	tflog.Trace(ctx, "deleted an assistant resource")
 }
 
-func bindVAPIAssistantResourceData(data *VAPIAssistantResourceModel, assistantResponse *vapi.Assistant) {
+func mapResponseObject(data *VAPIAssistantResourceModel, assistantResponse *vapi.Assistant) {
 	// Basic fields
 	data.ID = types.StringValue(assistantResponse.ID)
 	data.OrgID = types.StringValue(assistantResponse.OrgID)
@@ -870,7 +871,7 @@ func mapVAPIAssistantRequest(data *VAPIAssistantResourceModel) vapi.CreateAssist
 				return &vapi.AnalysisPlan{
 					SummaryPrompt:           data.AnalysisPlan.SummaryPrompt.ValueString(),
 					StructuredDataPrompt:    data.AnalysisPlan.StructuredDataPrompt.ValueString(),
-					StructuredDataSchema:    mapStructuredDataSchemaResourceModelToRequest(data.AnalysisPlan.StructuredDataSchema),
+					StructuredDataSchema:    createRequestObject(data.AnalysisPlan.StructuredDataSchema),
 					SuccessEvaluationPrompt: data.AnalysisPlan.SuccessEvaluationPrompt.ValueString(),
 					SuccessEvaluationRubric: data.AnalysisPlan.SuccessEvaluationRubric.ValueString(),
 				}
@@ -911,7 +912,7 @@ func mapVAPIAssistantRequest(data *VAPIAssistantResourceModel) vapi.CreateAssist
 	}
 }
 
-func mapStructuredDataSchemaResourceModelToRequest(data *StructuredDataSchemaResourceModel) *vapi.StructuredDataSchema {
+func createRequestObject(data *StructuredDataSchemaResourceModel) *vapi.StructuredDataSchema {
 	if data == nil {
 		return nil
 	}
