@@ -720,7 +720,7 @@ func bindVAPIAssistantResourceData(data *VAPIAssistantResourceModel, assistantRe
 	}
 
 	data.ServerURL = types.StringValue(assistantResponse.ServerURL)
-	data.ServerURLSecret = types.StringValue(assistantResponse.ServerURLSecret)
+	//data.ServerURLSecret = types.StringValue(assistantResponse.ServerURLSecret)
 
 	data.ClientMessages = ListValueFromStrings(assistantResponse.ClientMessages)
 	data.ServerMessages = ListValueFromStrings(assistantResponse.ServerMessages)
