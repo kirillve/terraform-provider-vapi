@@ -1,3 +1,8 @@
+## v0.5.6
+
+FIXES:
+  - fixed VAPI Assistant update support
+
 ## v0.5.5
 
 FIXES:
