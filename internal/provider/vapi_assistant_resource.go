@@ -213,6 +213,7 @@ func (r *VAPIAssistantResource) Schema(ctx context.Context, req resource.SchemaR
 			"server_url_secret": schema.StringAttribute{
 				MarkdownDescription: "Server URL Secret.",
 				Optional:            true,
+				Computed:            true,
 			},
 			"end_call_phrases": schema.ListAttribute{
 				ElementType:         types.StringType,
@@ -719,7 +720,7 @@ func bindVAPIAssistantResourceData(data *VAPIAssistantResourceModel, assistantRe
 	}
 
 	data.ServerURL = types.StringValue(assistantResponse.ServerURL)
-	//data.ServerURLSecret = types.StringValue(assistantResponse.ServerURLSecret)
+	data.ServerURLSecret = types.StringValue(assistantResponse.ServerURLSecret)
 
 	data.ClientMessages = ListValueFromStrings(assistantResponse.ClientMessages)
 	data.ServerMessages = ListValueFromStrings(assistantResponse.ServerMessages)
