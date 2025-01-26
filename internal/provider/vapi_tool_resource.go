@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -44,6 +45,7 @@ type Parameters struct {
 	Type       types.String        `tfsdk:"type"`
 	Async      types.Bool          `tfsdk:"async"`
 	Properties map[string]Property `tfsdk:"properties"`
+	Required   types.List          `tfsdk:"required"`
 }
 
 type Property struct {
@@ -135,6 +137,14 @@ func (r *VAPIToolFunctionResource) Schema(ctx context.Context, req resource.Sche
 							boolplanmodifier.RequiresReplace(),
 						},
 					},
+					"required": schema.ListAttribute{
+						Required:            true,
+						ElementType:         types.StringType,
+						MarkdownDescription: "List of required fields.",
+						PlanModifiers: []planmodifier.List{
+							listplanmodifier.RequiresReplace(),
+						},
+					},
 					"properties": schema.MapNestedAttribute{
 						MarkdownDescription: "The properties for the function parameters.",
 						Required:            true,
@@ -218,6 +228,7 @@ func (r *VAPIToolFunctionResource) Create(ctx context.Context, req resource.Crea
 			Parameters: vapi.FunctionParams{
 				Type:       data.Parameters.Type.ValueString(),
 				Properties: properties,
+				Required:   ElementsAsString(data.Parameters.Required),
 			},
 		},
 	}
@@ -321,6 +332,7 @@ func (r *VAPIToolFunctionResource) Update(ctx context.Context, req resource.Upda
 			Parameters: vapi.FunctionParams{
 				Type:       data.Parameters.Type.ValueString(),
 				Properties: properties,
+				Required:   ElementsAsString(data.Parameters.Required),
 			},
 		},
 	}
@@ -383,6 +395,7 @@ func bindVAPIToolFunctionResourceData(data *VAPIToolFunctionResourceModel, funct
 	data.Parameters = Parameters{
 		Type:       types.StringValue(functionResponse.Function.Parameters.Type),
 		Async:      types.BoolValue(functionResponse.Function.Async),
+		Required:   ListValueFromStrings(functionResponse.Function.Parameters.Required),
 		Properties: make(map[string]Property),
 	}
 

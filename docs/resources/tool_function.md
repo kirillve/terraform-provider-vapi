@@ -74,6 +74,7 @@ Required:
 
 - `async` (Boolean) Indicates whether the function parameters are async.
 - `properties` (Attributes Map) The properties for the function parameters. (see [below for nested schema](#nestedatt--parameters--properties))
+- `required` (List of String) List of required fields.
 - `type` (String) The type of parameters (object).
 
 <a id="nestedatt--parameters--properties"></a>

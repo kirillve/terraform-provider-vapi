@@ -1,3 +1,8 @@
+## v0.5.10
+
+FIXES:
+  - fixed VAPI Tools update
+
 ## v0.5.9
 
 FIXES:

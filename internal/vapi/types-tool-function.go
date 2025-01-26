@@ -23,6 +23,7 @@ type Function struct {
 type FunctionParams struct {
 	Type       string              `json:"type"`
 	Properties map[string]Property `json:"properties"`
+	Required   []string            `json:"required,omitempty"`
 }
 
 type Property struct {
@@ -52,6 +53,7 @@ type ResponseFunction struct {
 type ResponseFunctionParams struct {
 	Type       string                      `json:"type"`
 	Properties map[string]ResponseProperty `json:"properties"`
+	Required   []string                    `json:"required"`
 }
 
 type ResponseProperty struct {
