@@ -56,9 +56,12 @@ resource "vapi_tool_function" "test-vapi_tool_function" {
 - `description` (String) The description of the function.
 - `name` (String) The name of the function.
 - `parameters` (Attributes) Function parameters including type, async, and properties. (see [below for nested schema](#nestedatt--parameters))
+- `type` (String) The type of the tool (function).
+
+### Optional
+
 - `server_secret` (String, Sensitive) The secret used to authenticate with the server.
 - `server_url` (String) The URL of the server where the function is hosted.
-- `type` (String) The type of the tool (function).
 
 ### Read-Only
 
