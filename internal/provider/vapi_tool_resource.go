@@ -105,14 +105,14 @@ func (r *VAPIToolFunctionResource) Schema(ctx context.Context, req resource.Sche
 				},
 			},
 			"server_url": schema.StringAttribute{
-				Required:            true,
+				Optional:            true,
 				MarkdownDescription: "The URL of the server where the function is hosted.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
 			},
 			"server_secret": schema.StringAttribute{
-				Required:            true,
+				Optional:            true,
 				Sensitive:           true,
 				MarkdownDescription: "The secret used to authenticate with the server.",
 				PlanModifiers: []planmodifier.String{
@@ -214,23 +214,41 @@ func (r *VAPIToolFunctionResource) Create(ctx context.Context, req resource.Crea
 		}
 	}
 
-	requestBody := vapi.FunctionRequest{
-		Type:  "function",
-		Async: data.Async.ValueBool(),
-		Server: vapi.Server{
-			URL:    data.ServerURL.ValueString(),
-			Secret: data.ServerSecret.ValueString(),
-		},
-		Function: vapi.Function{
-			Name:        data.Name.ValueString(),
-			Description: data.Description.ValueString(),
-			Async:       data.Async.ValueBool(),
-			Parameters: vapi.FunctionParams{
-				Type:       data.Parameters.Type.ValueString(),
-				Properties: properties,
-				Required:   ElementsAsString(data.Parameters.Required),
+	var requestBody vapi.FunctionRequest
+	if data.Type.ValueString() == "dtmf" {
+		requestBody = vapi.FunctionRequest{
+			Type:  data.Type.ValueString(),
+			Async: data.Async.ValueBool(),
+			Function: vapi.Function{
+				Name:        data.Name.ValueString(),
+				Description: data.Description.ValueString(),
+				Async:       data.Async.ValueBool(),
+				Parameters: vapi.FunctionParams{
+					Type:       data.Parameters.Type.ValueString(),
+					Properties: properties,
+					Required:   ElementsAsString(data.Parameters.Required),
+				},
 			},
-		},
+		}
+	} else {
+		requestBody = vapi.FunctionRequest{
+			Type:  "function",
+			Async: data.Async.ValueBool(),
+			Server: vapi.Server{
+				URL:    data.ServerURL.ValueString(),
+				Secret: data.ServerSecret.ValueString(),
+			},
+			Function: vapi.Function{
+				Name:        data.Name.ValueString(),
+				Description: data.Description.ValueString(),
+				Async:       data.Async.ValueBool(),
+				Parameters: vapi.FunctionParams{
+					Type:       data.Parameters.Type.ValueString(),
+					Properties: properties,
+					Required:   ElementsAsString(data.Parameters.Required),
+				},
+			},
+		}
 	}
 
 	response, responseCode, err := r.client.CreateToolFunction(requestBody)
@@ -318,23 +336,41 @@ func (r *VAPIToolFunctionResource) Update(ctx context.Context, req resource.Upda
 		}
 	}
 
-	requestBody := vapi.FunctionRequest{
-		Type:  "function",
-		Async: data.Async.ValueBool(),
-		Server: vapi.Server{
-			URL:    data.ServerURL.ValueString(),
-			Secret: data.ServerSecret.ValueString(),
-		},
-		Function: vapi.Function{
-			Name:        data.Name.ValueString(),
-			Description: data.Description.ValueString(),
-			Async:       data.Async.ValueBool(),
-			Parameters: vapi.FunctionParams{
-				Type:       data.Parameters.Type.ValueString(),
-				Properties: properties,
-				Required:   ElementsAsString(data.Parameters.Required),
+	var requestBody vapi.FunctionRequest
+	if data.Type.ValueString() == "dtmf" {
+		requestBody = vapi.FunctionRequest{
+			Type:  data.Type.ValueString(),
+			Async: data.Async.ValueBool(),
+			Function: vapi.Function{
+				Name:        data.Name.ValueString(),
+				Description: data.Description.ValueString(),
+				Async:       data.Async.ValueBool(),
+				Parameters: vapi.FunctionParams{
+					Type:       data.Parameters.Type.ValueString(),
+					Properties: properties,
+					Required:   ElementsAsString(data.Parameters.Required),
+				},
 			},
-		},
+		}
+	} else {
+		requestBody = vapi.FunctionRequest{
+			Type:  "function",
+			Async: data.Async.ValueBool(),
+			Server: vapi.Server{
+				URL:    data.ServerURL.ValueString(),
+				Secret: data.ServerSecret.ValueString(),
+			},
+			Function: vapi.Function{
+				Name:        data.Name.ValueString(),
+				Description: data.Description.ValueString(),
+				Async:       data.Async.ValueBool(),
+				Parameters: vapi.FunctionParams{
+					Type:       data.Parameters.Type.ValueString(),
+					Properties: properties,
+					Required:   ElementsAsString(data.Parameters.Required),
+				},
+			},
+		}
 	}
 
 	response, responseCode, err := r.client.CreateToolFunction(requestBody)
@@ -386,7 +422,9 @@ func bindVAPIToolFunctionResourceData(data *VAPIToolFunctionResourceModel, funct
 	data.UpdatedAt = types.StringValue(functionResponse.UpdatedAt)
 	data.Type = types.StringValue(functionResponse.Type)
 	data.Async = types.BoolValue(functionResponse.Async)
-	data.ServerURL = types.StringValue(functionResponse.Server.URL)
+	if len(functionResponse.Server.URL) > 0 {
+		data.ServerURL = types.StringValue(functionResponse.Server.URL)
+	}
 
 	data.Name = types.StringValue(functionResponse.Function.Name)
 	data.Description = types.StringValue(functionResponse.Function.Description)

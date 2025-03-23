@@ -9,8 +9,8 @@ type FunctionRequest struct {
 }
 
 type Server struct {
-	URL    string `json:"url"`
-	Secret string `json:"secret"`
+	URL    string `json:"url,omitempty"`
+	Secret string `json:"secret,omitempty"`
 }
 
 type Function struct {

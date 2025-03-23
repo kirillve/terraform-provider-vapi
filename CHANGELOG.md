@@ -1,3 +1,8 @@
+## v0.6.0
+
+CHANGES:
+  - added DTMF function support
+
 ## v0.5.10
 
 FIXES:
