@@ -66,12 +66,12 @@ func (r *VAPITwilioPhoneNumberResource) Schema(ctx context.Context, req resource
 			"twilio_account_sid": schema.StringAttribute{
 				MarkdownDescription: "The Twilio account SID.",
 				Required:            true,
-				Sensitive:           false,
+				Sensitive:           true,
 			},
 			"twilio_auth_token": schema.StringAttribute{
 				MarkdownDescription: "The Twilio auth token.",
 				Required:            true,
-				Sensitive:           false,
+				Sensitive:           true,
 			},
 			"id": schema.StringAttribute{
 				Computed:            true,
@@ -301,13 +301,9 @@ func bindVAPIPhoneNumberResourceData(data *VAPITwilioPhoneNumberResourceModel, p
 	data.ID = types.StringValue(phoneNumberResp.ID)
 	data.OrgID = types.StringValue(phoneNumberResp.OrgID)
 	data.Name = types.StringValue(phoneNumberResp.Name)
-	data.Number = types.StringValue(phoneNumberResp.Number)
 	data.CreatedAt = types.StringValue(phoneNumberResp.CreatedAt)
 	data.UpdatedAt = types.StringValue(phoneNumberResp.UpdatedAt)
-	data.TwilioAccountSid = types.StringValue(phoneNumberResp.TwilioAccountSid)
-	data.TwilioAuthToken = types.StringValue(phoneNumberResp.TwilioAuthToken)
 	data.PhoneProvider = types.StringValue(phoneNumberResp.Provider)
-	data.AssistantID = types.StringValue(phoneNumberResp.AssistantID)
 
 	if phoneNumberResp.Fallback != nil {
 		var numberE164CheckEnabled string

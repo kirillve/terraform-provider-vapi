@@ -34,8 +34,8 @@ resource "vapi_twilio_phone_number" "test-vapi_twilio_phone_number" {
 
 - `name` (String) The name of the phone number.
 - `number` (String) The phone number.
-- `twilio_account_sid` (String) The Twilio account SID.
-- `twilio_auth_token` (String) The Twilio auth token.
+- `twilio_account_sid` (String, Sensitive) The Twilio account SID.
+- `twilio_auth_token` (String, Sensitive) The Twilio auth token.
 
 ### Optional
 
