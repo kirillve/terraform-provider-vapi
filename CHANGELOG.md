@@ -1,3 +1,8 @@
+## v0.6.1
+
+CHANGES:
+  - minor fix to avoid unnecessary alerts
+
 ## v0.6.0
 
 CHANGES:

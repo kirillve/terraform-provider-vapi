@@ -66,12 +66,12 @@ func (r *VAPITwilioPhoneNumberResource) Schema(ctx context.Context, req resource
 			"twilio_account_sid": schema.StringAttribute{
 				MarkdownDescription: "The Twilio account SID.",
 				Required:            true,
-				Sensitive:           true,
+				Sensitive:           false,
 			},
 			"twilio_auth_token": schema.StringAttribute{
 				MarkdownDescription: "The Twilio auth token.",
 				Required:            true,
-				Sensitive:           true,
+				Sensitive:           false,
 			},
 			"id": schema.StringAttribute{
 				Computed:            true,
