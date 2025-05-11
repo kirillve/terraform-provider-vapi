@@ -1,7 +1,8 @@
-## v0.6.2
+## v0.7.0
 
 CHANGES:
-  - minor fix to avoid unnecessary alerts
+  - added tool query support
+  - fixed AI Assistant creation issue
 
 ## v0.6.1
 

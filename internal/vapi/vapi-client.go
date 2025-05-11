@@ -75,18 +75,17 @@ func (c *APIClient) UploadData(fieldName, filename string, content []byte) ([]by
 	return responseData, resp.StatusCode, nil
 }
 
-// SendRequest Sends a request to the API.
 func (c *APIClient) SendRequest(method, endpoint string, body interface{}) ([]byte, int, error) {
 	var buf bytes.Buffer
 	if body != nil {
 		if err := json.NewEncoder(&buf).Encode(body); err != nil {
-			return nil, 500, err
+			return nil, 0, fmt.Errorf("failed to encode request body: %w", err)
 		}
 	}
 
 	req, err := http.NewRequest(method, c.BaseURL+"/"+endpoint, &buf)
 	if err != nil {
-		return nil, 500, err
+		return nil, 0, fmt.Errorf("failed to create HTTP request: %w", err)
 	}
 
 	req.Header.Set("Authorization", "Bearer "+c.Token)
@@ -94,17 +93,19 @@ func (c *APIClient) SendRequest(method, endpoint string, body interface{}) ([]by
 
 	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return nil, resp.StatusCode, err
+		return nil, 0, fmt.Errorf("request failed: %w", err)
 	}
 	defer resp.Body.Close()
 
-	// Read the response body
-	responseData, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, resp.StatusCode, fmt.Errorf("error reading response body: %v", err)
+	responseData, readErr := io.ReadAll(resp.Body)
+	if readErr != nil {
+		return nil, resp.StatusCode, fmt.Errorf("error reading response body: %w", readErr)
 	}
 
-	// Return the response body and status code
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return responseData, resp.StatusCode, fmt.Errorf("HTTP %d: %s", resp.StatusCode, string(responseData))
+	}
+
 	return responseData, resp.StatusCode, nil
 }
 
@@ -149,8 +150,40 @@ func (c *APIClient) DeletePhoneNumber(id string) ([]byte, int, error) {
 	return c.SendRequest("DELETE", endpoint, nil)
 }
 
+// CreateToolQueryFunction method.
+func (c *APIClient) CreateToolQueryFunction(requestData ToolQueryFunctionRequest) ([]byte, int, error) {
+	return c.SendRequest("POST", "tool", requestData)
+}
+
+// UpdateToolQueryFunction method.
+func (c *APIClient) UpdateToolQueryFunction(id string, requestData ToolQueryFunctionRequest) ([]byte, int, error) {
+	if len(id) == 0 {
+		return []byte{}, 404, nil
+	}
+	endpoint := fmt.Sprintf("tool/%s", id)
+	return c.SendRequest("PATCH", endpoint, requestData)
+}
+
+// GetToolQueryFunction retrieves the details of a specific tool by ID.
+func (c *APIClient) GetToolQueryFunction(id string) ([]byte, int, error) {
+	if len(id) == 0 {
+		return []byte{}, 404, nil
+	}
+	endpoint := fmt.Sprintf("tool/%s", id)
+	return c.SendRequest("GET", endpoint, nil)
+}
+
+// DeleteToolQueryFunction deletes a specific tool by ID.
+func (c *APIClient) DeleteToolQueryFunction(id string) ([]byte, int, error) {
+	if len(id) == 0 {
+		return []byte{}, 404, nil
+	}
+	endpoint := fmt.Sprintf("tool/%s", id)
+	return c.SendRequest("DELETE", endpoint, nil)
+}
+
 // CreateToolFunction method.
-func (c *APIClient) CreateToolFunction(requestData FunctionRequest) ([]byte, int, error) {
+func (c *APIClient) CreateToolFunction(requestData ToolFunctionRequest) ([]byte, int, error) {
 	return c.SendRequest("POST", "tool", requestData)
 }
 

@@ -1,7 +1,7 @@
 package vapi
 
-// FunctionRequest struct.
-type FunctionRequest struct {
+// ToolFunctionRequest struct.
+type ToolFunctionRequest struct {
 	Server   Server   `json:"server"`
 	Function Function `json:"function"`
 	Type     string   `json:"type"`
@@ -14,15 +14,15 @@ type Server struct {
 }
 
 type Function struct {
-	Description string         `json:"description"`
-	Async       bool           `json:"async,omitempty"`
-	Name        string         `json:"name,omitempty"`
-	Parameters  FunctionParams `json:"parameters,omitempty"`
+	Description string          `json:"description"`
+	Async       bool            `json:"async,omitempty"`
+	Name        string          `json:"name,omitempty"`
+	Parameters  *FunctionParams `json:"parameters,omitempty"`
 }
 
 type FunctionParams struct {
 	Type       string              `json:"type"`
-	Properties map[string]Property `json:"properties"`
+	Properties map[string]Property `json:"properties,omitempty"`
 	Required   []string            `json:"required,omitempty"`
 }
 
@@ -31,8 +31,8 @@ type Property struct {
 	Description string `json:"description"`
 }
 
-// FunctionResponse struct.
-type FunctionResponse struct {
+// ToolFunctionResponse struct.
+type ToolFunctionResponse struct {
 	ID        string           `json:"id"`
 	CreatedAt string           `json:"createdAt"`
 	UpdatedAt string           `json:"updatedAt"`

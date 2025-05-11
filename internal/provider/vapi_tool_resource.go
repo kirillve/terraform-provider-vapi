@@ -214,16 +214,16 @@ func (r *VAPIToolFunctionResource) Create(ctx context.Context, req resource.Crea
 		}
 	}
 
-	var requestBody vapi.FunctionRequest
+	var requestBody vapi.ToolFunctionRequest
 	if data.Type.ValueString() == "dtmf" {
-		requestBody = vapi.FunctionRequest{
+		requestBody = vapi.ToolFunctionRequest{
 			Type:  data.Type.ValueString(),
 			Async: data.Async.ValueBool(),
 			Function: vapi.Function{
 				Name:        data.Name.ValueString(),
 				Description: data.Description.ValueString(),
 				Async:       data.Async.ValueBool(),
-				Parameters: vapi.FunctionParams{
+				Parameters: &vapi.FunctionParams{
 					Type:       data.Parameters.Type.ValueString(),
 					Properties: properties,
 					Required:   ElementsAsString(data.Parameters.Required),
@@ -231,7 +231,7 @@ func (r *VAPIToolFunctionResource) Create(ctx context.Context, req resource.Crea
 			},
 		}
 	} else {
-		requestBody = vapi.FunctionRequest{
+		requestBody = vapi.ToolFunctionRequest{
 			Type:  "function",
 			Async: data.Async.ValueBool(),
 			Server: vapi.Server{
@@ -242,7 +242,7 @@ func (r *VAPIToolFunctionResource) Create(ctx context.Context, req resource.Crea
 				Name:        data.Name.ValueString(),
 				Description: data.Description.ValueString(),
 				Async:       data.Async.ValueBool(),
-				Parameters: vapi.FunctionParams{
+				Parameters: &vapi.FunctionParams{
 					Type:       data.Parameters.Type.ValueString(),
 					Properties: properties,
 					Required:   ElementsAsString(data.Parameters.Required),
@@ -257,7 +257,7 @@ func (r *VAPIToolFunctionResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
-	var functionResponse vapi.FunctionResponse
+	var functionResponse vapi.ToolFunctionResponse
 	if responseCode >= 200 && responseCode < 300 {
 		if err := json.Unmarshal(response, &functionResponse); err != nil {
 			resp.Diagnostics.AddError("Parse Error", fmt.Sprintf("Unable to parse response: %s", err))
@@ -276,7 +276,7 @@ func (r *VAPIToolFunctionResource) Create(ctx context.Context, req resource.Crea
 
 func (r *VAPIToolFunctionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data VAPIToolFunctionResourceModel
-	var functionResponse vapi.FunctionResponse
+	var functionResponse vapi.ToolFunctionResponse
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
@@ -311,7 +311,7 @@ func (r *VAPIToolFunctionResource) Read(ctx context.Context, req resource.ReadRe
 
 func (r *VAPIToolFunctionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data VAPIToolFunctionResourceModel
-	var functionResponse vapi.FunctionResponse
+	var functionResponse vapi.ToolFunctionResponse
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
@@ -323,7 +323,7 @@ func (r *VAPIToolFunctionResource) Update(ctx context.Context, req resource.Upda
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete file: %s", err))
 		return
 	}
-	bindVAPIToolFunctionResourceData(&data, &vapi.FunctionResponse{})
+	bindVAPIToolFunctionResourceData(&data, &vapi.ToolFunctionResponse{})
 
 	tflog.Trace(ctx, "deleted a file resource")
 
@@ -336,16 +336,16 @@ func (r *VAPIToolFunctionResource) Update(ctx context.Context, req resource.Upda
 		}
 	}
 
-	var requestBody vapi.FunctionRequest
+	var requestBody vapi.ToolFunctionRequest
 	if data.Type.ValueString() == "dtmf" {
-		requestBody = vapi.FunctionRequest{
+		requestBody = vapi.ToolFunctionRequest{
 			Type:  data.Type.ValueString(),
 			Async: data.Async.ValueBool(),
 			Function: vapi.Function{
 				Name:        data.Name.ValueString(),
 				Description: data.Description.ValueString(),
 				Async:       data.Async.ValueBool(),
-				Parameters: vapi.FunctionParams{
+				Parameters: &vapi.FunctionParams{
 					Type:       data.Parameters.Type.ValueString(),
 					Properties: properties,
 					Required:   ElementsAsString(data.Parameters.Required),
@@ -353,7 +353,7 @@ func (r *VAPIToolFunctionResource) Update(ctx context.Context, req resource.Upda
 			},
 		}
 	} else {
-		requestBody = vapi.FunctionRequest{
+		requestBody = vapi.ToolFunctionRequest{
 			Type:  "function",
 			Async: data.Async.ValueBool(),
 			Server: vapi.Server{
@@ -364,7 +364,7 @@ func (r *VAPIToolFunctionResource) Update(ctx context.Context, req resource.Upda
 				Name:        data.Name.ValueString(),
 				Description: data.Description.ValueString(),
 				Async:       data.Async.ValueBool(),
-				Parameters: vapi.FunctionParams{
+				Parameters: &vapi.FunctionParams{
 					Type:       data.Parameters.Type.ValueString(),
 					Properties: properties,
 					Required:   ElementsAsString(data.Parameters.Required),
@@ -415,7 +415,7 @@ func (r *VAPIToolFunctionResource) ImportState(ctx context.Context, req resource
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }
 
-func bindVAPIToolFunctionResourceData(data *VAPIToolFunctionResourceModel, functionResponse *vapi.FunctionResponse) {
+func bindVAPIToolFunctionResourceData(data *VAPIToolFunctionResourceModel, functionResponse *vapi.ToolFunctionResponse) {
 	data.ID = types.StringValue(functionResponse.ID)
 	data.OrgID = types.StringValue(functionResponse.OrgID)
 	data.CreatedAt = types.StringValue(functionResponse.CreatedAt)

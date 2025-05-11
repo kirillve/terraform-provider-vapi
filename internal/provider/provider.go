@@ -76,6 +76,7 @@ func (p *VAPIProvider) Resources(ctx context.Context) []func() resource.Resource
 		NewVAPIFileResource,
 		NewVAPIPhoneNumberResource,
 		NewVAPIToolFunctionResource,
+		NewVAPIToolQueryFunctionResource,
 	}
 }
 

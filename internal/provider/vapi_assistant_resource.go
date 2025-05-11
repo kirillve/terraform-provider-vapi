@@ -720,7 +720,7 @@ func mapResponseObject(data *VAPIAssistantResourceModel, assistantResponse *vapi
 		data.Transcriber = nil
 	}
 
-	data.ServerURL = types.StringValue(assistantResponse.ServerURL)
+	//data.ServerURL = types.StringValue(assistantResponse.ServerURL)
 	//data.ServerURLSecret = types.StringValue(assistantResponse.ServerURLSecret)
 
 	data.ClientMessages = ListValueFromStrings(assistantResponse.ClientMessages)
