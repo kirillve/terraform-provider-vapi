@@ -122,14 +122,37 @@ func (r *VAPIToolQueryFunctionResource) Create(ctx context.Context, req resource
 
 	var kbs []vapi.TQKnowledgeBase
 	for _, kbVal := range data.KnowledgeBases.Elements() {
-		objVal := kbVal.(types.Object)
+		objVal, ok := kbVal.(types.Object)
+		if !ok {
+			resp.Diagnostics.AddError("Type Assertion Error", "Expected Object type for knowledge_base element")
+			return
+		}
 		attrs := objVal.Attributes()
 
-		provider := attrs["provider"].(types.String)
-		name := attrs["name"].(types.String)
-		model := attrs["model"].(types.String)
-		description := attrs["description"].(types.String)
-		fileIDsList := attrs["file_ids"].(types.List)
+		provider, ok := attrs["provider"].(types.String)
+		if !ok {
+			resp.Diagnostics.AddError("Type Assertion Error", "Expected String type for provider")
+			return
+		}
+		name, ok := attrs["name"].(types.String)
+		if !ok {
+			resp.Diagnostics.AddError("Type Assertion Error", "Expected String type for name")
+			return
+		}
+		model, ok := attrs["model"].(types.String)
+		if !ok {
+			resp.Diagnostics.AddError("Type Assertion Error", "Expected String type for model")
+			return
+		}
+		description, ok := attrs["description"].(types.String)
+		if !ok {
+			description = types.StringValue("") // fallback if optional
+		}
+		fileIDsList, ok := attrs["file_ids"].(types.List)
+		if !ok {
+			resp.Diagnostics.AddError("Type Assertion Error", "Expected List type for file_ids")
+			return
+		}
 
 		var fileIDs []string
 		fileIDsList.ElementsAs(ctx, &fileIDs, false)
@@ -144,18 +167,20 @@ func (r *VAPIToolQueryFunctionResource) Create(ctx context.Context, req resource
 	}
 
 	request := vapi.ToolQueryFunctionRequest{
-		Type: "query",
 		Function: vapi.Function{
 			Name:        data.Name.ValueString(),
 			Description: data.Description.ValueString(),
-			Async:       false,
 		},
 		KnowledgeBases: kbs,
 	}
 
 	resBody, status, err := r.client.CreateToolQueryFunction(request)
-	if err != nil || status >= 300 {
+	if err != nil {
 		resp.Diagnostics.AddError("API Error", fmt.Sprintf("Error creating resource: %v", err))
+		return
+	}
+	if status >= 300 {
+		resp.Diagnostics.AddError("API Error", fmt.Sprintf("HTTP %d: %s", status, string(resBody)))
 		return
 	}
 
@@ -238,8 +263,7 @@ func (r *VAPIToolQueryFunctionResource) Read(ctx context.Context, req resource.R
 }
 
 func (r *VAPIToolQueryFunctionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data, state VAPIToolQueryFunctionResourceModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	var data VAPIToolQueryFunctionResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -247,14 +271,37 @@ func (r *VAPIToolQueryFunctionResource) Update(ctx context.Context, req resource
 
 	var kbs []vapi.TQKnowledgeBase
 	for _, kbVal := range data.KnowledgeBases.Elements() {
-		objVal := kbVal.(types.Object)
+		objVal, ok := kbVal.(types.Object)
+		if !ok {
+			resp.Diagnostics.AddError("Type Assertion Error", "Expected Object type for knowledge_base element")
+			return
+		}
 		attrs := objVal.Attributes()
 
-		provider := attrs["provider"].(types.String)
-		name := attrs["name"].(types.String)
-		model := attrs["model"].(types.String)
-		description := attrs["description"].(types.String)
-		fileIDsList := attrs["file_ids"].(types.List)
+		provider, ok := attrs["provider"].(types.String)
+		if !ok {
+			resp.Diagnostics.AddError("Type Assertion Error", "Expected String type for provider")
+			return
+		}
+		name, ok := attrs["name"].(types.String)
+		if !ok {
+			resp.Diagnostics.AddError("Type Assertion Error", "Expected String type for name")
+			return
+		}
+		model, ok := attrs["model"].(types.String)
+		if !ok {
+			resp.Diagnostics.AddError("Type Assertion Error", "Expected String type for model")
+			return
+		}
+		description, ok := attrs["description"].(types.String)
+		if !ok {
+			description = types.StringValue("")
+		}
+		fileIDsList, ok := attrs["file_ids"].(types.List)
+		if !ok {
+			resp.Diagnostics.AddError("Type Assertion Error", "Expected List type for file_ids")
+			return
+		}
 
 		var fileIDs []string
 		fileIDsList.ElementsAs(ctx, &fileIDs, false)
@@ -269,7 +316,6 @@ func (r *VAPIToolQueryFunctionResource) Update(ctx context.Context, req resource
 	}
 
 	request := vapi.ToolQueryFunctionRequest{
-		Async: false,
 		Function: vapi.Function{
 			Name:        data.Name.ValueString(),
 			Description: data.Description.ValueString(),
@@ -277,14 +323,13 @@ func (r *VAPIToolQueryFunctionResource) Update(ctx context.Context, req resource
 		KnowledgeBases: kbs,
 	}
 
-	resBody, status, err := r.client.UpdateToolQueryFunction(state.ID.ValueString(), request)
+	resBody, status, err := r.client.UpdateToolQueryFunction(data.ID.ValueString(), request)
 	if err != nil {
-		resp.Diagnostics.AddError("API Error", fmt.Sprintf("Error making request: %v", err))
+		resp.Diagnostics.AddError("API Error", fmt.Sprintf("Error updating resource: %v", err))
 		return
 	}
-
 	if status >= 300 {
-		resp.Diagnostics.AddError("API Error", fmt.Sprintf("Non-successful HTTP status: %d\nResponse body: %s", status, string(resBody)))
+		resp.Diagnostics.AddError("API Error", fmt.Sprintf("HTTP %d: %s", status, string(resBody)))
 		return
 	}
 
@@ -294,8 +339,6 @@ func (r *VAPIToolQueryFunctionResource) Update(ctx context.Context, req resource
 		return
 	}
 
-	data.ID = types.StringValue(res.ID)
-	data.OrgID = types.StringValue(res.OrgID)
 	data.Description = types.StringValue(res.Function.Description)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
