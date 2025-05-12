@@ -3,7 +3,7 @@ package vapi
 // ToolFunctionRequest struct.
 type ToolFunctionRequest struct {
 	Destinations []Destination `json:"destinations,omitempty"`
-	Server       Server        `json:"server"`
+	Server       *Server       `json:"server"`
 	Function     Function      `json:"function"`
 	Type         string        `json:"type"`
 	Async        bool          `json:"async"`
@@ -15,11 +15,6 @@ type Destination struct {
 	Message                string `json:"message"`
 	Description            string `json:"description"`
 	NumberE164CheckEnabled bool   `json:"numberE164CheckEnabled"`
-}
-
-type Server struct {
-	URL    string `json:"url,omitempty"`
-	Secret string `json:"secret,omitempty"`
 }
 
 type Function struct {

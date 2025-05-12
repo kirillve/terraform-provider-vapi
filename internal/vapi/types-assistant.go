@@ -28,14 +28,13 @@ type CreateAssistantRequest struct {
 	VoicemailMessage             string             `json:"voicemailMessage,omitempty"`
 	EndCallMessage               string             `json:"endCallMessage,omitempty"`
 	Transcriber                  *Transcriber       `json:"transcriber,omitempty"`
-	ServerURL                    string             `json:"serverUrl,omitempty"`
-	ServerURLSecret              string             `json:"serverUrlSecret,omitempty"`
 	EndCallPhrases               []string           `json:"endCallPhrases,omitempty"`
 	MaxDurationSeconds           int64              `json:"maxDurationSeconds,omitempty"`
 	AnalysisPlan                 *AnalysisPlan      `json:"analysisPlan,omitempty"`
 	MessagePlan                  *MessagePlan       `json:"messagePlan,omitempty"`
 	StartSpeakingPlan            *StartSpeakingPlan `json:"startSpeakingPlan,omitempty"`
 	StopSpeakingPlan             *StopSpeakingPlan  `json:"stopSpeakingPlan,omitempty"`
+	Server                       *Server            `json:"server,omitempty"`
 }
 
 // Assistant struct.
@@ -67,8 +66,6 @@ type Assistant struct {
 	VoicemailMessage             string             `json:"voicemailMessage,omitempty"`
 	EndCallMessage               string             `json:"endCallMessage,omitempty"`
 	Transcriber                  *Transcriber       `json:"transcriber,omitempty"`
-	ServerURL                    string             `json:"serverUrl,omitempty"`
-	ServerURLSecret              string             `json:"serverUrlSecret,omitempty"`
 	ClientMessages               []string           `json:"clientMessages,omitempty"`
 	ServerMessages               []string           `json:"serverMessages,omitempty"`
 	EndCallPhrases               []string           `json:"endCallPhrases,omitempty"`
@@ -77,6 +74,13 @@ type Assistant struct {
 	MessagePlan                  *MessagePlan       `json:"messagePlan,omitempty"`
 	StartSpeakingPlan            *StartSpeakingPlan `json:"startSpeakingPlan,omitempty"`
 	StopSpeakingPlan             *StopSpeakingPlan  `json:"StopSpeakingPlan,omitempty"`
+	Server                       *Server            `json:"server,omitempty"`
+}
+
+type Server struct {
+	URL            string `json:"url,omitempty"`
+	Secret         string `json:"secret,omitempty"`
+	TimeoutSeconds int64  `json:"timeoutSeconds,omitempty"`
 }
 
 // StopSpeakingPlan struct.

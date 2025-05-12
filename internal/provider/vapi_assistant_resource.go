@@ -860,8 +860,12 @@ func mapVAPIAssistantRequest(data *VAPIAssistantResourceModel) vapi.CreateAssist
 			return nil
 		}(),
 
-		ServerURL:          data.ServerURL.ValueString(),
-		ServerURLSecret:    data.ServerURLSecret.ValueString(),
+		Server: &vapi.Server{
+			URL:            data.ServerURL.ValueString(),
+			Secret:         data.ServerURLSecret.ValueString(),
+			TimeoutSeconds: 20,
+		},
+
 		ClientMessages:     ElementsAsString(data.ClientMessages),
 		EndCallPhrases:     ElementsAsString(data.EndCallPhrases),
 		MaxDurationSeconds: data.MaxDurationSeconds.ValueInt64(),

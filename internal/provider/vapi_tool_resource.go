@@ -308,9 +308,10 @@ func (r *VAPIToolFunctionResource) Create(ctx context.Context, req resource.Crea
 		requestBody = vapi.ToolFunctionRequest{
 			Type:  "function",
 			Async: data.Async.ValueBool(),
-			Server: vapi.Server{
-				URL:    data.ServerURL.ValueString(),
-				Secret: data.ServerSecret.ValueString(),
+			Server: &vapi.Server{
+				URL:            data.ServerURL.ValueString(),
+				Secret:         data.ServerSecret.ValueString(),
+				TimeoutSeconds: 20,
 			},
 			Function: vapi.Function{
 				Name:        data.Name.ValueString(),
@@ -459,9 +460,10 @@ func (r *VAPIToolFunctionResource) Update(ctx context.Context, req resource.Upda
 		requestBody = vapi.ToolFunctionRequest{
 			Type:  "function",
 			Async: data.Async.ValueBool(),
-			Server: vapi.Server{
-				URL:    data.ServerURL.ValueString(),
-				Secret: data.ServerSecret.ValueString(),
+			Server: &vapi.Server{
+				URL:            data.ServerURL.ValueString(),
+				Secret:         data.ServerSecret.ValueString(),
+				TimeoutSeconds: 20,
 			},
 			Function: vapi.Function{
 				Name:        data.Name.ValueString(),

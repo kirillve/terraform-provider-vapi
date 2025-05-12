@@ -1,3 +1,8 @@
+## v0.8.1
+
+CHANGES:
+  - hot-fixed AI Assistant Server URL, Secret, and TimeoutSeconds 
+
 ## v0.8.0
 
 CHANGES:
