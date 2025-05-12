@@ -2,10 +2,19 @@ package vapi
 
 // ToolFunctionRequest struct.
 type ToolFunctionRequest struct {
-	Server   Server   `json:"server"`
-	Function Function `json:"function"`
-	Type     string   `json:"type"`
-	Async    bool     `json:"async"`
+	Destinations []Destination `json:"destinations,omitempty"`
+	Server       Server        `json:"server"`
+	Function     Function      `json:"function"`
+	Type         string        `json:"type"`
+	Async        bool          `json:"async"`
+}
+
+type Destination struct {
+	Type                   string `json:"type"`
+	Number                 string `json:"number"`
+	Message                string `json:"message"`
+	Description            string `json:"description"`
+	NumberE164CheckEnabled bool   `json:"numberE164CheckEnabled"`
 }
 
 type Server struct {
@@ -27,8 +36,9 @@ type FunctionParams struct {
 }
 
 type Property struct {
-	Type        string `json:"type"`
-	Description string `json:"description"`
+	Type        string   `json:"type"`
+	Description string   `json:"description"`
+	Enum        []string `json:"enum,omitempty"`
 }
 
 // ToolFunctionResponse struct.
@@ -57,8 +67,9 @@ type ResponseFunctionParams struct {
 }
 
 type ResponseProperty struct {
-	Description string `json:"description"`
-	Type        string `json:"type"`
+	Description string   `json:"description"`
+	Type        string   `json:"type"`
+	Enum        []string `json:"enum,omitempty"`
 }
 
 type ResponseServer struct {

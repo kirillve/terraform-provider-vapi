@@ -1,3 +1,8 @@
+## v0.8.0
+
+CHANGES:
+  - added tool transferCall support
+
 ## v0.7.0
 
 CHANGES:

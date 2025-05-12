@@ -27,18 +27,27 @@ type VAPIToolFunctionResource struct {
 	client *vapi.APIClient
 }
 
+type Destination struct {
+	Type                   types.String `tfsdk:"type"`
+	Number                 types.String `tfsdk:"number"`
+	Message                types.String `tfsdk:"message"`
+	Description            types.String `tfsdk:"description"`
+	NumberE164CheckEnabled types.Bool   `tfsdk:"number_e164_check_enabled"`
+}
+
 type VAPIToolFunctionResourceModel struct {
-	ID           types.String `tfsdk:"id"`
-	OrgID        types.String `tfsdk:"org_id"`
-	Name         types.String `tfsdk:"name"`
-	Description  types.String `tfsdk:"description"`
-	Async        types.Bool   `tfsdk:"async"`
-	Type         types.String `tfsdk:"type"`
-	ServerURL    types.String `tfsdk:"server_url"`
-	ServerSecret types.String `tfsdk:"server_secret"`
-	Parameters   Parameters   `tfsdk:"parameters"`
-	CreatedAt    types.String `tfsdk:"created_at"`
-	UpdatedAt    types.String `tfsdk:"updated_at"`
+	ID           types.String  `tfsdk:"id"`
+	OrgID        types.String  `tfsdk:"org_id"`
+	Name         types.String  `tfsdk:"name"`
+	Description  types.String  `tfsdk:"description"`
+	Async        types.Bool    `tfsdk:"async"`
+	Type         types.String  `tfsdk:"type"`
+	ServerURL    types.String  `tfsdk:"server_url"`
+	ServerSecret types.String  `tfsdk:"server_secret"`
+	Parameters   Parameters    `tfsdk:"parameters"`
+	Destinations []Destination `tfsdk:"destinations"`
+	CreatedAt    types.String  `tfsdk:"created_at"`
+	UpdatedAt    types.String  `tfsdk:"updated_at"`
 }
 
 type Parameters struct {
@@ -51,6 +60,7 @@ type Parameters struct {
 type Property struct {
 	Type        types.String `tfsdk:"type"`
 	Description types.String `tfsdk:"description"`
+	Enum        types.List   `tfsdk:"enum"`
 }
 
 func (r *VAPIToolFunctionResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -60,7 +70,6 @@ func (r *VAPIToolFunctionResource) Metadata(ctx context.Context, req resource.Me
 func (r *VAPIToolFunctionResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "Manages a function tool resource in the VAPI system.",
-
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:            true,
@@ -164,7 +173,43 @@ func (r *VAPIToolFunctionResource) Schema(ctx context.Context, req resource.Sche
 										stringplanmodifier.RequiresReplace(),
 									},
 								},
+								"enum": schema.ListAttribute{
+									Optional:            true,
+									ElementType:         types.StringType,
+									MarkdownDescription: "List of possible values for the property.",
+									PlanModifiers: []planmodifier.List{
+										listplanmodifier.RequiresReplace(),
+									},
+								},
 							},
+						},
+					},
+				},
+			},
+			"destinations": schema.ListNestedAttribute{
+				Optional:            true,
+				MarkdownDescription: "List of destinations to forward calls.",
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"type": schema.StringAttribute{
+							Required:            true,
+							MarkdownDescription: "The type of the destination (e.g., number).",
+						},
+						"number": schema.StringAttribute{
+							Required:            true,
+							MarkdownDescription: "The phone number to forward to.",
+						},
+						"message": schema.StringAttribute{
+							Required:            true,
+							MarkdownDescription: "Message to play before forwarding.",
+						},
+						"description": schema.StringAttribute{
+							Required:            true,
+							MarkdownDescription: "Description for the destination.",
+						},
+						"number_e164_check_enabled": schema.BoolAttribute{
+							Optional:            true,
+							MarkdownDescription: "Indicates whether to check the number for E.164 format.",
 						},
 					},
 				},
@@ -211,6 +256,7 @@ func (r *VAPIToolFunctionResource) Create(ctx context.Context, req resource.Crea
 		properties[key] = vapi.Property{
 			Type:        prop.Type.ValueString(),
 			Description: prop.Description.ValueString(),
+			Enum:        ElementsAsString(prop.Enum),
 		}
 	}
 
@@ -219,6 +265,34 @@ func (r *VAPIToolFunctionResource) Create(ctx context.Context, req resource.Crea
 		requestBody = vapi.ToolFunctionRequest{
 			Type:  data.Type.ValueString(),
 			Async: data.Async.ValueBool(),
+			Function: vapi.Function{
+				Name:        data.Name.ValueString(),
+				Description: data.Description.ValueString(),
+				Async:       data.Async.ValueBool(),
+				Parameters: &vapi.FunctionParams{
+					Type:       data.Parameters.Type.ValueString(),
+					Properties: properties,
+					Required:   ElementsAsString(data.Parameters.Required),
+				},
+			},
+		}
+	} else if data.Type.ValueString() == "transferCall" {
+		var destinations []vapi.Destination
+		if len(data.Destinations) > 0 {
+			for _, dst := range data.Destinations {
+				destinations = append(destinations, vapi.Destination{
+					Type:                   dst.Type.ValueString(),
+					Number:                 dst.Number.ValueString(),
+					Message:                dst.Message.ValueString(),
+					Description:            dst.Description.ValueString(),
+					NumberE164CheckEnabled: dst.NumberE164CheckEnabled.ValueBool(),
+				})
+			}
+		}
+		requestBody = vapi.ToolFunctionRequest{
+			Type:         data.Type.ValueString(),
+			Async:        data.Async.ValueBool(),
+			Destinations: destinations,
 			Function: vapi.Function{
 				Name:        data.Name.ValueString(),
 				Description: data.Description.ValueString(),
@@ -333,6 +407,7 @@ func (r *VAPIToolFunctionResource) Update(ctx context.Context, req resource.Upda
 		properties[key] = vapi.Property{
 			Type:        prop.Type.ValueString(),
 			Description: prop.Description.ValueString(),
+			Enum:        ElementsAsString(prop.Enum),
 		}
 	}
 
@@ -341,6 +416,34 @@ func (r *VAPIToolFunctionResource) Update(ctx context.Context, req resource.Upda
 		requestBody = vapi.ToolFunctionRequest{
 			Type:  data.Type.ValueString(),
 			Async: data.Async.ValueBool(),
+			Function: vapi.Function{
+				Name:        data.Name.ValueString(),
+				Description: data.Description.ValueString(),
+				Async:       data.Async.ValueBool(),
+				Parameters: &vapi.FunctionParams{
+					Type:       data.Parameters.Type.ValueString(),
+					Properties: properties,
+					Required:   ElementsAsString(data.Parameters.Required),
+				},
+			},
+		}
+	} else if data.Type.ValueString() == "transferCall" {
+		var destinations []vapi.Destination
+		if len(data.Destinations) > 0 {
+			for _, dst := range data.Destinations {
+				destinations = append(destinations, vapi.Destination{
+					Type:                   dst.Type.ValueString(),
+					Number:                 dst.Number.ValueString(),
+					Message:                dst.Message.ValueString(),
+					Description:            dst.Description.ValueString(),
+					NumberE164CheckEnabled: dst.NumberE164CheckEnabled.ValueBool(),
+				})
+			}
+		}
+		requestBody = vapi.ToolFunctionRequest{
+			Type:         data.Type.ValueString(),
+			Async:        data.Async.ValueBool(),
+			Destinations: destinations,
 			Function: vapi.Function{
 				Name:        data.Name.ValueString(),
 				Description: data.Description.ValueString(),
@@ -438,9 +541,16 @@ func bindVAPIToolFunctionResourceData(data *VAPIToolFunctionResourceModel, funct
 	}
 
 	for key, prop := range functionResponse.Function.Parameters.Properties {
+		enumList, diag := types.ListValueFrom(context.Background(), types.StringType, prop.Enum)
+		if diag.HasError() {
+			// Optionally log or handle diagnostics
+			continue
+		}
+
 		data.Parameters.Properties[key] = Property{
 			Type:        types.StringValue(prop.Type),
 			Description: types.StringValue(prop.Description),
+			Enum:        enumList,
 		}
 	}
 }

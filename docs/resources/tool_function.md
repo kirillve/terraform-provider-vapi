@@ -60,6 +60,7 @@ resource "vapi_tool_function" "test-vapi_tool_function" {
 
 ### Optional
 
+- `destinations` (Attributes List) List of destinations to forward calls. (see [below for nested schema](#nestedatt--destinations))
 - `server_secret` (String, Sensitive) The secret used to authenticate with the server.
 - `server_url` (String) The URL of the server where the function is hosted.
 
@@ -90,3 +91,20 @@ Required:
 Optional:
 
 - `description` (String) A description of the property.
+- `enum` (List of String) List of possible values for the property.
+
+
+
+<a id="nestedatt--destinations"></a>
+### Nested Schema for `destinations`
+
+Required:
+
+- `description` (String) Description for the destination.
+- `message` (String) Message to play before forwarding.
+- `number` (String) The phone number to forward to.
+- `type` (String) The type of the destination (e.g., number).
+
+Optional:
+
+- `number_e164_check_enabled` (Boolean) Indicates whether to check the number for E.164 format.
