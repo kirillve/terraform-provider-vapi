@@ -47,6 +47,7 @@ type VAPIAssistantResourceModel struct {
 	StopSpeakingPlan             *StopSpeakingPlanResourceModel  `tfsdk:"stop_speaking_plan"`
 	AnalysisPlan                 *AnalysisPlanResourceModel      `tfsdk:"analysis_plan"`
 	MessagePlan                  *MessagePlanResourceModel       `tfsdk:"message_plan"`
+	ArtifactPlan                 *ArtifactPlanResourceModel      `tfsdk:"artifact_plan"`
 	EndCallFunctionEnabled       types.Bool                      `tfsdk:"end_call_function_enabled"`
 	RecordingEnabled             types.Bool                      `tfsdk:"recording_enabled"`
 	ForwardingPhoneNumber        types.String                    `tfsdk:"forwarding_phone_number"`
@@ -66,6 +67,10 @@ type TranscriberResourceModel struct {
 	Provider types.String `tfsdk:"provider"`
 	Model    types.String `tfsdk:"model"`
 	Language types.String `tfsdk:"language"`
+}
+
+type ArtifactPlanResourceModel struct {
+	RecordingFormat types.String `tfsdk:"recording_format"`
 }
 
 type ModelResourceModel struct {
@@ -426,6 +431,17 @@ func (r *VAPIAssistantResource) Schema(ctx context.Context, req resource.SchemaR
 					"idle_messages": schema.ListAttribute{
 						ElementType:         types.StringType,
 						MarkdownDescription: "List of idle messages.",
+						Optional:            true,
+					},
+				},
+			},
+
+			"artifact_plan": schema.SingleNestedAttribute{
+				MarkdownDescription: "Configuration for artifact plan.",
+				Optional:            true,
+				Attributes: map[string]schema.Attribute{
+					"recording_format": schema.StringAttribute{
+						MarkdownDescription: "Recording format wav or mp3.",
 						Optional:            true,
 					},
 				},
@@ -912,6 +928,18 @@ func mapVAPIAssistantRequest(data *VAPIAssistantResourceModel) vapi.CreateAssist
 				}
 			}
 			return nil
+		}(),
+
+		ArtifactPlan: func() *vapi.ArtifactPlan {
+			var recordingFormat string
+			if len(data.ArtifactPlan.RecordingFormat.ValueString()) == 0 {
+				recordingFormat = "mp3"
+			} else {
+				recordingFormat = data.ArtifactPlan.RecordingFormat.ValueString()
+			}
+			return &vapi.ArtifactPlan{
+				RecordingFormat: recordingFormat,
+			}
 		}(),
 	}
 }

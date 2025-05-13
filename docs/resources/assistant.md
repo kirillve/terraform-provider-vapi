@@ -140,6 +140,7 @@ resource "vapi_assistant" "example_assistant" {
 ### Optional
 
 - `analysis_plan` (Attributes) Configuration for the analysis plan. (see [below for nested schema](#nestedatt--analysis_plan))
+- `artifact_plan` (Attributes) Configuration for artifact plan. (see [below for nested schema](#nestedatt--artifact_plan))
 - `background_denoising` (Boolean) Indicates whether background denoising is enabled.
 - `background_sound` (String) Background sound used during the call.
 - `client_messages` (List of String) List of messages from the client.
@@ -208,6 +209,14 @@ Optional:
 - `type` (String) Type of the property.
 
 
+
+
+<a id="nestedatt--artifact_plan"></a>
+### Nested Schema for `artifact_plan`
+
+Optional:
+
+- `recording_format` (String) Recording format wav or mp3.
 
 
 <a id="nestedatt--message_plan"></a>

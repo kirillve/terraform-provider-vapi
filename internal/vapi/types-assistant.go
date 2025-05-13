@@ -35,6 +35,7 @@ type CreateAssistantRequest struct {
 	StartSpeakingPlan            *StartSpeakingPlan `json:"startSpeakingPlan,omitempty"`
 	StopSpeakingPlan             *StopSpeakingPlan  `json:"stopSpeakingPlan,omitempty"`
 	Server                       *Server            `json:"server,omitempty"`
+	ArtifactPlan                 *ArtifactPlan      `json:"artifactPlan,omitempty"`
 }
 
 // Assistant struct.
@@ -75,6 +76,11 @@ type Assistant struct {
 	StartSpeakingPlan            *StartSpeakingPlan `json:"startSpeakingPlan,omitempty"`
 	StopSpeakingPlan             *StopSpeakingPlan  `json:"StopSpeakingPlan,omitempty"`
 	Server                       *Server            `json:"server,omitempty"`
+	ArtifactPlan                 *ArtifactPlan      `json:"artifactPlan,omitempty"`
+}
+
+type ArtifactPlan struct {
+	RecordingFormat string `json:"recordingFormat,omitempty"`
 }
 
 type Server struct {

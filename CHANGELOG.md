@@ -1,3 +1,8 @@
+## v0.8.2
+
+CHANGES:
+  - added artifacts_plan with recording format 
+
 ## v0.8.1
 
 CHANGES:
