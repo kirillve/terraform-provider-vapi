@@ -167,6 +167,7 @@ func (r *VAPIToolQueryFunctionResource) Create(ctx context.Context, req resource
 	}
 
 	request := vapi.ToolQueryFunctionRequest{
+		Type: "query",
 		Function: vapi.Function{
 			Name:        data.Name.ValueString(),
 			Description: data.Description.ValueString(),
@@ -263,7 +264,8 @@ func (r *VAPIToolQueryFunctionResource) Read(ctx context.Context, req resource.R
 }
 
 func (r *VAPIToolQueryFunctionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data VAPIToolQueryFunctionResourceModel
+	var data, state VAPIToolQueryFunctionResourceModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -323,7 +325,7 @@ func (r *VAPIToolQueryFunctionResource) Update(ctx context.Context, req resource
 		KnowledgeBases: kbs,
 	}
 
-	resBody, status, err := r.client.UpdateToolQueryFunction(data.ID.ValueString(), request)
+	resBody, status, err := r.client.UpdateToolQueryFunction(state.ID.ValueString(), request)
 	if err != nil {
 		resp.Diagnostics.AddError("API Error", fmt.Sprintf("Error updating resource: %v", err))
 		return

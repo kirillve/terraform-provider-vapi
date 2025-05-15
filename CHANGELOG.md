@@ -1,3 +1,8 @@
+## v0.8.3
+
+CHANGES:
+  - fixed tool query 
+
 ## v0.8.2
 
 CHANGES:

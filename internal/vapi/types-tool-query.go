@@ -5,7 +5,6 @@ type ToolQueryFunctionRequest struct {
 	Function       Function          `json:"function"`
 	KnowledgeBases []TQKnowledgeBase `json:"knowledgeBases"`
 	Type           string            `json:"type,omitempty"`
-	Async          bool              `json:"async"`
 }
 
 type ToolQueryFunctionResponse struct {
