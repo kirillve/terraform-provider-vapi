@@ -107,4 +107,5 @@ Required:
 
 Optional:
 
+- `extension` (String) The phone number extension to forward to.
 - `number_e164_check_enabled` (Boolean) Indicates whether to check the number for E.164 format.

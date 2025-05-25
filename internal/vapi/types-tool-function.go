@@ -12,6 +12,7 @@ type ToolFunctionRequest struct {
 type Destination struct {
 	Type                   string `json:"type"`
 	Number                 string `json:"number"`
+	Extension              string `json:"extension"`
 	Message                string `json:"message"`
 	Description            string `json:"description"`
 	NumberE164CheckEnabled bool   `json:"numberE164CheckEnabled"`

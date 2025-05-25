@@ -819,9 +819,14 @@ func mapVAPIAssistantRequest(data *VAPIAssistantResourceModel) vapi.CreateAssist
 		Keywords:                     ElementsAsString(data.Keywords),
 		ServerMessages:               ElementsAsString(data.ServerMessages),
 
-		MessagePlan: &vapi.MessagePlan{
-			IdleMessages: ElementsAsString(data.MessagePlan.IdleMessages),
-		},
+		MessagePlan: func() *vapi.MessagePlan {
+			if data.MessagePlan != nil {
+				return &vapi.MessagePlan{
+					IdleMessages: ElementsAsString(data.MessagePlan.IdleMessages),
+				}
+			}
+			return nil
+		}(),
 
 		Voice: func() *vapi.Voice {
 			if data.Voice != nil {

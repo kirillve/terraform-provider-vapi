@@ -30,6 +30,7 @@ type VAPIToolFunctionResource struct {
 type Destination struct {
 	Type                   types.String `tfsdk:"type"`
 	Number                 types.String `tfsdk:"number"`
+	Extension              types.String `tfsdk:"extension"`
 	Message                types.String `tfsdk:"message"`
 	Description            types.String `tfsdk:"description"`
 	NumberE164CheckEnabled types.Bool   `tfsdk:"number_e164_check_enabled"`
@@ -198,6 +199,10 @@ func (r *VAPIToolFunctionResource) Schema(ctx context.Context, req resource.Sche
 						"number": schema.StringAttribute{
 							Required:            true,
 							MarkdownDescription: "The phone number to forward to.",
+						},
+						"extension": schema.StringAttribute{
+							Optional:            true,
+							MarkdownDescription: "The phone number extension to forward to.",
 						},
 						"message": schema.StringAttribute{
 							Required:            true,
@@ -435,6 +440,7 @@ func (r *VAPIToolFunctionResource) Update(ctx context.Context, req resource.Upda
 				destinations = append(destinations, vapi.Destination{
 					Type:                   dst.Type.ValueString(),
 					Number:                 dst.Number.ValueString(),
+					Extension:              dst.Extension.ValueString(),
 					Message:                dst.Message.ValueString(),
 					Description:            dst.Description.ValueString(),
 					NumberE164CheckEnabled: dst.NumberE164CheckEnabled.ValueBool(),
