@@ -936,15 +936,18 @@ func mapVAPIAssistantRequest(data *VAPIAssistantResourceModel) vapi.CreateAssist
 		}(),
 
 		ArtifactPlan: func() *vapi.ArtifactPlan {
-			var recordingFormat string
-			if len(data.ArtifactPlan.RecordingFormat.ValueString()) == 0 {
-				recordingFormat = "mp3"
-			} else {
-				recordingFormat = data.ArtifactPlan.RecordingFormat.ValueString()
+			if data.ArtifactPlan != nil {
+				var recordingFormat string
+				if len(data.ArtifactPlan.RecordingFormat.ValueString()) == 0 {
+					recordingFormat = "mp3"
+				} else {
+					recordingFormat = data.ArtifactPlan.RecordingFormat.ValueString()
+				}
+				return &vapi.ArtifactPlan{
+					RecordingFormat: recordingFormat,
+				}
 			}
-			return &vapi.ArtifactPlan{
-				RecordingFormat: recordingFormat,
-			}
+			return nil
 		}(),
 	}
 }

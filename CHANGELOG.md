@@ -1,8 +1,13 @@
+## v0.9.1
+
+CHANGES:
+  - fixed assistant provider bug
+
 ## v0.9.0
 
 CHANGES:
   - added extension to destinations 
-  - fixed assistant provider bug 
+  - fixed assistant provider bug
 
 ## v0.8.3
 
