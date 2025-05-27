@@ -11,7 +11,7 @@ terraform {
   required_providers {
     vapi = {
       source  = "kirillve/vapi"
-      version = "0.9.3"
+      version = "0.9.4"
     }
   }
 }
