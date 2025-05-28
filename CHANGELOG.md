@@ -1,8 +1,3 @@
-## v0.9.6
-
-CHANGES:
-  - fixed tool provider bug
-
 ## v0.9.5
 
 CHANGES:
