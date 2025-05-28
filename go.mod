@@ -1,6 +1,6 @@
 module github.com/kirillve/terraform-provider-vapi
 
-go 1.24.0
+go 1.23.0
 
 require (
 	github.com/hashicorp/terraform-plugin-framework v1.15.0
