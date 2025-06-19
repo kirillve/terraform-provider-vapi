@@ -220,7 +220,7 @@ func (r *VAPISIPTrunkResource) ImportState(ctx context.Context, req resource.Imp
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }
 
-// Helpers
+// Helpers.
 func convertGateways(models []SIPGatewayModel) []vapi.SIPGateway {
 	var out []vapi.SIPGateway
 	for _, m := range models {
