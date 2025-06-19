@@ -250,3 +250,49 @@ func (c *APIClient) DeleteAssistant(id string) ([]byte, int, error) {
 	endpoint := fmt.Sprintf("assistant/%s", id)
 	return c.SendRequest("DELETE", endpoint, nil)
 }
+
+// CreateSIPTrunk creates a new assistant.
+func (c *APIClient) CreateSIPTrunk(requestData ImportSIPTrunkRequest) ([]byte, int, error) {
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(requestData); err != nil {
+		return nil, http.StatusInternalServerError, fmt.Errorf("failed to encode request data: %v", err)
+	}
+
+	return c.SendRequest("POST", "credential", requestData)
+}
+
+// UpdateSIPTrunk updates assistant.
+func (c *APIClient) UpdateSIPTrunk(id string, requestData ImportSIPTrunkRequest) ([]byte, int, error) {
+
+	if id == "" {
+		return nil, http.StatusNotFound, fmt.Errorf("ID cannot be empty")
+	}
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(requestData); err != nil {
+		return nil, http.StatusInternalServerError, fmt.Errorf("failed to encode request data: %v", err)
+	}
+
+	endpoint := fmt.Sprintf("credential/%s", id)
+	return c.SendRequest("PATCH", endpoint, requestData)
+}
+
+// GetSIPTrunk retrieves the details of a specific assistant by ID.
+func (c *APIClient) GetSIPTrunk(id string) ([]byte, int, error) {
+	if id == "" {
+		return nil, http.StatusNotFound, fmt.Errorf("ID cannot be empty")
+	}
+
+	endpoint := fmt.Sprintf("credential/%s", id)
+	return c.SendRequest("GET", endpoint, nil)
+}
+
+// DeleteSIPTrunk deletes an existing assistant by ID.
+func (c *APIClient) DeleteSIPTrunk(id string) ([]byte, int, error) {
+	if id == "" {
+		return nil, http.StatusNotFound, fmt.Errorf("ID cannot be empty")
+	}
+
+	endpoint := fmt.Sprintf("credential/%s", id)
+	return c.SendRequest("DELETE", endpoint, nil)
+}

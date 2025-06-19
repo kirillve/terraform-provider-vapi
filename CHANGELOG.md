@@ -1,3 +1,8 @@
+## v0.10.0
+
+CHANGES:
+  - added SIP trunk support
+
 ## v0.9.5
 
 CHANGES:
