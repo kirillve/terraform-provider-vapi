@@ -1,3 +1,8 @@
+## v0.11.0
+
+CHANGES:
+  - added SIP trunk phone number support
+
 ## v0.10.0
 
 CHANGES:

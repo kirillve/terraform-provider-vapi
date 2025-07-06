@@ -150,6 +150,11 @@ func (c *APIClient) DeletePhoneNumber(id string) ([]byte, int, error) {
 	return c.SendRequest("DELETE", endpoint, nil)
 }
 
+// ImportSIPTrunkPhoneNumber requests the creation of a new phone number.
+func (c *APIClient) ImportSIPTrunkPhoneNumber(requestData ImportSIPTrunkPhoneNumberRequest) ([]byte, int, error) {
+	return c.SendRequest("POST", "phone-number", requestData)
+}
+
 // CreateToolQueryFunction method.
 func (c *APIClient) CreateToolQueryFunction(requestData ToolQueryFunctionRequest) ([]byte, int, error) {
 	return c.SendRequest("POST", "tool", requestData)

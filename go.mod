@@ -1,6 +1,6 @@
 module github.com/kirillve/terraform-provider-vapi
 
-go 1.23.0
+go 1.24.0
 
 require (
 	github.com/hashicorp/terraform-plugin-framework v1.15.0
@@ -48,7 +48,7 @@ require (
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
-	github.com/oklog/run v1.1.0 // indirect
+	github.com/oklog/run v1.2.0 // indirect
 	github.com/posener/complete v1.2.3 // indirect
 	github.com/shopspring/decimal v1.3.1 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
