@@ -58,8 +58,12 @@ func (c *APIClient) UploadData(fieldName, filename string, content []byte) ([]by
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 
 	// Send the request
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	httpClient := c.HTTPClient
+	if httpClient == nil {
+		httpClient = &http.Client{}
+	}
+
+	resp, err := httpClient.Do(req)
 	if err != nil {
 		return nil, 0, fmt.Errorf("error sending request: %v", err)
 	}

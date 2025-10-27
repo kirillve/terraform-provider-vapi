@@ -1,3 +1,8 @@
+## v0.12.0-rc1
+
+CHANGES:
+- added tests
+
 ## v0.11.0
 
 CHANGES:
