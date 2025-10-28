@@ -231,48 +231,50 @@ func (r *VAPITwilioPhoneNumberResource) Read(ctx context.Context, req resource.R
 }
 
 func (r *VAPITwilioPhoneNumberResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data VAPITwilioPhoneNumberResourceModel
-	var phoneNumberResp vapi.TwilioPhoneNumber
+	var state VAPITwilioPhoneNumberResourceModel
+	var plan VAPITwilioPhoneNumberResourceModel
 
-	_, _, err := r.client.DeletePhoneNumber(data.ID.ValueString())
-	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Update :: Unable to delete phone number: %s", err))
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	requestData := vapi.ImportTwilioRequest{
 		Provider:         "twilio",
-		Name:             data.Name.ValueString(),
-		Number:           data.Number.ValueString(),
-		TwilioAccountSID: data.TwilioAccountSid.ValueString(),
-		TwilioAuthToken:  data.TwilioAuthToken.ValueString(),
-		AssistantID:      data.AssistantID.ValueString(),
+		Name:             plan.Name.ValueString(),
+		Number:           plan.Number.ValueString(),
+		TwilioAccountSID: plan.TwilioAccountSid.ValueString(),
+		TwilioAuthToken:  plan.TwilioAuthToken.ValueString(),
+		AssistantID:      plan.AssistantID.ValueString(),
 		Fallback: &vapi.FallbackDestination{
-			Type:                   data.FallbackType.ValueString(),
-			NumberE164CheckEnabled: data.FallbackE164CheckEnabled.ValueString() == "true",
-			Number:                 data.FallbackNumber.ValueString(),
-			Extension:              data.FallbackExtension.ValueString(),
-			Message:                data.FallbackMessage.ValueString(),
-			Description:            data.FallbackDescription.ValueString(),
+			Type:                   plan.FallbackType.ValueString(),
+			NumberE164CheckEnabled: plan.FallbackE164CheckEnabled.ValueString() == "true",
+			Number:                 plan.FallbackNumber.ValueString(),
+			Extension:              plan.FallbackExtension.ValueString(),
+			Message:                plan.FallbackMessage.ValueString(),
+			Description:            plan.FallbackDescription.ValueString(),
 		},
 	}
 
-	response, responseCode, err := r.client.ImportTwilioPhoneNumber(requestData)
+	response, responseCode, err := r.client.UpdatePhoneNumber(state.ID.ValueString(), requestData)
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Update :: Unable to create phone number: %s", err))
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update phone number: %s", err))
 		return
 	}
 
-	if responseCode >= 200 && responseCode < 300 {
-		if err := json.Unmarshal(response, &phoneNumberResp); err != nil {
-			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Update :: Unable to unmarshal response: %s", err))
-			return
-		}
-	} else {
+	if responseCode < 200 || responseCode >= 300 {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to parse response [%d]: %s", responseCode, string(response)))
 		return
 	}
 
+	var phoneNumberResp vapi.TwilioPhoneNumber
+	if err := json.Unmarshal(response, &phoneNumberResp); err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Update :: Unable to unmarshal response: %s", err))
+		return
+	}
+
+	data := plan
 	bindVAPIPhoneNumberResourceData(&data, &phoneNumberResp)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

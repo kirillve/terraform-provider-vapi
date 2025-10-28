@@ -154,6 +154,15 @@ func (c *APIClient) DeletePhoneNumber(id string) ([]byte, int, error) {
 	return c.SendRequest("DELETE", endpoint, nil)
 }
 
+// UpdatePhoneNumber updates a phone number by ID.
+func (c *APIClient) UpdatePhoneNumber(id string, requestData interface{}) ([]byte, int, error) {
+	if len(id) == 0 {
+		return []byte{}, 404, nil
+	}
+	endpoint := fmt.Sprintf("phone-number/%s", id)
+	return c.SendRequest("PATCH", endpoint, requestData)
+}
+
 // ImportSIPTrunkPhoneNumber requests the creation of a new phone number.
 func (c *APIClient) ImportSIPTrunkPhoneNumber(requestData ImportSIPTrunkPhoneNumberRequest) ([]byte, int, error) {
 	return c.SendRequest("POST", "phone-number", requestData)

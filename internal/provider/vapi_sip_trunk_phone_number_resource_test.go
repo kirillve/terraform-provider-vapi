@@ -46,8 +46,7 @@ func TestVAPISIPTrunkPhoneNumberResourceLifecycle(t *testing.T) {
 		responses: []queuedResponse{
 			{method: http.MethodPost, path: "/phone-number", status: 200, body: createResp},
 			{method: http.MethodGet, path: "/phone-number/sip-pn-1", status: 200, body: createResp},
-			{method: http.MethodDelete, path: "/phone-number/sip-pn-1", status: 200, body: []byte(`{}`)},
-			{method: http.MethodPost, path: "/phone-number", status: 200, body: updateResp},
+			{method: http.MethodPatch, path: "/phone-number/sip-pn-1", status: 200, body: updateResp},
 			{method: http.MethodDelete, path: "/phone-number/sip-pn-1", status: 200, body: []byte(`{}`)},
 		},
 	}
@@ -90,8 +89,6 @@ func TestVAPISIPTrunkPhoneNumberResourceLifecycle(t *testing.T) {
 
 	updatePlan := tfsdk.Plan{Schema: schemaResp.Schema}
 	updatedModel := sipPhoneModel("sip-number-updated", false)
-	updatedModel.ID = types.StringValue("sip-pn-1")
-	updatedModel.OrgID = types.StringValue("org-1")
 	if diags := updatePlan.Set(ctx, updatedModel); diags.HasError() {
 		t.Fatalf("update plan diagnostics: %v", diags)
 	}

@@ -36,3 +36,5 @@ tmp
 .gocache
 /coverage.out
 /AGENTS.md
+/foo.txt
+/CLAUDE.md

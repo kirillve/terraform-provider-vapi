@@ -185,7 +185,6 @@ func TestVAPIToolFunctionResourceCreateVariants(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			ctx := context.Background()
 			respBody := mustMarshal(t, vapi.ToolFunctionResponse{

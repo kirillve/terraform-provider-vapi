@@ -24,7 +24,6 @@ func TestResourceSchemaAndMetadata(t *testing.T) {
 	}
 
 	for _, res := range resources {
-		res := res
 		t.Run(fmt.Sprintf("%T", res), func(t *testing.T) {
 			metaResp := &resource.MetadataResponse{}
 			res.Metadata(ctx, resource.MetadataRequest{ProviderTypeName: "vapi"}, metaResp)

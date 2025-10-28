@@ -77,10 +77,11 @@ func TestConvenienceEndpoints(t *testing.T) {
 	qt := &queueTransport{t: t}
 
 	qt.enqueue("GET /file/file-1", http.StatusOK, `{}`)
-	qt.enqueue("DELETE /file/file-1", http.StatusOK, `{}`)
-	qt.enqueue("POST /phone-number", http.StatusOK, `{}`)
+	qt.enqueue("DELETE /file/file-1", http.StatusNoContent, `{}`)
+	qt.enqueue("POST /phone-number", http.StatusCreated, `{}`)
 	qt.enqueue("DELETE /phone-number/pn", http.StatusOK, `{}`)
-	qt.enqueue("POST /tool", http.StatusOK, `{}`)
+	qt.enqueue("PATCH /phone-number/pn-update", http.StatusOK, `{}`)
+	qt.enqueue("POST /tool", http.StatusCreated, `{}`)
 	qt.enqueue("GET /tool/tool", http.StatusOK, `{}`)
 	qt.enqueue("DELETE /tool/tool", http.StatusOK, `{}`)
 	qt.enqueue("POST /tool", http.StatusOK, `{}`)
@@ -106,25 +107,66 @@ func TestConvenienceEndpoints(t *testing.T) {
 		t.Fatalf("expected 404 short circuit, got status %d err %v", status, err)
 	}
 
-	client.GetFile("file-1")
-	client.DeleteFile("file-1")
-	client.ImportTwilioPhoneNumber(ImportTwilioRequest{})
-	client.DeletePhoneNumber("pn")
-	client.CreateToolFunction(ToolFunctionRequest{})
-	client.GetToolFunction("tool")
-	client.DeleteToolFunction("tool")
-	client.CreateToolQueryFunction(ToolQueryFunctionRequest{})
-	client.UpdateToolQueryFunction("tool", ToolQueryFunctionRequest{})
-	client.DeleteToolQueryFunction("tool")
-	client.CreateAssistant(CreateAssistantRequest{})
-	client.UpdateAssistant("assistant", CreateAssistantRequest{})
-	client.GetAssistant("assistant")
-	client.DeleteAssistant("assistant")
-	client.CreateSIPTrunk(ImportSIPTrunkRequest{})
-	client.UpdateSIPTrunk("trunk", ImportSIPTrunkRequest{})
-	client.GetSIPTrunk("trunk")
-	client.DeleteSIPTrunk("trunk")
-	client.ImportSIPTrunkPhoneNumber(ImportSIPTrunkPhoneNumberRequest{})
+	if _, status, err := client.GetFile("file-1"); err != nil || status < 200 || status >= 300 {
+		t.Fatalf("GetFile unexpected status %d err %v", status, err)
+	}
+	if _, status, err := client.DeleteFile("file-1"); err != nil || status < 200 || status >= 300 {
+		t.Fatalf("DeleteFile unexpected status %d err %v", status, err)
+	}
+	if _, status, err := client.ImportTwilioPhoneNumber(ImportTwilioRequest{}); err != nil || status < 200 || status >= 300 {
+		t.Fatalf("ImportTwilioPhoneNumber unexpected status %d err %v", status, err)
+	}
+	if _, status, err := client.DeletePhoneNumber("pn"); err != nil || status < 200 || status >= 300 {
+		t.Fatalf("DeletePhoneNumber unexpected status %d err %v", status, err)
+	}
+	if _, status, err := client.UpdatePhoneNumber("pn-update", struct{}{}); err != nil || status < 200 || status >= 300 {
+		t.Fatalf("UpdatePhoneNumber unexpected status %d err %v", status, err)
+	}
+	if _, status, err := client.CreateToolFunction(ToolFunctionRequest{}); err != nil || status < 200 || status >= 300 {
+		t.Fatalf("CreateToolFunction unexpected status %d err %v", status, err)
+	}
+	if _, status, err := client.GetToolFunction("tool"); err != nil || status < 200 || status >= 300 {
+		t.Fatalf("GetToolFunction unexpected status %d err %v", status, err)
+	}
+	if _, status, err := client.DeleteToolFunction("tool"); err != nil || status < 200 || status >= 300 {
+		t.Fatalf("DeleteToolFunction unexpected status %d err %v", status, err)
+	}
+	if _, status, err := client.CreateToolQueryFunction(ToolQueryFunctionRequest{}); err != nil || status < 200 || status >= 300 {
+		t.Fatalf("CreateToolQueryFunction unexpected status %d err %v", status, err)
+	}
+	if _, status, err := client.UpdateToolQueryFunction("tool", ToolQueryFunctionRequest{}); err != nil || status < 200 || status >= 300 {
+		t.Fatalf("UpdateToolQueryFunction unexpected status %d err %v", status, err)
+	}
+	if _, status, err := client.DeleteToolQueryFunction("tool"); err != nil || status < 200 || status >= 300 {
+		t.Fatalf("DeleteToolQueryFunction unexpected status %d err %v", status, err)
+	}
+	if _, status, err := client.CreateAssistant(CreateAssistantRequest{}); err != nil || status < 200 || status >= 300 {
+		t.Fatalf("CreateAssistant unexpected status %d err %v", status, err)
+	}
+	if _, status, err := client.UpdateAssistant("assistant", CreateAssistantRequest{}); err != nil || status < 200 || status >= 300 {
+		t.Fatalf("UpdateAssistant unexpected status %d err %v", status, err)
+	}
+	if _, status, err := client.GetAssistant("assistant"); err != nil || status < 200 || status >= 300 {
+		t.Fatalf("GetAssistant unexpected status %d err %v", status, err)
+	}
+	if _, status, err := client.DeleteAssistant("assistant"); err != nil || status < 200 || status >= 300 {
+		t.Fatalf("DeleteAssistant unexpected status %d err %v", status, err)
+	}
+	if _, status, err := client.CreateSIPTrunk(ImportSIPTrunkRequest{}); err != nil || status < 200 || status >= 300 {
+		t.Fatalf("CreateSIPTrunk unexpected status %d err %v", status, err)
+	}
+	if _, status, err := client.UpdateSIPTrunk("trunk", ImportSIPTrunkRequest{}); err != nil || status < 200 || status >= 300 {
+		t.Fatalf("UpdateSIPTrunk unexpected status %d err %v", status, err)
+	}
+	if _, status, err := client.GetSIPTrunk("trunk"); err != nil || status < 200 || status >= 300 {
+		t.Fatalf("GetSIPTrunk unexpected status %d err %v", status, err)
+	}
+	if _, status, err := client.DeleteSIPTrunk("trunk"); err != nil || status < 200 || status >= 300 {
+		t.Fatalf("DeleteSIPTrunk unexpected status %d err %v", status, err)
+	}
+	if _, status, err := client.ImportSIPTrunkPhoneNumber(ImportSIPTrunkPhoneNumberRequest{}); err != nil || status < 200 || status >= 300 {
+		t.Fatalf("ImportSIPTrunkPhoneNumber unexpected status %d err %v", status, err)
+	}
 
 	qt.assertExhausted()
 }

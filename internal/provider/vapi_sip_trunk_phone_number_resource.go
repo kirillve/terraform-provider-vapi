@@ -186,27 +186,24 @@ func (r *VAPISIPTrunkPhoneNumberResource) Read(ctx context.Context, req resource
 
 // Update deletes and recreates the SIP trunk phone number.
 func (r *VAPISIPTrunkPhoneNumberResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data VAPISIPTrunkPhoneNumberResourceModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
+	var state VAPISIPTrunkPhoneNumberResourceModel
+	var plan VAPISIPTrunkPhoneNumberResourceModel
 
-	_, _, err := r.client.DeletePhoneNumber(data.ID.ValueString())
-	if err != nil {
-		resp.Diagnostics.AddError("Delete Error", fmt.Sprintf("Unable to delete SIP phone number: %s", err))
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	requestData := vapi.ImportSIPTrunkPhoneNumberRequest{
 		Provider:               "byo-phone-number",
-		Name:                   data.Name.ValueString(),
-		Number:                 data.Number.ValueString(),
-		CredentialID:           data.CredentialID.ValueString(),
-		NumberE164CheckEnabled: data.NumberE164CheckEnabled.ValueBool(),
+		Name:                   plan.Name.ValueString(),
+		Number:                 plan.Number.ValueString(),
+		CredentialID:           plan.CredentialID.ValueString(),
+		NumberE164CheckEnabled: plan.NumberE164CheckEnabled.ValueBool(),
 	}
 
-	response, responseCode, err := r.client.ImportSIPTrunkPhoneNumber(requestData)
+	response, responseCode, err := r.client.UpdatePhoneNumber(state.ID.ValueString(), requestData)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update SIP phone number: %s", err))
 		return
@@ -223,6 +220,7 @@ func (r *VAPISIPTrunkPhoneNumberResource) Update(ctx context.Context, req resour
 		return
 	}
 
+	data := plan
 	bindSIPPhoneNumberResponse(&data, &sipResp)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
