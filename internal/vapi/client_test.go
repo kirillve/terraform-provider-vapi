@@ -83,6 +83,7 @@ func TestConvenienceEndpoints(t *testing.T) {
 	qt.enqueue("PATCH /phone-number/pn-update", http.StatusOK, `{"id":"pn-update"}`)
 	qt.enqueue("POST /tool", http.StatusCreated, `{"id":"tool-1"}`)
 	qt.enqueue("GET /tool/tool", http.StatusOK, `{"id":"tool"}`)
+	qt.enqueue("PATCH /tool/tool", http.StatusOK, `{"id":"tool"}`)
 	qt.enqueue("DELETE /tool/tool", http.StatusOK, ``)
 	qt.enqueue("POST /tool", http.StatusOK, `{"id":"tool-2"}`)
 	qt.enqueue("PATCH /tool/tool", http.StatusOK, `{"id":"tool"}`)
@@ -127,6 +128,9 @@ func TestConvenienceEndpoints(t *testing.T) {
 	}
 	if _, status, err := client.GetToolFunction("tool"); err != nil || status < 200 || status >= 300 {
 		t.Fatalf("GetToolFunction unexpected status %d err %v", status, err)
+	}
+	if _, status, err := client.UpdateToolFunction("tool", ToolFunctionRequest{}); err != nil || status < 200 || status >= 300 {
+		t.Fatalf("UpdateToolFunction unexpected status %d err %v", status, err)
 	}
 	if _, status, err := client.DeleteToolFunction("tool"); err != nil || status < 200 || status >= 300 {
 		t.Fatalf("DeleteToolFunction unexpected status %d err %v", status, err)

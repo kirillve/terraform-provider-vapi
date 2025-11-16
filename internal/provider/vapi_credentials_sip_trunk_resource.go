@@ -125,15 +125,7 @@ func (r *VAPISIPTrunkResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
-	trunkReq := vapi.ImportSIPTrunkRequest{
-		Provider:                   data.SIPProvider.ValueString(),
-		Name:                       data.Name.ValueString(),
-		Gateways:                   convertGateways(data.Gateways),
-		OutboundAuthenticationPlan: convertAuthPlan(data.OutboundAuthenticationPlan),
-		OutboundLeadingPlusEnabled: data.OutboundLeadingPlusEnabled.ValueBool(),
-		TechPrefix:                 data.TechPrefix.ValueString(),
-		SIPDiversionHeader:         data.SIPDiversionHeader.ValueString(),
-	}
+	trunkReq := buildSIPTrunkRequest(&data)
 
 	respBytes, status, err := r.client.CreateSIPTrunk(trunkReq)
 	if err != nil || status >= 400 {
@@ -141,13 +133,13 @@ func (r *VAPISIPTrunkResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
-	var created vapi.TwilioPhoneNumber // replace with actual SIPTrunkResponse if you define one
+	var created vapi.SIPTrunk
 	if err := json.Unmarshal(respBytes, &created); err != nil {
 		resp.Diagnostics.AddError("Unmarshal Error", err.Error())
 		return
 	}
 
-	data.ID = types.StringValue(created.ID)
+	bindVAPISIPTrunkResourceData(&data, &created)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -168,39 +160,42 @@ func (r *VAPISIPTrunkResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 
-	var fetched vapi.TwilioPhoneNumber
+	var fetched vapi.SIPTrunk
 	if err := json.Unmarshal(respBytes, &fetched); err != nil {
 		resp.Diagnostics.AddWarning("Unmarshal Warning", err.Error())
 		return
 	}
 
+	bindVAPISIPTrunkResourceData(&data, &fetched)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *VAPISIPTrunkResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data VAPISIPTrunkResourceModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var state VAPISIPTrunkResourceModel
+	var plan VAPISIPTrunkResourceModel
+
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	trunkReq := vapi.ImportSIPTrunkRequest{
-		Provider:                   data.SIPProvider.ValueString(),
-		Name:                       data.Name.ValueString(),
-		Gateways:                   convertGateways(data.Gateways),
-		OutboundAuthenticationPlan: convertAuthPlan(data.OutboundAuthenticationPlan),
-		OutboundLeadingPlusEnabled: data.OutboundLeadingPlusEnabled.ValueBool(),
-		TechPrefix:                 data.TechPrefix.ValueString(),
-		SIPDiversionHeader:         data.SIPDiversionHeader.ValueString(),
-	}
+	trunkReq := buildSIPTrunkRequest(&plan)
 
-	_, status, err := r.client.UpdateSIPTrunk(data.ID.ValueString(), trunkReq)
+	respBytes, status, err := r.client.UpdateSIPTrunk(state.ID.ValueString(), trunkReq)
 	if err != nil || status >= 400 {
 		resp.Diagnostics.AddError("Update Failed", fmt.Sprintf("Status: %d, Error: %v", status, err))
 		return
 	}
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	var updated vapi.SIPTrunk
+	if err := json.Unmarshal(respBytes, &updated); err != nil {
+		resp.Diagnostics.AddError("Unmarshal Error", err.Error())
+		return
+	}
+
+	bindVAPISIPTrunkResourceData(&plan, &updated)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (r *VAPISIPTrunkResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -218,6 +213,71 @@ func (r *VAPISIPTrunkResource) Delete(ctx context.Context, req resource.DeleteRe
 
 func (r *VAPISIPTrunkResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+}
+
+func buildSIPTrunkRequest(model *VAPISIPTrunkResourceModel) vapi.ImportSIPTrunkRequest {
+	return vapi.ImportSIPTrunkRequest{
+		Provider:                   model.SIPProvider.ValueString(),
+		Name:                       model.Name.ValueString(),
+		Gateways:                   convertGateways(model.Gateways),
+		OutboundAuthenticationPlan: convertAuthPlan(model.OutboundAuthenticationPlan),
+		OutboundLeadingPlusEnabled: model.OutboundLeadingPlusEnabled.ValueBool(),
+		TechPrefix:                 model.TechPrefix.ValueString(),
+		SIPDiversionHeader:         model.SIPDiversionHeader.ValueString(),
+	}
+}
+
+func bindVAPISIPTrunkResourceData(model *VAPISIPTrunkResourceModel, trunk *vapi.SIPTrunk) {
+	if trunk == nil {
+		return
+	}
+
+	model.ID = types.StringValue(trunk.ID)
+	model.SIPProvider = types.StringValue(trunk.Provider)
+	model.Name = types.StringValue(trunk.Name)
+	model.OutboundLeadingPlusEnabled = types.BoolValue(trunk.OutboundLeadingPlusEnabled)
+	model.TechPrefix = types.StringValue(trunk.TechPrefix)
+	model.SIPDiversionHeader = types.StringValue(trunk.SIPDiversionHeader)
+	model.Gateways = flattenSIPGateways(trunk.Gateways)
+	model.OutboundAuthenticationPlan = flattenOutboundAuthenticationPlan(trunk.OutboundAuthenticationPlan)
+}
+
+func flattenSIPGateways(gateways []vapi.SIPGateway) []SIPGatewayModel {
+	if len(gateways) == 0 {
+		return nil
+	}
+
+	result := make([]SIPGatewayModel, 0, len(gateways))
+	for _, g := range gateways {
+		result = append(result, SIPGatewayModel{
+			IP: types.StringValue(g.IP),
+		})
+	}
+	return result
+}
+
+func flattenOutboundAuthenticationPlan(plan *vapi.OutboundAuthenticationPlan) *OutboundAuthenticationPlanModel {
+	if plan == nil {
+		return nil
+	}
+
+	model := &OutboundAuthenticationPlanModel{
+		AuthUsername: types.StringValue(plan.AuthUsername),
+		AuthPassword: types.StringValue(plan.AuthPassword),
+	}
+	model.SIPRegisterPlan = flattenSIPRegisterPlan(plan.SIPRegisterPlan)
+	return model
+}
+
+func flattenSIPRegisterPlan(plan *vapi.SIPRegisterPlan) *SIPRegisterPlanModel {
+	if plan == nil {
+		return nil
+	}
+	return &SIPRegisterPlanModel{
+		Domain:   types.StringValue(plan.Domain),
+		Username: types.StringValue(plan.Username),
+		Realm:    types.StringValue(plan.Realm),
+	}
 }
 
 // Helpers.

@@ -255,82 +255,7 @@ func (r *VAPIToolFunctionResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
-	properties := make(map[string]vapi.Property)
-
-	for key, prop := range data.Parameters.Properties {
-		properties[key] = vapi.Property{
-			Type:        prop.Type.ValueString(),
-			Description: prop.Description.ValueString(),
-			Enum:        ElementsAsString(prop.Enum),
-		}
-	}
-
-	var requestBody vapi.ToolFunctionRequest
-	if data.Type.ValueString() == "dtmf" {
-		requestBody = vapi.ToolFunctionRequest{
-			Type:  data.Type.ValueString(),
-			Async: data.Async.ValueBool(),
-			Function: vapi.Function{
-				Name:        data.Name.ValueString(),
-				Description: data.Description.ValueString(),
-				Async:       data.Async.ValueBool(),
-				Parameters: &vapi.FunctionParams{
-					Type:       data.Parameters.Type.ValueString(),
-					Properties: properties,
-					Required:   ElementsAsString(data.Parameters.Required),
-				},
-			},
-		}
-	} else if data.Type.ValueString() == "transferCall" {
-		var destinations []vapi.Destination
-		if len(data.Destinations) > 0 {
-			for _, dst := range data.Destinations {
-				destinations = append(destinations, vapi.Destination{
-					Type:                   dst.Type.ValueString(),
-					Number:                 dst.Number.ValueString(),
-					Message:                dst.Message.ValueString(),
-					Description:            dst.Description.ValueString(),
-					NumberE164CheckEnabled: dst.NumberE164CheckEnabled.ValueBool(),
-				})
-			}
-		}
-		requestBody = vapi.ToolFunctionRequest{
-			Type:         data.Type.ValueString(),
-			Async:        data.Async.ValueBool(),
-			Destinations: destinations,
-			Function: vapi.Function{
-				Name:        data.Name.ValueString(),
-				Description: data.Description.ValueString(),
-				Async:       data.Async.ValueBool(),
-				Parameters: &vapi.FunctionParams{
-					Type:       data.Parameters.Type.ValueString(),
-					Properties: properties,
-					Required:   ElementsAsString(data.Parameters.Required),
-				},
-			},
-		}
-	} else {
-		requestBody = vapi.ToolFunctionRequest{
-			Type:  "function",
-			Async: data.Async.ValueBool(),
-			Server: &vapi.Server{
-				URL:            data.ServerURL.ValueString(),
-				Secret:         data.ServerSecret.ValueString(),
-				TimeoutSeconds: 20,
-			},
-			Function: vapi.Function{
-				Name:        data.Name.ValueString(),
-				Description: data.Description.ValueString(),
-				Async:       data.Async.ValueBool(),
-				Parameters: &vapi.FunctionParams{
-					Type:       data.Parameters.Type.ValueString(),
-					Properties: properties,
-					Required:   ElementsAsString(data.Parameters.Required),
-				},
-			},
-		}
-	}
-
+	requestBody := buildToolFunctionRequest(&data)
 	response, responseCode, err := r.client.CreateToolFunction(requestBody)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create tool function: %s", err))
@@ -390,103 +315,20 @@ func (r *VAPIToolFunctionResource) Read(ctx context.Context, req resource.ReadRe
 }
 
 func (r *VAPIToolFunctionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data VAPIToolFunctionResourceModel
+	var state VAPIToolFunctionResourceModel
+	var plan VAPIToolFunctionResourceModel
 	var functionResponse vapi.ToolFunctionResponse
 
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	_, _, err := r.client.DeleteFile(data.ID.ValueString())
+	requestBody := buildToolFunctionRequest(&plan)
+	response, responseCode, err := r.client.UpdateToolFunction(state.ID.ValueString(), requestBody)
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete file: %s", err))
-		return
-	}
-	bindVAPIToolFunctionResourceData(&data, &vapi.ToolFunctionResponse{})
-
-	tflog.Trace(ctx, "deleted a file resource")
-
-	properties := make(map[string]vapi.Property)
-
-	for key, prop := range data.Parameters.Properties {
-		properties[key] = vapi.Property{
-			Type:        prop.Type.ValueString(),
-			Description: prop.Description.ValueString(),
-			Enum:        ElementsAsString(prop.Enum),
-		}
-	}
-
-	var requestBody vapi.ToolFunctionRequest
-	if data.Type.ValueString() == "dtmf" {
-		requestBody = vapi.ToolFunctionRequest{
-			Type:  data.Type.ValueString(),
-			Async: data.Async.ValueBool(),
-			Function: vapi.Function{
-				Name:        data.Name.ValueString(),
-				Description: data.Description.ValueString(),
-				Async:       data.Async.ValueBool(),
-				Parameters: &vapi.FunctionParams{
-					Type:       data.Parameters.Type.ValueString(),
-					Properties: properties,
-					Required:   ElementsAsString(data.Parameters.Required),
-				},
-			},
-		}
-	} else if data.Type.ValueString() == "transferCall" {
-		var destinations []vapi.Destination
-		if len(data.Destinations) > 0 {
-			for _, dst := range data.Destinations {
-				destinations = append(destinations, vapi.Destination{
-					Type:                   dst.Type.ValueString(),
-					Number:                 dst.Number.ValueString(),
-					Extension:              dst.Extension.ValueString(),
-					Message:                dst.Message.ValueString(),
-					Description:            dst.Description.ValueString(),
-					NumberE164CheckEnabled: dst.NumberE164CheckEnabled.ValueBool(),
-				})
-			}
-		}
-		requestBody = vapi.ToolFunctionRequest{
-			Type:         data.Type.ValueString(),
-			Async:        data.Async.ValueBool(),
-			Destinations: destinations,
-			Function: vapi.Function{
-				Name:        data.Name.ValueString(),
-				Description: data.Description.ValueString(),
-				Async:       data.Async.ValueBool(),
-				Parameters: &vapi.FunctionParams{
-					Type:       data.Parameters.Type.ValueString(),
-					Properties: properties,
-					Required:   ElementsAsString(data.Parameters.Required),
-				},
-			},
-		}
-	} else {
-		requestBody = vapi.ToolFunctionRequest{
-			Type:  "function",
-			Async: data.Async.ValueBool(),
-			Server: &vapi.Server{
-				URL:            data.ServerURL.ValueString(),
-				Secret:         data.ServerSecret.ValueString(),
-				TimeoutSeconds: 20,
-			},
-			Function: vapi.Function{
-				Name:        data.Name.ValueString(),
-				Description: data.Description.ValueString(),
-				Async:       data.Async.ValueBool(),
-				Parameters: &vapi.FunctionParams{
-					Type:       data.Parameters.Type.ValueString(),
-					Properties: properties,
-					Required:   ElementsAsString(data.Parameters.Required),
-				},
-			},
-		}
-	}
-
-	response, responseCode, err := r.client.CreateToolFunction(requestBody)
-	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create tool function: %s", err))
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update tool function: %s", err))
 		return
 	}
 
@@ -500,10 +342,10 @@ func (r *VAPIToolFunctionResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 
-	bindVAPIToolFunctionResourceData(&data, &functionResponse)
+	bindVAPIToolFunctionResourceData(&plan, &functionResponse)
 
-	tflog.Trace(ctx, "created a tool function resource")
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	tflog.Trace(ctx, "updated a tool function resource")
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (r *VAPIToolFunctionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -524,6 +366,60 @@ func (r *VAPIToolFunctionResource) Delete(ctx context.Context, req resource.Dele
 
 func (r *VAPIToolFunctionResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+}
+
+func buildToolFunctionRequest(data *VAPIToolFunctionResourceModel) vapi.ToolFunctionRequest {
+	properties := make(map[string]vapi.Property, len(data.Parameters.Properties))
+
+	for key, prop := range data.Parameters.Properties {
+		properties[key] = vapi.Property{
+			Type:        prop.Type.ValueString(),
+			Description: prop.Description.ValueString(),
+			Enum:        ElementsAsString(prop.Enum),
+		}
+	}
+
+	request := vapi.ToolFunctionRequest{
+		Type:  data.Type.ValueString(),
+		Async: data.Async.ValueBool(),
+		Function: vapi.Function{
+			Name:        data.Name.ValueString(),
+			Description: data.Description.ValueString(),
+			Async:       data.Async.ValueBool(),
+			Parameters: &vapi.FunctionParams{
+				Type:       data.Parameters.Type.ValueString(),
+				Properties: properties,
+				Required:   ElementsAsString(data.Parameters.Required),
+			},
+		},
+	}
+
+	switch request.Type {
+	case "dtmf":
+		return request
+	case "transferCall":
+		var destinations []vapi.Destination
+		for _, dst := range data.Destinations {
+			destinations = append(destinations, vapi.Destination{
+				Type:                   dst.Type.ValueString(),
+				Number:                 dst.Number.ValueString(),
+				Extension:              dst.Extension.ValueString(),
+				Message:                dst.Message.ValueString(),
+				Description:            dst.Description.ValueString(),
+				NumberE164CheckEnabled: dst.NumberE164CheckEnabled.ValueBool(),
+			})
+		}
+		request.Destinations = destinations
+		return request
+	default:
+		request.Type = "function"
+		request.Server = &vapi.Server{
+			URL:            data.ServerURL.ValueString(),
+			Secret:         data.ServerSecret.ValueString(),
+			TimeoutSeconds: 20,
+		}
+		return request
+	}
 }
 
 func bindVAPIToolFunctionResourceData(data *VAPIToolFunctionResourceModel, functionResponse *vapi.ToolFunctionResponse) {

@@ -70,8 +70,7 @@ func TestVAPIToolFunctionResourceLifecycle(t *testing.T) {
 		responses: []queuedResponse{
 			{method: http.MethodPost, path: "/tool", status: 200, body: initialResponse},
 			{method: http.MethodGet, path: "/tool/tool-1", status: 200, body: initialResponse},
-			{method: http.MethodDelete, path: "/file/tool-1", status: 200, body: []byte(`{}`)},
-			{method: http.MethodPost, path: "/tool", status: 200, body: updateResponse},
+			{method: http.MethodPatch, path: "/tool/tool-1", status: 200, body: updateResponse},
 			{method: http.MethodDelete, path: "/tool/tool-1", status: 200, body: []byte(`{}`)},
 		},
 	}

@@ -17,8 +17,42 @@ func TestVAPISIPTrunkResourceLifecycle(t *testing.T) {
 
 	ctx := context.Background()
 
-	createPayload := mustMarshal(t, vapi.TwilioPhoneNumber{ID: "trunk-1"})
-	updatePayload := mustMarshal(t, vapi.TwilioPhoneNumber{ID: "trunk-1"})
+	createPayload := mustMarshal(t, vapi.SIPTrunk{
+		ID:                         "trunk-1",
+		Provider:                   "byo",
+		Name:                       "trunk",
+		Gateways:                   []vapi.SIPGateway{{IP: "1.1.1.1"}},
+		TechPrefix:                 "*123",
+		SIPDiversionHeader:         "Diversion",
+		OutboundLeadingPlusEnabled: true,
+		OutboundAuthenticationPlan: &vapi.OutboundAuthenticationPlan{
+			AuthUsername: "user",
+			AuthPassword: "pass",
+			SIPRegisterPlan: &vapi.SIPRegisterPlan{
+				Domain:   "example.com",
+				Username: "sip-user",
+				Realm:    "realm",
+			},
+		},
+	})
+	updatePayload := mustMarshal(t, vapi.SIPTrunk{
+		ID:                         "trunk-1",
+		Provider:                   "byo",
+		Name:                       "trunk-updated",
+		Gateways:                   []vapi.SIPGateway{{IP: "2.2.2.2"}},
+		TechPrefix:                 "*123",
+		SIPDiversionHeader:         "Diversion",
+		OutboundLeadingPlusEnabled: true,
+		OutboundAuthenticationPlan: &vapi.OutboundAuthenticationPlan{
+			AuthUsername: "user",
+			AuthPassword: "pass",
+			SIPRegisterPlan: &vapi.SIPRegisterPlan{
+				Domain:   "example.com",
+				Username: "sip-user",
+				Realm:    "realm",
+			},
+		},
+	})
 
 	transport := &queueRoundTripper{
 		t: t,
@@ -60,7 +94,7 @@ func TestVAPISIPTrunkResourceLifecycle(t *testing.T) {
 
 	updatePlan := tfsdk.Plan{Schema: schemaResp.Schema}
 	updated := sipTrunkModel("trunk-updated")
-	updated.ID = types.StringValue("trunk-1")
+	updated.Gateways = []SIPGatewayModel{{IP: types.StringValue("2.2.2.2")}}
 	if diags := updatePlan.Set(ctx, updated); diags.HasError() {
 		t.Fatalf("update plan diagnostics: %v", diags)
 	}
@@ -69,6 +103,17 @@ func TestVAPISIPTrunkResourceLifecycle(t *testing.T) {
 	res.Update(ctx, resource.UpdateRequest{State: readResp.State, Plan: updatePlan}, &updateResp)
 	if updateResp.Diagnostics.HasError() {
 		t.Fatalf("update diagnostics: %v", updateResp.Diagnostics)
+	}
+
+	var updatedState VAPISIPTrunkResourceModel
+	if diags := updateResp.State.Get(ctx, &updatedState); diags.HasError() {
+		t.Fatalf("state diagnostics: %v", diags)
+	}
+	if updatedState.Name.ValueString() != "trunk-updated" {
+		t.Fatalf("expected updated name, got %s", updatedState.Name.ValueString())
+	}
+	if len(updatedState.Gateways) == 0 || updatedState.Gateways[0].IP.ValueString() != "2.2.2.2" {
+		t.Fatalf("expected gateway from API response")
 	}
 
 	var deleteResp resource.DeleteResponse

@@ -205,6 +205,15 @@ func (c *APIClient) CreateToolFunction(requestData ToolFunctionRequest) ([]byte,
 	return c.SendRequest("POST", "tool", requestData)
 }
 
+// UpdateToolFunction updates an existing tool function by ID.
+func (c *APIClient) UpdateToolFunction(id string, requestData ToolFunctionRequest) ([]byte, int, error) {
+	if len(id) == 0 {
+		return []byte{}, 404, nil
+	}
+	endpoint := fmt.Sprintf("tool/%s", id)
+	return c.SendRequest("PATCH", endpoint, requestData)
+}
+
 // GetToolFunction retrieves the details of a specific tool by ID.
 func (c *APIClient) GetToolFunction(id string) ([]byte, int, error) {
 	if len(id) == 0 {

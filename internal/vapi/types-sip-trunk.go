@@ -16,6 +16,21 @@ type SIPGateway struct {
 	IP string `json:"ip"`
 }
 
+// SIPTrunk represents the API response for a SIP trunk.
+type SIPTrunk struct {
+	ID                         string                      `json:"id"`
+	OrgID                      string                      `json:"orgId"`
+	Provider                   string                      `json:"provider"`
+	Name                       string                      `json:"name"`
+	Gateways                   []SIPGateway                `json:"gateways"`
+	OutboundAuthenticationPlan *OutboundAuthenticationPlan `json:"outboundAuthenticationPlan,omitempty"`
+	OutboundLeadingPlusEnabled bool                        `json:"outboundLeadingPlusEnabled"`
+	TechPrefix                 string                      `json:"techPrefix,omitempty"`
+	SIPDiversionHeader         string                      `json:"sipDiversionHeader,omitempty"`
+	CreatedAt                  string                      `json:"createdAt,omitempty"`
+	UpdatedAt                  string                      `json:"updatedAt,omitempty"`
+}
+
 // OutboundAuthenticationPlan struct represents outbound SIP authentication details.
 type OutboundAuthenticationPlan struct {
 	AuthUsername    string           `json:"authUsername"`
