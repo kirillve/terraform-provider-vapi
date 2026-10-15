@@ -1,5 +1,7 @@
 package vapi
 
+import "encoding/json"
+
 // ToolFunctionRequest struct.
 type ToolFunctionRequest struct {
 	Destinations []Destination `json:"destinations,omitempty"`
@@ -19,10 +21,10 @@ type Destination struct {
 }
 
 type Function struct {
-	Description string          `json:"description"`
-	Async       bool            `json:"async,omitempty"`
-	Name        string          `json:"name,omitempty"`
-	Parameters  *FunctionParams `json:"parameters,omitempty"`
+	Description string `json:"description"`
+	Async       bool   `json:"async,omitempty"`
+	Name        string `json:"name,omitempty"`
+	Parameters  any    `json:"parameters,omitempty"`
 }
 
 type FunctionParams struct {
@@ -57,6 +59,7 @@ type ResponseFunction struct {
 }
 
 type ResponseFunctionParams struct {
+	Raw        json.RawMessage             `json:"-"`
 	Type       string                      `json:"type"`
 	Properties map[string]ResponseProperty `json:"properties"`
 	Required   []string                    `json:"required"`
@@ -69,5 +72,20 @@ type ResponseProperty struct {
 }
 
 type ResponseServer struct {
-	URL string `json:"url"`
+	URL            string `json:"url"`
+	TimeoutSeconds int64  `json:"timeoutSeconds"`
+}
+
+// UnmarshalJSON preserves schemas that cannot be represented by the legacy flat model.
+func (p *ResponseFunctionParams) UnmarshalJSON(data []byte) error {
+	type flatParams ResponseFunctionParams
+	var flat flatParams
+	// Arbitrary JSON Schema properties (for example, numeric enums or union types)
+	// need not fit the flat fields. Raw remains the source of truth in JSON mode.
+	if err := json.Unmarshal(data, &flat); err != nil {
+		flat = flatParams{}
+	}
+	*p = ResponseFunctionParams(flat)
+	p.Raw = append(json.RawMessage(nil), data...)
+	return nil
 }
