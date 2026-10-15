@@ -1,7 +1,9 @@
-## v0.12.0-rc1
+## v0.12.0
 
 CHANGES:
 - added tests
+- added parameters_json for nested JSON schema tool parameters
+- added server_timeout_seconds for function tools
 
 ## v0.11.0
 

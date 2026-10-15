@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -17,6 +18,7 @@ import (
 )
 
 var _ resource.Resource = &VAPIToolFunctionResource{}
+var _ resource.ResourceWithValidateConfig = &VAPIToolFunctionResource{}
 var _ resource.ResourceWithImportState = &VAPIToolFunctionResource{}
 
 func NewVAPIToolFunctionResource() resource.Resource {
@@ -37,18 +39,20 @@ type Destination struct {
 }
 
 type VAPIToolFunctionResourceModel struct {
-	ID           types.String  `tfsdk:"id"`
-	OrgID        types.String  `tfsdk:"org_id"`
-	Name         types.String  `tfsdk:"name"`
-	Description  types.String  `tfsdk:"description"`
-	Async        types.Bool    `tfsdk:"async"`
-	Type         types.String  `tfsdk:"type"`
-	ServerURL    types.String  `tfsdk:"server_url"`
-	ServerSecret types.String  `tfsdk:"server_secret"`
-	Parameters   Parameters    `tfsdk:"parameters"`
-	Destinations []Destination `tfsdk:"destinations"`
-	CreatedAt    types.String  `tfsdk:"created_at"`
-	UpdatedAt    types.String  `tfsdk:"updated_at"`
+	ID                   types.String         `tfsdk:"id"`
+	OrgID                types.String         `tfsdk:"org_id"`
+	Name                 types.String         `tfsdk:"name"`
+	Description          types.String         `tfsdk:"description"`
+	Async                types.Bool           `tfsdk:"async"`
+	Type                 types.String         `tfsdk:"type"`
+	ServerURL            types.String         `tfsdk:"server_url"`
+	ServerSecret         types.String         `tfsdk:"server_secret"`
+	Parameters           *Parameters          `tfsdk:"parameters"`
+	ParametersJSON       jsontypes.Normalized `tfsdk:"parameters_json"`
+	ServerTimeoutSeconds types.Int64          `tfsdk:"server_timeout_seconds"`
+	Destinations         []Destination        `tfsdk:"destinations"`
+	CreatedAt            types.String         `tfsdk:"created_at"`
+	UpdatedAt            types.String         `tfsdk:"updated_at"`
 }
 
 type Parameters struct {
@@ -70,12 +74,13 @@ func (r *VAPIToolFunctionResource) Metadata(ctx context.Context, req resource.Me
 
 func (r *VAPIToolFunctionResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		MarkdownDescription: "Manages a function tool resource in the VAPI system.",
+		MarkdownDescription: "Manages a function tool resource in the VAPI system. For function tools, set exactly one of parameters or parameters_json. Import selects parameters for flat schemas containing only type, properties, and required, with property type, description, and enum; other schemas use parameters_json.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:            true,
 				MarkdownDescription: "The ID of the tool function.",
 				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
 					stringplanmodifier.RequiresReplace(),
 				},
 			},
@@ -83,6 +88,7 @@ func (r *VAPIToolFunctionResource) Schema(ctx context.Context, req resource.Sche
 				Computed:            true,
 				MarkdownDescription: "The ID of the tool function.",
 				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
 					stringplanmodifier.RequiresReplace(),
 				},
 			},
@@ -129,9 +135,19 @@ func (r *VAPIToolFunctionResource) Schema(ctx context.Context, req resource.Sche
 					stringplanmodifier.RequiresReplace(),
 				},
 			},
+			"parameters_json": schema.StringAttribute{
+				Optional:            true,
+				CustomType:          jsontypes.NormalizedType{},
+				MarkdownDescription: "Complete JSON Schema object for function.parameters, including nested objects and arrays. JSON whitespace and key order are ignored. Mutually exclusive with parameters for function tools.",
+				PlanModifiers:       []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"server_timeout_seconds": schema.Int64Attribute{
+				Optional:            true,
+				MarkdownDescription: "Server timeout in seconds for function tools. When omitted, requests use 20 and state remains null. Changes update the tool in place.",
+			},
 			"parameters": schema.SingleNestedAttribute{
 				MarkdownDescription: "Function parameters including type, async, and properties.",
-				Required:            true,
+				Optional:            true,
 				Attributes: map[string]schema.Attribute{
 					"type": schema.StringAttribute{
 						Required:            true,
@@ -369,29 +385,19 @@ func (r *VAPIToolFunctionResource) ImportState(ctx context.Context, req resource
 }
 
 func buildToolFunctionRequest(data *VAPIToolFunctionResourceModel) vapi.ToolFunctionRequest {
-	properties := make(map[string]vapi.Property, len(data.Parameters.Properties))
-
-	for key, prop := range data.Parameters.Properties {
-		properties[key] = vapi.Property{
-			Type:        prop.Type.ValueString(),
-			Description: prop.Description.ValueString(),
-			Enum:        ElementsAsString(prop.Enum),
+	var parameters any
+	if !data.ParametersJSON.IsNull() && !data.ParametersJSON.IsUnknown() {
+		parameters = json.RawMessage(data.ParametersJSON.ValueString())
+	} else if data.Parameters != nil {
+		properties := make(map[string]vapi.Property, len(data.Parameters.Properties))
+		for key, prop := range data.Parameters.Properties {
+			properties[key] = vapi.Property{Type: prop.Type.ValueString(), Description: prop.Description.ValueString(), Enum: ElementsAsString(prop.Enum)}
 		}
+		parameters = &vapi.FunctionParams{Type: data.Parameters.Type.ValueString(), Properties: properties, Required: ElementsAsString(data.Parameters.Required)}
 	}
-
 	request := vapi.ToolFunctionRequest{
-		Type:  data.Type.ValueString(),
-		Async: data.Async.ValueBool(),
-		Function: vapi.Function{
-			Name:        data.Name.ValueString(),
-			Description: data.Description.ValueString(),
-			Async:       data.Async.ValueBool(),
-			Parameters: &vapi.FunctionParams{
-				Type:       data.Parameters.Type.ValueString(),
-				Properties: properties,
-				Required:   ElementsAsString(data.Parameters.Required),
-			},
-		},
+		Type: data.Type.ValueString(), Async: data.Async.ValueBool(),
+		Function: vapi.Function{Name: data.Name.ValueString(), Description: data.Description.ValueString(), Async: data.Async.ValueBool(), Parameters: parameters},
 	}
 
 	switch request.Type {
@@ -418,6 +424,9 @@ func buildToolFunctionRequest(data *VAPIToolFunctionResourceModel) vapi.ToolFunc
 			Secret:         data.ServerSecret.ValueString(),
 			TimeoutSeconds: 20,
 		}
+		if !data.ServerTimeoutSeconds.IsNull() && !data.ServerTimeoutSeconds.IsUnknown() {
+			request.Server.TimeoutSeconds = data.ServerTimeoutSeconds.ValueInt64()
+		}
 		return request
 	}
 }
@@ -437,7 +446,22 @@ func bindVAPIToolFunctionResourceData(data *VAPIToolFunctionResourceModel, funct
 	data.Description = types.StringValue(functionResponse.Function.Description)
 	data.Async = types.BoolValue(functionResponse.Function.Async)
 
-	data.Parameters = Parameters{
+	// Null means the legacy implicit timeout; preserve it through refresh and import.
+	if !data.ServerTimeoutSeconds.IsNull() && !data.ServerTimeoutSeconds.IsUnknown() {
+		data.ServerTimeoutSeconds = types.Int64Value(functionResponse.Server.TimeoutSeconds)
+	}
+	raw := functionResponse.Function.Parameters.Raw
+	jsonMode := !data.ParametersJSON.IsNull()
+	importing := data.Parameters == nil && !jsonMode
+	// Responses constructed in Go may have no raw capture. Their typed fields
+	// represent only flat parameters, so import them into the legacy model.
+	if jsonMode || (importing && len(raw) > 0 && !flatToolParameters(raw)) {
+		data.ParametersJSON = jsontypes.NewNormalizedValue(string(raw))
+		data.Parameters = nil
+		return
+	}
+	data.ParametersJSON = jsontypes.NewNormalizedNull()
+	data.Parameters = &Parameters{
 		Type:       types.StringValue(functionResponse.Function.Parameters.Type),
 		Async:      types.BoolValue(functionResponse.Function.Async),
 		Required:   ListValueFromStrings(functionResponse.Function.Parameters.Required),
@@ -457,4 +481,62 @@ func bindVAPIToolFunctionResourceData(data *VAPIToolFunctionResourceModel, funct
 			Enum:        enumList,
 		}
 	}
+}
+
+// ValidateConfig defers unknown values until Terraform can resolve them.
+func (r *VAPIToolFunctionResource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
+	var kind types.String
+	var parameters types.Object
+	var raw jsontypes.Normalized
+	resp.Diagnostics.Append(req.Config.GetAttribute(ctx, path.Root("type"), &kind)...)
+	resp.Diagnostics.Append(req.Config.GetAttribute(ctx, path.Root("parameters"), &parameters)...)
+	resp.Diagnostics.Append(req.Config.GetAttribute(ctx, path.Root("parameters_json"), &raw)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	if !raw.IsNull() && !raw.IsUnknown() {
+		var object map[string]json.RawMessage
+		if err := json.Unmarshal([]byte(raw.ValueString()), &object); err != nil || object == nil {
+			resp.Diagnostics.AddAttributeError(path.Root("parameters_json"), "Invalid parameters_json", "parameters_json must be a valid JSON object containing the complete function parameters schema.")
+		}
+	}
+	if kind.IsUnknown() || kind.ValueString() != "function" || parameters.IsUnknown() || raw.IsUnknown() {
+		return
+	}
+	if parameters.IsNull() == raw.IsNull() {
+		resp.Diagnostics.AddError("Invalid function parameters", "For type = function, exactly one of parameters and parameters_json must be set.")
+	}
+}
+
+// Import into the legacy model only when doing so preserves the entire schema.
+func flatToolParameters(raw json.RawMessage) bool {
+	var schema map[string]json.RawMessage
+	if err := json.Unmarshal(raw, &schema); err != nil || schema == nil {
+		return false
+	}
+	for key := range schema {
+		switch key {
+		case "type", "properties", "required":
+		default:
+			return false
+		}
+	}
+	var flat vapi.FunctionParams
+	if err := json.Unmarshal(raw, &flat); err != nil {
+		return false
+	}
+	var properties map[string]map[string]json.RawMessage
+	if err := json.Unmarshal(schema["properties"], &properties); err != nil && len(schema["properties"]) > 0 {
+		return false
+	}
+	for _, property := range properties {
+		for key := range property {
+			switch key {
+			case "type", "description", "enum":
+			default:
+				return false
+			}
+		}
+	}
+	return true
 }

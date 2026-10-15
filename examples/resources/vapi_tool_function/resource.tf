@@ -8,8 +8,9 @@ resource "vapi_tool_function" "test-vapi_tool_function" {
   server_secret = "123asd"
 
   parameters = {
-    type  = "object"
-    async = false
+    type     = "object"
+    async    = false
+    required = []
     properties = {
       property1 = {
         type        = "string"
@@ -29,4 +30,36 @@ resource "vapi_tool_function" "test-vapi_tool_function" {
       }
     }
   }
+}
+
+resource "vapi_tool_function" "booking_outgoing" {
+  name        = "booking_outgoing"
+  description = "Book an appointment for a customer."
+  async       = false
+  type        = "function"
+
+  server_url             = "https://somewhere.com/api/vapi/functions/booking"
+  server_secret          = "replace-with-your-secret"
+  server_timeout_seconds = 30
+
+  parameters_json = jsonencode({
+    type = "object"
+    properties = {
+      booking_info = {
+        type = "object"
+        properties = {
+          customer = {
+            type = "object"
+            properties = {
+              first_name = { type = "string" }
+              last_name  = { type = "string" }
+            }
+            required = ["first_name", "last_name"]
+          }
+        }
+        required = ["customer"]
+      }
+    }
+    required = ["booking_info"]
+  })
 }
