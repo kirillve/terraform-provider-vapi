@@ -2,6 +2,7 @@ package vapi
 
 // ImportTwilioRequest struct.
 type ImportTwilioRequest struct {
+	SmsEnabled       *bool                `json:"smsEnabled,omitempty"`
 	Provider         string               `json:"provider"`
 	Name             string               `json:"name"`
 	Number           string               `json:"number"`
@@ -23,6 +24,7 @@ type FallbackDestination struct {
 
 // TwilioPhoneNumber represents the structure of a Twilio phone number API response.
 type TwilioPhoneNumber struct {
+	SmsEnabled       *bool                `json:"smsEnabled,omitempty"`
 	ID               string               `json:"id"`
 	OrgID            string               `json:"orgId"`
 	Number           string               `json:"number"`

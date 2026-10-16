@@ -1,3 +1,8 @@
+## v0.13.0
+
+CHANGES:
+- added optional sms_enabled for Twilio phone numbers with in-place updates
+
 ## v0.12.0
 
 CHANGES:
