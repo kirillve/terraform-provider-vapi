@@ -1,0 +1,132 @@
+[
+  {
+    "name": "read",
+    "op": "read",
+    "prior_state": {"id":"tool-2","org_id":"org-1","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","name":"lookup_order","description":"Look up an order by id.","async":false,"type":"function","server_url":"https://tools.example.invalid/orders","server_secret":"secret-1","parameters":{"type":"object","async":false,"required":["order_id"],"properties":{"order_id":{"type":"string","description":"Order identifier"}}}},
+    "api": [
+      {"method":"GET","path":"/tool/tool-2","status":200,"body":"{\"id\":\"tool-2\",\"orgId\":\"org-1\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-02-01T00:00:00Z\",\"type\":\"function\",\"async\":false,\"function\":{\"name\":\"lookup_order\",\"async\":false,\"description\":\"Look up an order by id.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\",\"description\":\"Order identifier\"}},\"required\":[\"order_id\"]}},\"server\":{\"url\":\"https://tools.example.invalid/orders\",\"timeoutSeconds\":20}}"}
+    ]
+  },
+  {
+    "name": "read_partial",
+    "op": "read",
+    "prior_state": {"id":"tool-2","org_id":"org-1","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","name":"lookup_order","description":"Look up an order by id.","async":false,"type":"function","server_url":"https://tools.example.invalid/orders","server_secret":"secret-1","parameters":{"type":"object","async":false,"required":["order_id"],"properties":{"order_id":{"type":"string","description":"Order identifier"}}}},
+    "api": [
+      {"method":"GET","path":"/tool/tool-2","status":200,"body":"{\"id\":\"tool-2\",\"type\":\"function\",\"function\":{\"name\":\"lookup_order\",\"description\":\"Look up an order by id.\"}}"}
+    ]
+  },
+  {
+    "name": "read_malformed",
+    "op": "read",
+    "prior_state": {"id":"tool-2","org_id":"org-1","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","name":"lookup_order","description":"Look up an order by id.","async":false,"type":"function","server_url":"https://tools.example.invalid/orders","server_secret":"secret-1","parameters":{"type":"object","async":false,"required":["order_id"],"properties":{"order_id":{"type":"string","description":"Order identifier"}}}},
+    "api": [
+      {"method":"GET","path":"/tool/tool-2","status":200,"body":"{\"id\":\"tool-2\",\"function\":"}
+    ]
+  },
+  {
+    "name": "read_body_error",
+    "op": "read",
+    "prior_state": {"id":"tool-2","org_id":"org-1","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","name":"lookup_order","description":"Look up an order by id.","async":false,"type":"function","server_url":"https://tools.example.invalid/orders","server_secret":"secret-1","parameters":{"type":"object","async":false,"required":["order_id"],"properties":{"order_id":{"type":"string","description":"Order identifier"}}}},
+    "api": [
+      {"method":"GET","path":"/tool/tool-2","status":200,"body":"{\"id\":\"tool-2\",\"orgId\":\"org-1\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-02-01T00:00:00Z\",\"type\":\"function\",\"async\":false,\"function\":{\"name\":\"lookup_order\",\"async\":false,\"description\":\"Look up an order by id.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\",\"description\":\"Order identifier\"}},\"required\":[\"order_id\"]}},\"server\":{\"url\":\"https://tools.example.invalid/orders\",\"timeoutSeconds\":20}}","failure":"short_body"}
+    ]
+  },
+  {
+    "name": "read_404",
+    "op": "read",
+    "prior_state": {"id":"tool-2","org_id":"org-1","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","name":"lookup_order","description":"Look up an order by id.","async":false,"type":"function","server_url":"https://tools.example.invalid/orders","server_secret":"secret-1","parameters":{"type":"object","async":false,"required":["order_id"],"properties":{"order_id":{"type":"string","description":"Order identifier"}}}},
+    "api": [
+      {"method":"GET","path":"/tool/tool-2","status":404,"body":"{\"message\":\"not found\"}"}
+    ]
+  },
+  {
+    "name": "read_500",
+    "op": "read",
+    "prior_state": {"id":"tool-2","org_id":"org-1","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","name":"lookup_order","description":"Look up an order by id.","async":false,"type":"function","server_url":"https://tools.example.invalid/orders","server_secret":"secret-1","parameters":{"type":"object","async":false,"required":["order_id"],"properties":{"order_id":{"type":"string","description":"Order identifier"}}}},
+    "api": [
+      {"method":"GET","path":"/tool/tool-2","status":500,"body":"{\"message\":\"internal error\"}"}
+    ]
+  },
+  {
+    "name": "read_transport_error",
+    "op": "read",
+    "prior_state": {"id":"tool-2","org_id":"org-1","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","name":"lookup_order","description":"Look up an order by id.","async":false,"type":"function","server_url":"https://tools.example.invalid/orders","server_secret":"secret-1","parameters":{"type":"object","async":false,"required":["order_id"],"properties":{"order_id":{"type":"string","description":"Order identifier"}}}},
+    "api": [
+      {"method":"GET","path":"/tool/tool-2","status":0,"body":"","failure":"disconnect"}
+    ]
+  },
+  {
+    "name": "read_empty_id",
+    "op": "read",
+    "prior_state": {"id":"","org_id":"org-1","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","name":"lookup_order","description":"Look up an order by id.","async":false,"type":"function","server_url":"https://tools.example.invalid/orders","server_secret":"secret-1","parameters":{"type":"object","async":false,"required":["order_id"],"properties":{"order_id":{"type":"string","description":"Order identifier"}}}},
+    "api": []
+  },
+  {
+    "name": "import",
+    "op": "import",
+    "import_id": "tool-2",
+    "api": [
+      {"method":"GET","path":"/tool/tool-2","status":200,"body":"{\"id\":\"tool-2\",\"orgId\":\"org-1\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-02-01T00:00:00Z\",\"type\":\"function\",\"async\":false,\"function\":{\"name\":\"lookup_order\",\"async\":false,\"description\":\"Look up an order by id.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\",\"description\":\"Order identifier\"}},\"required\":[\"order_id\"]}},\"server\":{\"url\":\"https://tools.example.invalid/orders\",\"timeoutSeconds\":20}}"}
+    ]
+  },
+  {
+    "name": "import_nested",
+    "op": "import",
+    "import_id": "tool-2",
+    "api": [
+      {"method":"GET","path":"/tool/tool-2","status":200,"body":"{\"id\":\"tool-2\",\"orgId\":\"org-1\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-02-01T00:00:00Z\",\"type\":\"function\",\"async\":false,\"function\":{\"name\":\"lookup_order\",\"async\":false,\"description\":\"Look up an order by id.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"order\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"}},\"required\":[\"id\"]}},\"required\":[\"order\"],\"additionalProperties\":false}},\"server\":{\"url\":\"https://tools.example.invalid/orders\",\"timeoutSeconds\":20}}"}
+    ]
+  },
+  {
+    "name": "import_read_404",
+    "op": "import",
+    "import_id": "tool-2",
+    "api": [
+      {"method":"GET","path":"/tool/tool-2","status":404,"body":"{\"message\":\"not found\"}"}
+    ]
+  },
+  {
+    "name": "upgrade_v0",
+    "op": "upgrade",
+    "raw_state": {"id":"tool-2","org_id":"org-1","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","name":"lookup_order","description":"Look up an order by id.","async":false,"type":"function","server_url":"https://tools.example.invalid/orders","server_secret":"secret-1","parameters":{"type":"object","async":false,"required":["order_id"],"properties":{"order_id":{"type":"string","description":"Order identifier"}}}},
+    "api": []
+  },
+  {
+    "name": "delete",
+    "op": "delete",
+    "prior_state": {"id":"tool-2","org_id":"org-1","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","name":"lookup_order","description":"Look up an order by id.","async":false,"type":"function","server_url":"https://tools.example.invalid/orders","server_secret":"secret-1","parameters":{"type":"object","async":false,"required":["order_id"],"properties":{"order_id":{"type":"string","description":"Order identifier"}}}},
+    "api": [
+      {"method":"DELETE","path":"/tool/tool-2","status":200,"body":"{\"id\":\"tool-2\"}"}
+    ]
+  },
+  {
+    "name": "delete_404",
+    "op": "delete",
+    "prior_state": {"id":"tool-2","org_id":"org-1","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","name":"lookup_order","description":"Look up an order by id.","async":false,"type":"function","server_url":"https://tools.example.invalid/orders","server_secret":"secret-1","parameters":{"type":"object","async":false,"required":["order_id"],"properties":{"order_id":{"type":"string","description":"Order identifier"}}}},
+    "api": [
+      {"method":"DELETE","path":"/tool/tool-2","status":404,"body":"{\"message\":\"not found\"}"}
+    ]
+  },
+  {
+    "name": "delete_transport_error",
+    "op": "delete",
+    "prior_state": {"id":"tool-2","org_id":"org-1","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","name":"lookup_order","description":"Look up an order by id.","async":false,"type":"function","server_url":"https://tools.example.invalid/orders","server_secret":"secret-1","parameters":{"type":"object","async":false,"required":["order_id"],"properties":{"order_id":{"type":"string","description":"Order identifier"}}}},
+    "api": [
+      {"method":"DELETE","path":"/tool/tool-2","status":0,"body":"","failure":"disconnect"}
+    ]
+  },
+  {
+    "name": "delete_empty_id",
+    "op": "delete",
+    "prior_state": {"id":"","org_id":"org-1","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","name":"lookup_order","description":"Look up an order by id.","async":false,"type":"function","server_url":"https://tools.example.invalid/orders","server_secret":"secret-1","parameters":{"type":"object","async":false,"required":["order_id"],"properties":{"order_id":{"type":"string","description":"Order identifier"}}}},
+    "api": []
+  },
+  {
+    "name": "read_timeout_drift",
+    "op": "read",
+    "prior_state": {"id":"tool-2","org_id":"org-1","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","name":"lookup_order","description":"Look up an order by id.","async":false,"type":"function","server_url":"https://tools.example.invalid/orders","server_secret":"secret-1","parameters":{"type":"object","async":false,"required":["order_id"],"properties":{"order_id":{"type":"string","description":"Order identifier"}}},"server_timeout_seconds":20},
+    "api": [
+      {"method":"GET","path":"/tool/tool-2","status":200,"body":"{\"id\":\"tool-2\",\"orgId\":\"org-1\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-02-01T00:00:00Z\",\"type\":\"function\",\"async\":false,\"function\":{\"name\":\"lookup_order\",\"async\":false,\"description\":\"Look up an order by id.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\",\"description\":\"Order identifier\"}},\"required\":[\"order_id\"]}},\"server\":{\"url\":\"https://tools.example.invalid/orders\",\"timeoutSeconds\":45}}"}
+    ]
+  }
+]
