@@ -1,0 +1,111 @@
+[
+  {
+    "name": "plan_create",
+    "op": "plan_create",
+    "config": {"name":"support-bot"},
+    "api": []
+  },
+  {
+    "name": "plan_update",
+    "op": "plan_update",
+    "config": {"name":"support-bot-v2","first_message":"Hello again"},
+    "prior_state": {"id":"asst-1","org_id":"org-1","name":"support-bot"},
+    "api": []
+  },
+  {
+    "name": "create",
+    "op": "create",
+    "config": {"name":"support-bot"},
+    "api": [
+      {"method":"POST","path":"/assistant","status":200,"body":"{\"id\":\"asst-1\",\"orgId\":\"org-1\",\"name\":\"support-bot\"}"}
+    ]
+  },
+  {
+    "name": "create_full",
+    "op": "create",
+    "config": {"name":"example-assistant","first_message_mode":"assistant-speaks-first","hipaa_enabled":false,"server_url":"https://somewhere.example.invalid","server_url_secret":"secret-phrase","client_messages":["function-call","hang","status-update","tool-calls","user-interrupted"],"server_messages":["end-of-call-report","function-call","hang","status-update","tool-calls","user-interrupted","transfer-destination-request"],"silence_timeout_seconds":30,"max_duration_seconds":600,"background_sound":"office","background_denoising":true,"model_output_enabled":true,"first_message":"First message","voicemail_message":"Voicemain message","end_call_message":"End Call message","end_call_phrases":["Bye for now","Talk to you soon","Goodbye","Talk to you later"],"transcriber":{"provider":"deepgram","model":"nova-2-phonecall","language":"en"},"model":{"model":"gpt-4o","system_prompt":"System prompt","temperature":0.3,"provider":"openai","knowledge_base":{"file_ids":["920f2f78-1234-5678-afec-9a3a79b8f687"],"provider":"canonical"}},"voice":{"model":"eleven_turbo_v2_5","provider":"11labs","voice_id":"FVQMzxJGPUBtfz1Azdoy","stability":1.0,"similarity_boost":0.75},"start_speaking_plan":{"wait_seconds":2.5,"smart_endpointing_enabled":true,"transcription_endpointing_plan":{"on_punctuation_seconds":0.5,"on_no_punctuation_seconds":1.0,"on_number_seconds":0.75}},"stop_speaking_plan":{"num_words":3},"analysis_plan":{"summary_prompt":"Summary prompt","structured_data_prompt":"Structured data prompt","structured_data_schema":{"type":"object","properties":{"isCallNotAnswered":{"description":"Indicates whether the call was not answered by the customer.","type":"string"}}},"success_evaluation_prompt":"Success evaluation prompt","success_evaluation_rubric":"Checklist"},"message_plan":{"idle_messages":["I’ll proceed with scheduling unless you have any questions.","If you don't mind, I will continue with booking your appointment?","Sorry, I kind of lost track for a moment. Mind if we continued?","I will continue, but feel free to ask me any questions, ok?","Are you ready to proceed?"]},"end_call_function_enabled":false,"recording_enabled":true,"forwarding_phone_number":"","phone_number_id":"","artifact_plan":{"recording_format":"wav"}},
+    "api": [
+      {"method":"POST","path":"/assistant","status":200,"body":"{\"id\":\"asst-1\",\"orgId\":\"org-1\",\"name\":\"example-assistant\",\"firstMessageMode\":\"assistant-speaks-first\",\"hipaaEnabled\":false,\"server\":{\"url\":\"https://somewhere.example.invalid\",\"secret\":\"secret-phrase\",\"timeoutSeconds\":20},\"clientMessages\":[\"function-call\",\"hang\",\"status-update\",\"tool-calls\",\"user-interrupted\"],\"serverMessages\":[\"end-of-call-report\",\"function-call\",\"hang\",\"status-update\",\"tool-calls\",\"user-interrupted\",\"transfer-destination-request\"],\"silenceTimeoutSeconds\":30,\"maxDurationSeconds\":600,\"backgroundSound\":\"office\",\"backgroundDenoisingEnabled\":true,\"modelOutputInMessagesEnabled\":true,\"firstMessage\":\"First message\",\"voicemailMessage\":\"Voicemain message\",\"endCallMessage\":\"End Call message\",\"endCallPhrases\":[\"Bye for now\",\"Talk to you soon\",\"Goodbye\",\"Talk to you later\"],\"transcriber\":{\"provider\":\"deepgram\",\"model\":\"nova-2-phonecall\",\"language\":\"en\"},\"model\":{\"model\":\"gpt-4o\",\"systemPrompt\":\"System prompt\",\"temperature\":0.3,\"provider\":\"openai\",\"knowledgeBase\":{\"fileIds\":[\"920f2f78-1234-5678-afec-9a3a79b8f687\"],\"provider\":\"canonical\"}},\"voice\":{\"model\":\"eleven_turbo_v2_5\",\"provider\":\"11labs\",\"voiceId\":\"FVQMzxJGPUBtfz1Azdoy\",\"stability\":1.0,\"similarityBoost\":0.75},\"startSpeakingPlan\":{\"waitSeconds\":2.5,\"smartEndpointingEnabled\":true,\"transcriptionEndpointingPlan\":{\"onPunctuationSeconds\":0.5,\"onNoPunctuationSeconds\":1.0,\"onNumberSeconds\":0.75}},\"stopSpeakingPlan\":{\"numWords\":3},\"analysisPlan\":{\"summaryPrompt\":\"Summary prompt\",\"structuredDataPrompt\":\"Structured data prompt\",\"structuredDataSchema\":{\"type\":\"object\",\"properties\":{\"isCallNotAnswered\":{\"description\":\"Indicates whether the call was not answered by the customer.\",\"type\":\"string\"}}},\"successEvaluationPrompt\":\"Success evaluation prompt\",\"successEvaluationRubric\":\"Checklist\"},\"messagePlan\":{\"idleMessages\":[\"I’ll proceed with scheduling unless you have any questions.\",\"If you don't mind, I will continue with booking your appointment?\",\"Sorry, I kind of lost track for a moment. Mind if we continued?\",\"I will continue, but feel free to ask me any questions, ok?\",\"Are you ready to proceed?\"]},\"endCallFunctionEnabled\":false,\"recordingEnabled\":true,\"forwardingPhoneNumber\":\"\",\"artifactPlan\":{\"recordingFormat\":\"wav\"}}"}
+    ]
+  },
+  {
+    "name": "update",
+    "op": "update",
+    "config": {"name":"support-bot-v2","first_message":"Hello again"},
+    "prior_state": {"id":"asst-1","org_id":"org-1","name":"support-bot"},
+    "api": [
+      {"method":"PATCH","path":"/assistant/asst-1","status":200,"body":"{\"id\":\"asst-1\",\"orgId\":\"org-1\",\"name\":\"support-bot-v2\",\"firstMessage\":\"Hello again\"}"}
+    ]
+  },
+  {
+    "name": "create_500",
+    "op": "create",
+    "config": {"name":"support-bot"},
+    "api": [
+      {"method":"POST","path":"/assistant","status":500,"body":"{\"message\":\"internal error\"}"}
+    ]
+  },
+  {
+    "name": "update_500",
+    "op": "update",
+    "config": {"name":"support-bot-v2","first_message":"Hello again"},
+    "prior_state": {"id":"asst-1","org_id":"org-1","name":"support-bot"},
+    "api": [
+      {"method":"PATCH","path":"/assistant/asst-1","status":500,"body":"{\"message\":\"internal error\"}"}
+    ]
+  },
+  {
+    "name": "create_malformed",
+    "op": "create",
+    "config": {"name":"support-bot"},
+    "api": [
+      {"method":"POST","path":"/assistant","status":200,"body":"{\"id\":\"asst-1\",\"name\":"}
+    ]
+  },
+  {
+    "name": "update_malformed",
+    "op": "update",
+    "config": {"name":"support-bot-v2","first_message":"Hello again"},
+    "prior_state": {"id":"asst-1","org_id":"org-1","name":"support-bot"},
+    "api": [
+      {"method":"PATCH","path":"/assistant/asst-1","status":200,"body":"{\"id\":\"asst-1\",\"name\":"}
+    ]
+  },
+  {
+    "name": "create_transport_error",
+    "op": "create",
+    "config": {"name":"support-bot"},
+    "api": [
+      {"method":"POST","path":"/assistant","status":0,"body":"","failure":"disconnect"}
+    ]
+  },
+  {
+    "name": "update_transport_error",
+    "op": "update",
+    "config": {"name":"support-bot-v2","first_message":"Hello again"},
+    "prior_state": {"id":"asst-1","org_id":"org-1","name":"support-bot"},
+    "api": [
+      {"method":"PATCH","path":"/assistant/asst-1","status":0,"body":"","failure":"disconnect"}
+    ]
+  },
+  {
+    "name": "create_unencodable",
+    "op": "create",
+    "config": {"name":"support-bot","model":{"model":"gpt-4o","temperature":1e999}},
+    "api": []
+  },
+  {
+    "name": "update_unencodable",
+    "op": "update",
+    "config": {"name":"support-bot","model":{"model":"gpt-4o","temperature":1e999}},
+    "prior_state": {"id":"asst-1","org_id":"org-1","name":"support-bot"},
+    "api": []
+  },
+  {
+    "name": "update_empty_id",
+    "op": "update",
+    "config": {"name":"support-bot-v2","first_message":"Hello again"},
+    "prior_state": {"id":"","org_id":"org-1","name":"support-bot"},
+    "api": []
+  }
+]
