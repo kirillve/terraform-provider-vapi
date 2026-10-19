@@ -1,0 +1,134 @@
+[
+  {
+    "name": "plan_create",
+    "op": "plan_create",
+    "config": {
+      "content": "hello world\n",
+      "filename": "notes.txt"
+    },
+    "api": []
+  },
+  {
+    "name": "plan_update",
+    "op": "plan_update",
+    "config": {
+      "content": "updated notes\n",
+      "filename": "notes.txt"
+    },
+    "prior_state": {
+      "content": "hello world\n",
+      "filename": "notes.txt",
+      "id": "file-1",
+      "org_id": "org-1",
+      "name": "notes.txt",
+      "original_name": "notes.txt",
+      "bytes": 12,
+      "mimetype": "text/plain",
+      "path": "files/file-1/notes.txt",
+      "url": "/files/file-1/notes.txt",
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z",
+      "status": "ready",
+      "bucket": "uploads",
+      "purpose": "knowledge_base"
+    },
+    "api": []
+  },
+  {
+    "name": "create",
+    "op": "create",
+    "config": {
+      "content": "hello world\n",
+      "filename": "notes.txt"
+    },
+    "api": [
+      {
+        "method": "POST",
+        "path": "/file",
+        "status": 200,
+        "body": "{\"id\":\"file-1\",\"orgId\":\"org-1\",\"name\":\"notes.txt\",\"originalName\":\"notes.txt\",\"bytes\":12,\"mimetype\":\"text/plain\",\"path\":\"files/file-1/notes.txt\",\"url\":\"/files/file-1/notes.txt\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-01-01T00:00:00Z\",\"status\":\"ready\",\"bucket\":\"uploads\",\"purpose\":\"knowledge_base\"}"
+      }
+    ]
+  },
+  {
+    "name": "create_500",
+    "op": "create",
+    "config": {
+      "content": "hello world\n",
+      "filename": "notes.txt"
+    },
+    "api": [
+      {
+        "method": "POST",
+        "path": "/file",
+        "status": 500,
+        "body": "upload failed"
+      }
+    ]
+  },
+  {
+    "name": "create_malformed",
+    "op": "create",
+    "config": {
+      "content": "hello world\n",
+      "filename": "notes.txt"
+    },
+    "api": [
+      {
+        "method": "POST",
+        "path": "/file",
+        "status": 200,
+        "body": "{\"id\":\"file-1\",\"bytes\":"
+      }
+    ]
+  },
+  {
+    "name": "create_transport_error",
+    "op": "create",
+    "config": {
+      "content": "hello world\n",
+      "filename": "notes.txt"
+    },
+    "api": [
+      {
+        "method": "POST",
+        "path": "/file",
+        "status": 0,
+        "body": "",
+        "failure": "disconnect"
+      }
+    ]
+  },
+  {
+    "name": "create_dir_filename",
+    "op": "create",
+    "config": {
+      "content": "hello world\n",
+      "filename": "dir/sub/notes.txt"
+    },
+    "api": [
+      {
+        "method": "POST",
+        "path": "/file",
+        "status": 200,
+        "body": "{\"id\":\"file-1\",\"orgId\":\"org-1\",\"name\":\"notes.txt\",\"originalName\":\"notes.txt\",\"bytes\":12,\"mimetype\":\"text/plain\",\"path\":\"files/file-1/notes.txt\",\"url\":\"/files/file-1/notes.txt\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-01-01T00:00:00Z\",\"status\":\"ready\",\"bucket\":\"uploads\",\"purpose\":\"knowledge_base\"}"
+      }
+    ]
+  },
+  {
+    "name": "create_bytes_as_string",
+    "op": "create",
+    "config": {
+      "content": "hello world\n",
+      "filename": "notes.txt"
+    },
+    "api": [
+      {
+        "method": "POST",
+        "path": "/file",
+        "status": 200,
+        "body": "{\"id\":\"file-1\",\"orgId\":\"org-1\",\"name\":\"notes.txt\",\"originalName\":\"notes.txt\",\"bytes\":\"12\",\"mimetype\":\"text/plain\",\"path\":\"files/file-1/notes.txt\",\"url\":\"/files/file-1/notes.txt\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-01-01T00:00:00Z\",\"status\":\"ready\",\"bucket\":\"uploads\",\"purpose\":\"knowledge_base\"}"
+      }
+    ]
+  }
+]
