@@ -46,6 +46,7 @@ type VAPITwilioPhoneNumberResourceModel struct {
 	FallbackDescription      types.String `tfsdk:"fallback_destination_description"`
 	AssistantID              types.String `tfsdk:"assistant_id"`
 	SmsEnabled               types.Bool   `tfsdk:"sms_enabled"`
+	ServerURL                types.String `tfsdk:"server_url"`
 }
 
 func (r *VAPITwilioPhoneNumberResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -125,6 +126,10 @@ func (r *VAPITwilioPhoneNumberResource) Schema(ctx context.Context, req resource
 				MarkdownDescription: "Whether VAPI manages SMS for this Twilio number. Set false to disable VAPI SMS and avoid overwriting the Twilio messaging webhook. When omitted, VAPI uses its default on import; removing this attribute stops managing SMS without resetting the remote setting. Disabling SMS does not restore a previously overwritten webhook.",
 				Optional:            true,
 			},
+			"server_url": schema.StringAttribute{
+				MarkdownDescription: "URL of the server that receives webhook messages for calls on this phone number (server.url). Takes precedence over the assistant and org server URLs. When omitted, the number has no server of its own; removing this attribute stops managing it without clearing the remote setting.",
+				Optional:            true,
+			},
 			"assistant_id": schema.StringAttribute{
 				MarkdownDescription: "This is the assistant that will be used for incoming calls to this phone number.",
 				Optional:            true,
@@ -164,6 +169,7 @@ func (r *VAPITwilioPhoneNumberResource) Create(ctx context.Context, req resource
 		TwilioAccountSID: data.TwilioAccountSid.ValueString(),
 		TwilioAuthToken:  data.TwilioAuthToken.ValueString(),
 		AssistantID:      data.AssistantID.ValueString(),
+		Server:           twilioServer(data.ServerURL),
 		Fallback: &vapi.FallbackDestination{
 			Type:                   data.FallbackType.ValueString(),
 			NumberE164CheckEnabled: data.FallbackE164CheckEnabled.ValueString() == "true",
@@ -254,6 +260,7 @@ func (r *VAPITwilioPhoneNumberResource) Update(ctx context.Context, req resource
 		TwilioAccountSID: plan.TwilioAccountSid.ValueString(),
 		TwilioAuthToken:  plan.TwilioAuthToken.ValueString(),
 		AssistantID:      plan.AssistantID.ValueString(),
+		Server:           twilioServer(plan.ServerURL),
 		Fallback: &vapi.FallbackDestination{
 			Type:                   plan.FallbackType.ValueString(),
 			NumberE164CheckEnabled: plan.FallbackE164CheckEnabled.ValueString() == "true",
@@ -306,10 +313,22 @@ func (r *VAPITwilioPhoneNumberResource) ImportState(ctx context.Context, req res
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }
 
+// twilioServer omits server when server_url is unmanaged.
+func twilioServer(url types.String) *vapi.Server {
+	if url.IsNull() || url.IsUnknown() {
+		return nil
+	}
+	return &vapi.Server{URL: url.ValueString()}
+}
+
 func bindVAPIPhoneNumberResourceData(data *VAPITwilioPhoneNumberResourceModel, phoneNumberResp *vapi.TwilioPhoneNumber) {
 	// Only refresh SMS when it is managed and the API returned a value.
 	if !data.SmsEnabled.IsNull() && phoneNumberResp.SmsEnabled != nil {
 		data.SmsEnabled = types.BoolValue(*phoneNumberResp.SmsEnabled)
+	}
+	// Same for the server URL.
+	if !data.ServerURL.IsNull() && phoneNumberResp.Server != nil && phoneNumberResp.Server.URL != "" {
+		data.ServerURL = types.StringValue(phoneNumberResp.Server.URL)
 	}
 	data.ID = types.StringValue(phoneNumberResp.ID)
 	data.OrgID = types.StringValue(phoneNumberResp.OrgID)

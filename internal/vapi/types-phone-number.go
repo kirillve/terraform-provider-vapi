@@ -9,6 +9,7 @@ type ImportTwilioRequest struct {
 	TwilioAccountSID string               `json:"twilioAccountSid"`
 	TwilioAuthToken  string               `json:"twilioAuthToken"`
 	AssistantID      string               `json:"assistantId,omitempty"`
+	Server           *Server              `json:"server,omitempty"`
 	Fallback         *FallbackDestination `json:"fallbackDestination,omitempty"`
 }
 
@@ -35,5 +36,6 @@ type TwilioPhoneNumber struct {
 	Name             string               `json:"name"`
 	Provider         string               `json:"provider"`
 	AssistantID      string               `json:"assistantId"`
+	Server           *Server              `json:"server,omitempty"`
 	Fallback         *FallbackDestination `json:"fallbackDestination,omitempty"`
 }

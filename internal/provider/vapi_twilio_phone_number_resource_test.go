@@ -147,7 +147,7 @@ func twilioPhoneModel(name string) VAPITwilioPhoneNumberResourceModel {
 }
 
 // Exercise framework planning and CRUD over a local API, including replacement decisions.
-type twilioSMSHarness struct {
+type twilioHarness struct {
 	t        *testing.T
 	server   tfprotov6.ProviderServer
 	typ      tftypes.Type
@@ -156,9 +156,9 @@ type twilioSMSHarness struct {
 	requests []map[string]any
 }
 
-func newTwilioSMSHarness(t *testing.T) *twilioSMSHarness {
+func newTwilioHarness(t *testing.T) *twilioHarness {
 	t.Helper()
-	h := &twilioSMSHarness{t: t, remote: map[string]any{"id": "pn-1", "orgId": "org-1", "name": "primary", "provider": "twilio"}}
+	h := &twilioHarness{t: t, remote: map[string]any{"id": "pn-1", "orgId": "org-1", "name": "primary", "provider": "twilio"}}
 	api := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		h.methods = append(h.methods, r.Method+" "+r.URL.Path)
 		if r.Method == http.MethodPost || r.Method == http.MethodPatch {
@@ -167,8 +167,10 @@ func newTwilioSMSHarness(t *testing.T) *twilioSMSHarness {
 				t.Error(err)
 			}
 			h.requests = append(h.requests, body)
-			if v, ok := body["smsEnabled"]; ok {
-				h.remote["smsEnabled"] = v
+			for _, key := range []string{"smsEnabled", "server"} {
+				if v, ok := body[key]; ok {
+					h.remote[key] = v
+				}
 			}
 		}
 		w.Header().Set("Content-Type", "application/json")
@@ -199,11 +201,15 @@ func newTwilioSMSHarness(t *testing.T) *twilioSMSHarness {
 	return h
 }
 
-func (h *twilioSMSHarness) config(sms any) map[string]any {
-	return map[string]any{"name": "primary", "number": "+15555550123", "twilio_account_sid": "test-sid", "twilio_auth_token": "test-token", "sms_enabled": sms}
+func (h *twilioHarness) config(attrs map[string]any) map[string]any {
+	config := map[string]any{"name": "primary", "number": "+15555550123", "twilio_account_sid": "test-sid", "twilio_auth_token": "test-token"}
+	for key, value := range attrs {
+		config[key] = value
+	}
+	return config
 }
 
-func (h *twilioSMSHarness) value(fields map[string]any) *tfprotov6.DynamicValue {
+func (h *twilioHarness) value(fields map[string]any) *tfprotov6.DynamicValue {
 	h.t.Helper()
 	filled := map[string]any{}
 	object, ok := h.typ.(tftypes.Object)
@@ -219,7 +225,7 @@ func (h *twilioSMSHarness) value(fields map[string]any) *tfprotov6.DynamicValue 
 	return &tfprotov6.DynamicValue{JSON: mustMarshal(h.t, filled)}
 }
 
-func (h *twilioSMSHarness) fields(state *tfprotov6.DynamicValue) map[string]any {
+func (h *twilioHarness) fields(state *tfprotov6.DynamicValue) map[string]any {
 	h.t.Helper()
 	v, err := state.Unmarshal(h.typ)
 	if err != nil {
@@ -240,9 +246,9 @@ func (h *twilioSMSHarness) fields(state *tfprotov6.DynamicValue) map[string]any 
 	return out
 }
 
-func (h *twilioSMSHarness) plan(sms any, prior *tfprotov6.DynamicValue) *tfprotov6.PlanResourceChangeResponse {
+func (h *twilioHarness) plan(attrs map[string]any, prior *tfprotov6.DynamicValue) *tfprotov6.PlanResourceChangeResponse {
 	h.t.Helper()
-	proposed := h.config(sms)
+	proposed := h.config(attrs)
 	if prior == nil {
 		prior = &tfprotov6.DynamicValue{JSON: []byte("null")}
 	} else {
@@ -251,7 +257,7 @@ func (h *twilioSMSHarness) plan(sms any, prior *tfprotov6.DynamicValue) *tfproto
 			proposed[key] = fields[key]
 		}
 	}
-	plan, err := h.server.PlanResourceChange(h.t.Context(), &tfprotov6.PlanResourceChangeRequest{TypeName: "vapi_twilio_phone_number", Config: h.value(h.config(sms)), PriorState: prior, ProposedNewState: h.value(proposed)})
+	plan, err := h.server.PlanResourceChange(h.t.Context(), &tfprotov6.PlanResourceChangeRequest{TypeName: "vapi_twilio_phone_number", Config: h.value(h.config(attrs)), PriorState: prior, ProposedNewState: h.value(proposed)})
 	if err != nil {
 		h.t.Fatal(err)
 	}
@@ -265,13 +271,13 @@ func (h *twilioSMSHarness) plan(sms any, prior *tfprotov6.DynamicValue) *tfproto
 	return plan
 }
 
-func (h *twilioSMSHarness) apply(sms any, prior *tfprotov6.DynamicValue) *tfprotov6.DynamicValue {
+func (h *twilioHarness) apply(attrs map[string]any, prior *tfprotov6.DynamicValue) *tfprotov6.DynamicValue {
 	h.t.Helper()
-	plan := h.plan(sms, prior)
+	plan := h.plan(attrs, prior)
 	if prior == nil {
 		prior = &tfprotov6.DynamicValue{JSON: []byte("null")}
 	}
-	applied, err := h.server.ApplyResourceChange(h.t.Context(), &tfprotov6.ApplyResourceChangeRequest{TypeName: "vapi_twilio_phone_number", Config: h.value(h.config(sms)), PriorState: prior, PlannedState: plan.PlannedState})
+	applied, err := h.server.ApplyResourceChange(h.t.Context(), &tfprotov6.ApplyResourceChangeRequest{TypeName: "vapi_twilio_phone_number", Config: h.value(h.config(attrs)), PriorState: prior, PlannedState: plan.PlannedState})
 	if err != nil {
 		h.t.Fatal(err)
 	}
@@ -282,7 +288,7 @@ func (h *twilioSMSHarness) apply(sms any, prior *tfprotov6.DynamicValue) *tfprot
 	return applied.NewState
 }
 
-func (h *twilioSMSHarness) refresh(state *tfprotov6.DynamicValue) *tfprotov6.DynamicValue {
+func (h *twilioHarness) refresh(state *tfprotov6.DynamicValue) *tfprotov6.DynamicValue {
 	h.t.Helper()
 	read, err := h.server.ReadResource(h.t.Context(), &tfprotov6.ReadResourceRequest{TypeName: "vapi_twilio_phone_number", CurrentState: state})
 	if err != nil {
@@ -293,12 +299,12 @@ func (h *twilioSMSHarness) refresh(state *tfprotov6.DynamicValue) *tfprotov6.Dyn
 }
 
 func TestTwilioSMSEnabledLifecycle(t *testing.T) {
-	h := newTwilioSMSHarness(t)
-	state := h.apply(false, nil)
+	h := newTwilioHarness(t)
+	state := h.apply(map[string]any{"sms_enabled": false}, nil)
 	if h.requests[0]["smsEnabled"] != false {
 		t.Fatal("create must send explicit false")
 	}
-	state = h.apply(true, state)
+	state = h.apply(map[string]any{"sms_enabled": true}, state)
 	if h.requests[1]["smsEnabled"] != true {
 		t.Fatal("update must send true")
 	}
@@ -330,8 +336,8 @@ func TestTwilioSMSEnabledRead(t *testing.T) {
 	for _, prior := range []any{nil, false, true} {
 		for _, response := range []any{nil, false, true} {
 			t.Run(fmt.Sprintf("prior=%v/response=%v", prior, response), func(t *testing.T) {
-				h := newTwilioSMSHarness(t)
-				state := h.apply(prior, nil)
+				h := newTwilioHarness(t)
+				state := h.apply(map[string]any{"sms_enabled": prior}, nil)
 				if response == nil {
 					delete(h.remote, "smsEnabled")
 				} else {
@@ -346,6 +352,32 @@ func TestTwilioSMSEnabledRead(t *testing.T) {
 				}
 			})
 		}
+	}
+}
+
+func TestTwilioServerURLLifecycle(t *testing.T) {
+	h := newTwilioHarness(t)
+	state := h.apply(map[string]any{"server_url": "https://example.com/a"}, nil)
+	if !reflect.DeepEqual(h.requests[0]["server"], map[string]any{"url": "https://example.com/a"}) {
+		t.Fatalf("create must send server.url: %v", h.requests[0])
+	}
+	state = h.apply(map[string]any{"server_url": "https://example.com/b"}, state)
+	if !reflect.DeepEqual(h.requests[1]["server"], map[string]any{"url": "https://example.com/b"}) {
+		t.Fatalf("update must send server.url: %v", h.requests[1])
+	}
+	if !reflect.DeepEqual(h.methods, []string{"POST /phone-number", "PATCH /phone-number/pn-1"}) {
+		t.Fatalf("unexpected API operations: %v", h.methods)
+	}
+	h.remote["server"] = map[string]any{"url": "https://example.com/drift"}
+	if got := h.fields(h.refresh(state))["server_url"]; got != "https://example.com/drift" {
+		t.Fatalf("read server_url = %v, want remote drift", got)
+	}
+	state = h.apply(nil, state)
+	if _, ok := h.requests[2]["server"]; ok {
+		t.Fatal("removing attribute must omit server")
+	}
+	if h.fields(h.refresh(state))["server_url"] != nil {
+		t.Fatal("removing attribute must remain null after refresh")
 	}
 }
 

@@ -46,6 +46,7 @@ resource "vapi_twilio_phone_number" "test-vapi_twilio_phone_number" {
 - `fallback_destination_number` (String) The FallbackDestination Number.
 - `fallback_destination_number_e164_check_enabled` (String) The FallbackDestination E164 check.
 - `fallback_destination_type` (String) The FallbackDestination Type.
+- `server_url` (String) URL of the server that receives webhook messages for calls on this phone number (server.url). Takes precedence over the assistant and org server URLs. When omitted, the number has no server of its own; removing this attribute stops managing it without clearing the remote setting.
 - `sms_enabled` (Boolean) Whether VAPI manages SMS for this Twilio number. Set false to disable VAPI SMS and avoid overwriting the Twilio messaging webhook. When omitted, VAPI uses its default on import; removing this attribute stops managing SMS without resetting the remote setting. Disabling SMS does not restore a previously overwritten webhook.
 
 ### Read-Only
