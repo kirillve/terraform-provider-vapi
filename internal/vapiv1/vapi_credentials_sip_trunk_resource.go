@@ -1,4 +1,4 @@
-package provider
+package vapiv1
 
 import (
 	"context"
@@ -107,15 +107,7 @@ func (r *VAPISIPTrunkResource) Schema(ctx context.Context, req resource.SchemaRe
 }
 
 func (r *VAPISIPTrunkResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-	client, ok := req.ProviderData.(*vapi.APIClient)
-	if !ok {
-		resp.Diagnostics.AddError("Unexpected Provider Data", fmt.Sprintf("Expected *vapi.APIClient, got %T", req.ProviderData))
-		return
-	}
-	r.client = client
+	r.client = configureClient(req, resp)
 }
 
 func (r *VAPISIPTrunkResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
