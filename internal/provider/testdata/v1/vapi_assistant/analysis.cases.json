@@ -1,0 +1,10 @@
+[
+  {
+    "name": "create_analysis_without_schema",
+    "op": "create",
+    "config": {"name":"support-bot","model":{"model":"gpt-4o"},"analysis_plan":{"summary_prompt":"Summary prompt"}},
+    "api": [
+      {"method":"POST","path":"/assistant","status":200,"body":"{\"id\":\"asst-1\",\"orgId\":\"org-1\",\"name\":\"support-bot\",\"model\":{\"model\":\"gpt-4o\",\"provider\":\"openai\",\"systemPrompt\":\"\",\"maxTokens\":0,\"temperature\":0},\"analysisPlan\":{\"summaryPrompt\":\"Summary prompt\"}}"}
+    ]
+  }
+]

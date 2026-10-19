@@ -1,0 +1,108 @@
+[
+  {
+    "name": "read",
+    "op": "read",
+    "prior_state": {"id":"asst-1","org_id":"org-1","name":"support-bot"},
+    "api": [
+      {"method":"GET","path":"/assistant/asst-1","status":200,"body":"{\"id\":\"asst-1\",\"orgId\":\"org-1\",\"name\":\"example-assistant\",\"firstMessageMode\":\"assistant-speaks-first\",\"hipaaEnabled\":false,\"server\":{\"url\":\"https://somewhere.example.invalid\",\"secret\":\"secret-phrase\",\"timeoutSeconds\":20},\"clientMessages\":[\"function-call\",\"hang\",\"status-update\",\"tool-calls\",\"user-interrupted\"],\"serverMessages\":[\"end-of-call-report\",\"function-call\",\"hang\",\"status-update\",\"tool-calls\",\"user-interrupted\",\"transfer-destination-request\"],\"silenceTimeoutSeconds\":30,\"maxDurationSeconds\":600,\"backgroundSound\":\"office\",\"backgroundDenoisingEnabled\":true,\"modelOutputInMessagesEnabled\":true,\"firstMessage\":\"First message\",\"voicemailMessage\":\"Voicemain message\",\"endCallMessage\":\"End Call message\",\"endCallPhrases\":[\"Bye for now\",\"Talk to you soon\",\"Goodbye\",\"Talk to you later\"],\"transcriber\":{\"provider\":\"deepgram\",\"model\":\"nova-2-phonecall\",\"language\":\"en\"},\"model\":{\"model\":\"gpt-4o\",\"systemPrompt\":\"System prompt\",\"temperature\":0.3,\"provider\":\"openai\",\"knowledgeBase\":{\"fileIds\":[\"920f2f78-1234-5678-afec-9a3a79b8f687\"],\"provider\":\"canonical\"}},\"voice\":{\"model\":\"eleven_turbo_v2_5\",\"provider\":\"11labs\",\"voiceId\":\"FVQMzxJGPUBtfz1Azdoy\",\"stability\":1.0,\"similarityBoost\":0.75},\"startSpeakingPlan\":{\"waitSeconds\":2.5,\"smartEndpointingEnabled\":true,\"transcriptionEndpointingPlan\":{\"onPunctuationSeconds\":0.5,\"onNoPunctuationSeconds\":1.0,\"onNumberSeconds\":0.75}},\"stopSpeakingPlan\":{\"numWords\":3},\"analysisPlan\":{\"summaryPrompt\":\"Summary prompt\",\"structuredDataPrompt\":\"Structured data prompt\",\"structuredDataSchema\":{\"type\":\"object\",\"properties\":{\"isCallNotAnswered\":{\"description\":\"Indicates whether the call was not answered by the customer.\",\"type\":\"string\"}}},\"successEvaluationPrompt\":\"Success evaluation prompt\",\"successEvaluationRubric\":\"Checklist\"},\"messagePlan\":{\"idleMessages\":[\"I’ll proceed with scheduling unless you have any questions.\",\"If you don't mind, I will continue with booking your appointment?\",\"Sorry, I kind of lost track for a moment. Mind if we continued?\",\"I will continue, but feel free to ask me any questions, ok?\",\"Are you ready to proceed?\"]},\"endCallFunctionEnabled\":false,\"recordingEnabled\":true,\"forwardingPhoneNumber\":\"\",\"artifactPlan\":{\"recordingFormat\":\"wav\"}}"}
+    ]
+  },
+  {
+    "name": "read_partial",
+    "op": "read",
+    "prior_state": {"id":"asst-1","org_id":"org-1","name":"support-bot"},
+    "api": [
+      {"method":"GET","path":"/assistant/asst-1","status":200,"body":"{\"id\":\"asst-1\",\"orgId\":\"org-1\",\"name\":\"support-bot\",\"firstMessage\":\"Hi\",\"voice\":{\"provider\":\"11labs\",\"voiceId\":\"v-1\"}}"}
+    ]
+  },
+  {
+    "name": "read_malformed",
+    "op": "read",
+    "prior_state": {"id":"asst-1","org_id":"org-1","name":"support-bot"},
+    "api": [
+      {"method":"GET","path":"/assistant/asst-1","status":200,"body":"{\"id\":\"asst-1\",\"name\":"}
+    ]
+  },
+  {
+    "name": "read_body_error",
+    "op": "read",
+    "prior_state": {"id":"asst-1","org_id":"org-1","name":"support-bot"},
+    "api": [
+      {"method":"GET","path":"/assistant/asst-1","status":200,"body":"{\"id\":\"asst-1\",\"orgId\":\"org-1\",\"name\":\"support-bot\"}","failure":"short_body"}
+    ]
+  },
+  {
+    "name": "read_404",
+    "op": "read",
+    "prior_state": {"id":"asst-1","org_id":"org-1","name":"support-bot"},
+    "api": [
+      {"method":"GET","path":"/assistant/asst-1","status":404,"body":"{\"message\":\"not found\"}"}
+    ]
+  },
+  {
+    "name": "read_500",
+    "op": "read",
+    "prior_state": {"id":"asst-1","org_id":"org-1","name":"support-bot"},
+    "api": [
+      {"method":"GET","path":"/assistant/asst-1","status":500,"body":"{\"message\":\"internal error\"}"}
+    ]
+  },
+  {
+    "name": "read_transport_error",
+    "op": "read",
+    "prior_state": {"id":"asst-1","org_id":"org-1","name":"support-bot"},
+    "api": [
+      {"method":"GET","path":"/assistant/asst-1","status":0,"body":"","failure":"disconnect"}
+    ]
+  },
+  {
+    "name": "read_empty_id",
+    "op": "read",
+    "prior_state": {"id":"","org_id":"org-1","name":"support-bot"},
+    "api": []
+  },
+  {
+    "name": "import_unsupported",
+    "op": "import",
+    "import_id": "asst-1",
+    "api": []
+  },
+  {
+    "name": "delete",
+    "op": "delete",
+    "prior_state": {"id":"asst-1","org_id":"org-1","name":"support-bot"},
+    "api": [
+      {"method":"DELETE","path":"/assistant/asst-1","status":200,"body":"{}"}
+    ]
+  },
+  {
+    "name": "delete_404",
+    "op": "delete",
+    "prior_state": {"id":"asst-1","org_id":"org-1","name":"support-bot"},
+    "api": [
+      {"method":"DELETE","path":"/assistant/asst-1","status":404,"body":"{\"message\":\"not found\"}"}
+    ]
+  },
+  {
+    "name": "delete_transport_error",
+    "op": "delete",
+    "prior_state": {"id":"asst-1","org_id":"org-1","name":"support-bot"},
+    "api": [
+      {"method":"DELETE","path":"/assistant/asst-1","status":0,"body":"","failure":"disconnect"}
+    ]
+  },
+  {
+    "name": "delete_empty_id",
+    "op": "delete",
+    "prior_state": {"id":"","org_id":"org-1","name":"support-bot"},
+    "api": []
+  },
+  {
+    "name": "read_nil_nested_child",
+    "op": "read",
+    "prior_state": {"id":"asst-1","org_id":"org-1","name":"support-bot","model":{"model":"gpt-4o","provider":"openai","knowledge_base":{"file_ids":["file-1"],"provider":"canonical"}},"start_speaking_plan":{"wait_seconds":1.5,"transcription_endpointing_plan":{"on_punctuation_seconds":0.5}},"analysis_plan":{"summary_prompt":"s","structured_data_schema":{"type":"object"}},"voice":{"provider":"11labs","voice_id":"v-1"},"transcriber":{"provider":"deepgram"}},
+    "api": [
+      {"method":"GET","path":"/assistant/asst-1","status":200,"body":"{\"id\":\"asst-1\",\"orgId\":\"org-1\",\"name\":\"support-bot\",\"model\":{\"model\":\"gpt-4o\",\"provider\":\"openai\"},\"startSpeakingPlan\":{\"waitSeconds\":1.5},\"analysisPlan\":{\"summaryPrompt\":\"s\"}}"}
+    ]
+  }
+]

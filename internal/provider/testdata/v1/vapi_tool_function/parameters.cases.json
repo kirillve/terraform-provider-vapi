@@ -1,0 +1,10 @@
+[
+  {
+    "name": "import_property_extra_key",
+    "op": "import",
+    "import_id": "tool-2",
+    "api": [
+      {"method":"GET","path":"/tool/tool-2","status":200,"body":"{\"id\":\"tool-2\",\"orgId\":\"org-1\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-02-01T00:00:00Z\",\"type\":\"function\",\"async\":false,\"function\":{\"name\":\"lookup_order\",\"async\":false,\"description\":\"Look up an order by id.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\",\"pattern\":\"^ord-[0-9]+$\"}},\"required\":[\"order_id\"]}},\"server\":{\"url\":\"https://tools.example.invalid/orders\",\"timeoutSeconds\":20}}"}
+    ]
+  }
+]
