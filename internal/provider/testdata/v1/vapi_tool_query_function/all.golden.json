@@ -1,0 +1,1131 @@
+{
+  "create": {
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/tool",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"function\":{\"description\":\"Search the knowledge bases\",\"name\":\"kb-search\"},\"knowledgeBases\":[{\"provider\":\"google\",\"name\":\"kb-a\",\"model\":\"gemini-1.5-flash\",\"description\":\"first base\",\"fileIds\":[\"file-1\",\"file-2\"]},{\"provider\":\"google\",\"name\":\"kb-b\",\"model\":\"gemini-1.5-flash\",\"description\":\"second base\",\"fileIds\":[\"file-3\"]}],\"type\":\"query\"}\n"
+      }
+    ],
+    "planned_state": {
+      "description": "Search the knowledge bases",
+      "id": "<unknown>",
+      "knowledge_bases": [
+        {
+          "description": "first base",
+          "file_ids": [
+            "file-1",
+            "file-2"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        },
+        {
+          "description": "second base",
+          "file_ids": [
+            "file-3"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-b",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "<unknown>"
+    },
+    "plan_apply_diff": [
+      "description"
+    ],
+    "new_state": {
+      "description": "Search the knowledge bases (server)",
+      "id": "tool-1",
+      "knowledge_bases": [
+        {
+          "description": "first base",
+          "file_ids": [
+            "file-1",
+            "file-2"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        },
+        {
+          "description": "second base",
+          "file_ids": [
+            "file-3"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-b",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "org-1"
+    },
+    "diagnostics": []
+  },
+  "create_500": {
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/tool",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"function\":{\"description\":\"Search the knowledge bases\",\"name\":\"kb-search\"},\"knowledgeBases\":[{\"provider\":\"google\",\"name\":\"kb-a\",\"model\":\"gemini-1.5-flash\",\"description\":\"first base\",\"fileIds\":[\"file-1\",\"file-2\"]},{\"provider\":\"google\",\"name\":\"kb-b\",\"model\":\"gemini-1.5-flash\",\"description\":\"second base\",\"fileIds\":[\"file-3\"]}],\"type\":\"query\"}\n"
+      }
+    ],
+    "planned_state": {
+      "description": "Search the knowledge bases",
+      "id": "<unknown>",
+      "knowledge_bases": [
+        {
+          "description": "first base",
+          "file_ids": [
+            "file-1",
+            "file-2"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        },
+        {
+          "description": "second base",
+          "file_ids": [
+            "file-3"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-b",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "<unknown>"
+    },
+    "new_state": null,
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "API Error",
+        "detail": "Error creating resource: HTTP 500: {\"message\":\"internal error\"}"
+      }
+    ]
+  },
+  "create_descriptions_optional": {
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/tool",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"function\":{\"description\":\"\",\"name\":\"kb-search\"},\"knowledgeBases\":[{\"provider\":\"google\",\"name\":\"kb-a\",\"model\":\"gemini-1.5-flash\",\"description\":\"\",\"fileIds\":[\"file-1\"]}],\"type\":\"query\"}\n"
+      }
+    ],
+    "planned_state": {
+      "description": null,
+      "id": "<unknown>",
+      "knowledge_bases": [
+        {
+          "description": null,
+          "file_ids": [
+            "file-1"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "<unknown>"
+    },
+    "plan_apply_diff": [
+      "description"
+    ],
+    "new_state": {
+      "description": "",
+      "id": "tool-1",
+      "knowledge_bases": [
+        {
+          "description": null,
+          "file_ids": [
+            "file-1"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "org-1"
+    },
+    "diagnostics": []
+  },
+  "create_file_ids_empty": {
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/tool",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"function\":{\"description\":\"Search the knowledge bases\",\"name\":\"kb-search\"},\"knowledgeBases\":[{\"provider\":\"google\",\"name\":\"kb-a\",\"model\":\"gemini-1.5-flash\",\"description\":\"first base\",\"fileIds\":[]}],\"type\":\"query\"}\n"
+      }
+    ],
+    "planned_state": {
+      "description": "Search the knowledge bases",
+      "id": "<unknown>",
+      "knowledge_bases": [
+        {
+          "description": "first base",
+          "file_ids": [],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "<unknown>"
+    },
+    "new_state": {
+      "description": "Search the knowledge bases",
+      "id": "tool-1",
+      "knowledge_bases": [
+        {
+          "description": "first base",
+          "file_ids": [],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "org-1"
+    },
+    "diagnostics": []
+  },
+  "create_malformed": {
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/tool",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"function\":{\"description\":\"Search the knowledge bases\",\"name\":\"kb-search\"},\"knowledgeBases\":[{\"provider\":\"google\",\"name\":\"kb-a\",\"model\":\"gemini-1.5-flash\",\"description\":\"first base\",\"fileIds\":[\"file-1\",\"file-2\"]},{\"provider\":\"google\",\"name\":\"kb-b\",\"model\":\"gemini-1.5-flash\",\"description\":\"second base\",\"fileIds\":[\"file-3\"]}],\"type\":\"query\"}\n"
+      }
+    ],
+    "planned_state": {
+      "description": "Search the knowledge bases",
+      "id": "<unknown>",
+      "knowledge_bases": [
+        {
+          "description": "first base",
+          "file_ids": [
+            "file-1",
+            "file-2"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        },
+        {
+          "description": "second base",
+          "file_ids": [
+            "file-3"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-b",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "<unknown>"
+    },
+    "new_state": null,
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Response Error",
+        "detail": "Error parsing response: unexpected end of JSON input"
+      }
+    ]
+  },
+  "create_transport_error": {
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/tool",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"function\":{\"description\":\"Search the knowledge bases\",\"name\":\"kb-search\"},\"knowledgeBases\":[{\"provider\":\"google\",\"name\":\"kb-a\",\"model\":\"gemini-1.5-flash\",\"description\":\"first base\",\"fileIds\":[\"file-1\",\"file-2\"]},{\"provider\":\"google\",\"name\":\"kb-b\",\"model\":\"gemini-1.5-flash\",\"description\":\"second base\",\"fileIds\":[\"file-3\"]}],\"type\":\"query\"}\n"
+      }
+    ],
+    "planned_state": {
+      "description": "Search the knowledge bases",
+      "id": "<unknown>",
+      "knowledge_bases": [
+        {
+          "description": "first base",
+          "file_ids": [
+            "file-1",
+            "file-2"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        },
+        {
+          "description": "second base",
+          "file_ids": [
+            "file-3"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-b",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "<unknown>"
+    },
+    "new_state": null,
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "API Error",
+        "detail": "Error creating resource: request failed: Post \"{{api}}/tool\": EOF"
+      }
+    ]
+  },
+  "delete": {
+    "requests": [
+      {
+        "method": "DELETE",
+        "path": "/tool/tool-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": null,
+    "diagnostics": []
+  },
+  "delete_404": {
+    "requests": [
+      {
+        "method": "DELETE",
+        "path": "/tool/tool-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "description": "Search the knowledge bases",
+      "id": "tool-1",
+      "knowledge_bases": [
+        {
+          "description": "first base",
+          "file_ids": [
+            "file-1",
+            "file-2"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        },
+        {
+          "description": "second base",
+          "file_ids": [
+            "file-3"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-b",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "org-1"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "API Error",
+        "detail": "Error deleting resource: HTTP 404: {\"message\":\"not found\"}"
+      }
+    ]
+  },
+  "delete_empty_id": {
+    "requests": [],
+    "new_state": null,
+    "diagnostics": []
+  },
+  "delete_transport_error": {
+    "requests": [
+      {
+        "method": "DELETE",
+        "path": "/tool/tool-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "description": "Search the knowledge bases",
+      "id": "tool-1",
+      "knowledge_bases": [
+        {
+          "description": "first base",
+          "file_ids": [
+            "file-1",
+            "file-2"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        },
+        {
+          "description": "second base",
+          "file_ids": [
+            "file-3"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-b",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "org-1"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "API Error",
+        "detail": "Error deleting resource: request failed: Delete \"{{api}}/tool/tool-1\": EOF"
+      }
+    ]
+  },
+  "import": {
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/tool/tool-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "imported_state": {
+      "description": null,
+      "id": "tool-1",
+      "knowledge_bases": null,
+      "name": null,
+      "org_id": null
+    },
+    "new_state": {
+      "description": "Search the knowledge bases (refreshed)",
+      "id": "tool-1",
+      "knowledge_bases": [
+        {
+          "description": "first base (refreshed)",
+          "file_ids": [
+            "file-1",
+            "file-2"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        },
+        {
+          "description": "second base (refreshed)",
+          "file_ids": [
+            "file-3"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-b",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "org-1"
+    },
+    "diagnostics": []
+  },
+  "import_read_404": {
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/tool/tool-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "imported_state": {
+      "description": null,
+      "id": "tool-1",
+      "knowledge_bases": null,
+      "name": null,
+      "org_id": null
+    },
+    "new_state": null,
+    "diagnostics": []
+  },
+  "plan_create": {
+    "requests": [],
+    "planned_state": {
+      "description": "Search the knowledge bases",
+      "id": "<unknown>",
+      "knowledge_bases": [
+        {
+          "description": "first base",
+          "file_ids": [
+            "file-1",
+            "file-2"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        },
+        {
+          "description": "second base",
+          "file_ids": [
+            "file-3"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-b",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "<unknown>"
+    },
+    "new_state": null,
+    "diagnostics": []
+  },
+  "plan_update": {
+    "requests": [],
+    "planned_state": {
+      "description": "Search the updated knowledge bases",
+      "id": "<unknown>",
+      "knowledge_bases": [
+        {
+          "description": "first base updated",
+          "file_ids": [
+            "file-1",
+            "file-2"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        },
+        {
+          "description": "second base",
+          "file_ids": [
+            "file-3"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-b",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "<unknown>"
+    },
+    "new_state": null,
+    "diagnostics": []
+  },
+  "read": {
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/tool/tool-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "description": "Search the knowledge bases (refreshed)",
+      "id": "tool-1",
+      "knowledge_bases": [
+        {
+          "description": "first base (refreshed)",
+          "file_ids": [
+            "file-1",
+            "file-2"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        },
+        {
+          "description": "second base (refreshed)",
+          "file_ids": [
+            "file-3"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-b",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "org-1"
+    },
+    "diagnostics": []
+  },
+  "read_404": {
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/tool/tool-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": null,
+    "diagnostics": []
+  },
+  "read_500": {
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/tool/tool-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "description": "Search the knowledge bases",
+      "id": "tool-1",
+      "knowledge_bases": [
+        {
+          "description": "first base",
+          "file_ids": [
+            "file-1",
+            "file-2"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        },
+        {
+          "description": "second base",
+          "file_ids": [
+            "file-3"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-b",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "org-1"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "API Error",
+        "detail": "Error reading resource: HTTP 500: {\"message\":\"internal error\"}"
+      }
+    ]
+  },
+  "read_body_error": {
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/tool/tool-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "description": "Search the knowledge bases",
+      "id": "tool-1",
+      "knowledge_bases": [
+        {
+          "description": "first base",
+          "file_ids": [
+            "file-1",
+            "file-2"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        },
+        {
+          "description": "second base",
+          "file_ids": [
+            "file-3"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-b",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "org-1"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "API Error",
+        "detail": "Error reading resource: error reading response body: unexpected EOF"
+      }
+    ]
+  },
+  "read_empty_id": {
+    "requests": [],
+    "new_state": null,
+    "diagnostics": []
+  },
+  "read_malformed": {
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/tool/tool-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "description": "Search the knowledge bases",
+      "id": "tool-1",
+      "knowledge_bases": [
+        {
+          "description": "first base",
+          "file_ids": [
+            "file-1",
+            "file-2"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        },
+        {
+          "description": "second base",
+          "file_ids": [
+            "file-3"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-b",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "org-1"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Parse Error",
+        "detail": "Failed to parse response: unexpected end of JSON input"
+      }
+    ]
+  },
+  "read_partial": {
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/tool/tool-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "description": "",
+      "id": "tool-1",
+      "knowledge_bases": [],
+      "name": "kb-search",
+      "org_id": ""
+    },
+    "diagnostics": []
+  },
+  "read_transport_error": {
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/tool/tool-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "description": "Search the knowledge bases",
+      "id": "tool-1",
+      "knowledge_bases": [
+        {
+          "description": "first base",
+          "file_ids": [
+            "file-1",
+            "file-2"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        },
+        {
+          "description": "second base",
+          "file_ids": [
+            "file-3"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-b",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "org-1"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "API Error",
+        "detail": "Error reading resource: request failed: Get \"{{api}}/tool/tool-1\": EOF"
+      }
+    ]
+  },
+  "update": {
+    "requests": [
+      {
+        "method": "PATCH",
+        "path": "/tool/tool-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"function\":{\"description\":\"Search the updated knowledge bases\",\"name\":\"kb-search\"},\"knowledgeBases\":[{\"provider\":\"google\",\"name\":\"kb-a\",\"model\":\"gemini-1.5-flash\",\"description\":\"first base updated\",\"fileIds\":[\"file-1\",\"file-2\"]},{\"provider\":\"google\",\"name\":\"kb-b\",\"model\":\"gemini-1.5-flash\",\"description\":\"second base\",\"fileIds\":[\"file-3\"]}]}\n"
+      }
+    ],
+    "planned_state": {
+      "description": "Search the updated knowledge bases",
+      "id": "<unknown>",
+      "knowledge_bases": [
+        {
+          "description": "first base updated",
+          "file_ids": [
+            "file-1",
+            "file-2"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        },
+        {
+          "description": "second base",
+          "file_ids": [
+            "file-3"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-b",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "<unknown>"
+    },
+    "plan_apply_diff": [
+      "description"
+    ],
+    "new_state": {
+      "description": "Search the updated knowledge bases (server)",
+      "id": "<unknown>",
+      "knowledge_bases": [
+        {
+          "description": "first base updated",
+          "file_ids": [
+            "file-1",
+            "file-2"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        },
+        {
+          "description": "second base",
+          "file_ids": [
+            "file-3"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-b",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "<unknown>"
+    },
+    "diagnostics": []
+  },
+  "update_500": {
+    "requests": [
+      {
+        "method": "PATCH",
+        "path": "/tool/tool-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"function\":{\"description\":\"Search the updated knowledge bases\",\"name\":\"kb-search\"},\"knowledgeBases\":[{\"provider\":\"google\",\"name\":\"kb-a\",\"model\":\"gemini-1.5-flash\",\"description\":\"first base updated\",\"fileIds\":[\"file-1\",\"file-2\"]},{\"provider\":\"google\",\"name\":\"kb-b\",\"model\":\"gemini-1.5-flash\",\"description\":\"second base\",\"fileIds\":[\"file-3\"]}]}\n"
+      }
+    ],
+    "planned_state": {
+      "description": "Search the updated knowledge bases",
+      "id": "<unknown>",
+      "knowledge_bases": [
+        {
+          "description": "first base updated",
+          "file_ids": [
+            "file-1",
+            "file-2"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        },
+        {
+          "description": "second base",
+          "file_ids": [
+            "file-3"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-b",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "<unknown>"
+    },
+    "new_state": {
+      "description": "Search the knowledge bases",
+      "id": "tool-1",
+      "knowledge_bases": [
+        {
+          "description": "first base",
+          "file_ids": [
+            "file-1",
+            "file-2"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        },
+        {
+          "description": "second base",
+          "file_ids": [
+            "file-3"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-b",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "org-1"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "API Error",
+        "detail": "Error updating resource: HTTP 500: {\"message\":\"internal error\"}"
+      }
+    ]
+  },
+  "update_empty_id": {
+    "requests": [],
+    "planned_state": {
+      "description": "Search the updated knowledge bases",
+      "id": "<unknown>",
+      "knowledge_bases": [
+        {
+          "description": "first base updated",
+          "file_ids": [
+            "file-1",
+            "file-2"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        },
+        {
+          "description": "second base",
+          "file_ids": [
+            "file-3"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-b",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "<unknown>"
+    },
+    "new_state": {
+      "description": "Search the knowledge bases",
+      "id": "",
+      "knowledge_bases": [
+        {
+          "description": "first base",
+          "file_ids": [
+            "file-1",
+            "file-2"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        },
+        {
+          "description": "second base",
+          "file_ids": [
+            "file-3"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-b",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "org-1"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "API Error",
+        "detail": "HTTP 404: "
+      }
+    ]
+  },
+  "update_malformed": {
+    "requests": [
+      {
+        "method": "PATCH",
+        "path": "/tool/tool-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"function\":{\"description\":\"Search the updated knowledge bases\",\"name\":\"kb-search\"},\"knowledgeBases\":[{\"provider\":\"google\",\"name\":\"kb-a\",\"model\":\"gemini-1.5-flash\",\"description\":\"first base updated\",\"fileIds\":[\"file-1\",\"file-2\"]},{\"provider\":\"google\",\"name\":\"kb-b\",\"model\":\"gemini-1.5-flash\",\"description\":\"second base\",\"fileIds\":[\"file-3\"]}]}\n"
+      }
+    ],
+    "planned_state": {
+      "description": "Search the updated knowledge bases",
+      "id": "<unknown>",
+      "knowledge_bases": [
+        {
+          "description": "first base updated",
+          "file_ids": [
+            "file-1",
+            "file-2"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        },
+        {
+          "description": "second base",
+          "file_ids": [
+            "file-3"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-b",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "<unknown>"
+    },
+    "new_state": {
+      "description": "Search the knowledge bases",
+      "id": "tool-1",
+      "knowledge_bases": [
+        {
+          "description": "first base",
+          "file_ids": [
+            "file-1",
+            "file-2"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        },
+        {
+          "description": "second base",
+          "file_ids": [
+            "file-3"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-b",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "org-1"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Response Error",
+        "detail": "Error parsing update response: unexpected end of JSON input"
+      }
+    ]
+  },
+  "update_transport_error": {
+    "requests": [
+      {
+        "method": "PATCH",
+        "path": "/tool/tool-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"function\":{\"description\":\"Search the updated knowledge bases\",\"name\":\"kb-search\"},\"knowledgeBases\":[{\"provider\":\"google\",\"name\":\"kb-a\",\"model\":\"gemini-1.5-flash\",\"description\":\"first base updated\",\"fileIds\":[\"file-1\",\"file-2\"]},{\"provider\":\"google\",\"name\":\"kb-b\",\"model\":\"gemini-1.5-flash\",\"description\":\"second base\",\"fileIds\":[\"file-3\"]}]}\n"
+      }
+    ],
+    "planned_state": {
+      "description": "Search the updated knowledge bases",
+      "id": "<unknown>",
+      "knowledge_bases": [
+        {
+          "description": "first base updated",
+          "file_ids": [
+            "file-1",
+            "file-2"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        },
+        {
+          "description": "second base",
+          "file_ids": [
+            "file-3"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-b",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "<unknown>"
+    },
+    "new_state": {
+      "description": "Search the knowledge bases",
+      "id": "tool-1",
+      "knowledge_bases": [
+        {
+          "description": "first base",
+          "file_ids": [
+            "file-1",
+            "file-2"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        },
+        {
+          "description": "second base",
+          "file_ids": [
+            "file-3"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-b",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "org-1"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "API Error",
+        "detail": "Error updating resource: request failed: Patch \"{{api}}/tool/tool-1\": EOF"
+      }
+    ]
+  }
+}
