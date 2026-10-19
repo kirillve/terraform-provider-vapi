@@ -1,0 +1,215 @@
+{
+  "attributes": {
+    "gateways": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "",
+      "description_kind": 0,
+      "nesting": "LIST",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": [
+        "list",
+        [
+          "object",
+          {
+            "ip": "string"
+          }
+        ]
+      ]
+    },
+    "gateways.ip": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "",
+      "description_kind": 0,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "id": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "",
+      "description_kind": 0,
+      "nesting": "",
+      "optional": false,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "name": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "",
+      "description_kind": 0,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "outbound_authentication_plan": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "",
+      "description_kind": 0,
+      "nesting": "SINGLE",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": [
+        "object",
+        {
+          "auth_password": "string",
+          "auth_username": "string",
+          "sip_register_plan": [
+            "object",
+            {
+              "domain": "string",
+              "realm": "string",
+              "username": "string"
+            }
+          ]
+        }
+      ]
+    },
+    "outbound_authentication_plan.auth_password": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "",
+      "description_kind": 0,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "outbound_authentication_plan.auth_username": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "",
+      "description_kind": 0,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "outbound_authentication_plan.sip_register_plan": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "",
+      "description_kind": 0,
+      "nesting": "SINGLE",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": [
+        "object",
+        {
+          "domain": "string",
+          "realm": "string",
+          "username": "string"
+        }
+      ]
+    },
+    "outbound_authentication_plan.sip_register_plan.domain": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "",
+      "description_kind": 0,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "outbound_authentication_plan.sip_register_plan.realm": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "",
+      "description_kind": 0,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "outbound_authentication_plan.sip_register_plan.username": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "",
+      "description_kind": 0,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "outbound_leading_plus_enabled": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "",
+      "description_kind": 0,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "bool"
+    },
+    "sip_diversion_header": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "",
+      "description_kind": 0,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "sip_provider": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The SIP trunk provider identifier (e.g., byo-sip-trunk).",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "tech_prefix": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "",
+      "description_kind": 0,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    }
+  },
+  "fingerprints": {},
+  "schema_version": 0
+}
