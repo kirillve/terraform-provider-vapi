@@ -272,26 +272,41 @@ func (m *VAPISIPTrunkResourceModel) flatten(in *vapi.SIPTrunk) {
 	m.SIPProvider = types.StringValue(in.Provider)
 	m.Name = types.StringValue(in.Name)
 	m.OutboundLeadingPlusEnabled = types.BoolValue(in.OutboundLeadingPlusEnabled)
-	m.TechPrefix = types.StringValue(in.TechPrefix)
-	m.SIPDiversionHeader = types.StringValue(in.SIPDiversionHeader)
+	m.TechPrefix = optionalString(m.TechPrefix, in.TechPrefix)
+	m.SIPDiversionHeader = optionalString(m.SIPDiversionHeader, in.SIPDiversionHeader)
 
 	m.Gateways = nil
 	for _, g := range in.Gateways {
 		m.Gateways = append(m.Gateways, SIPGatewayModel{IP: types.StringValue(g.IP)})
 	}
 
+	prior := m.OutboundAuthenticationPlan
 	m.OutboundAuthenticationPlan = nil
 	if plan := in.OutboundAuthenticationPlan; plan != nil {
+		var priorRegister *SIPRegisterPlanModel
+		if prior != nil {
+			priorRegister = prior.SIPRegisterPlan
+		}
+		register := flattenSIPRegisterPlan(priorRegister, plan.SIPRegisterPlan)
+		if prior == nil && plan.AuthUsername == "" && plan.AuthPassword == "" && register == nil {
+			return
+		}
 		m.OutboundAuthenticationPlan = &OutboundAuthenticationPlanModel{
-			AuthUsername: types.StringValue(plan.AuthUsername),
-			AuthPassword: types.StringValue(plan.AuthPassword),
+			AuthUsername:    types.StringValue(plan.AuthUsername),
+			AuthPassword:    types.StringValue(plan.AuthPassword),
+			SIPRegisterPlan: register,
 		}
-		if reg := plan.SIPRegisterPlan; reg != nil {
-			m.OutboundAuthenticationPlan.SIPRegisterPlan = &SIPRegisterPlanModel{
-				Domain:   types.StringValue(reg.Domain),
-				Username: types.StringValue(reg.Username),
-				Realm:    types.StringValue(reg.Realm),
-			}
-		}
+	}
+}
+
+// flattenSIPRegisterPlan keeps an empty registration block absent when it was unset.
+func flattenSIPRegisterPlan(prior *SIPRegisterPlanModel, in *vapi.SIPRegisterPlan) *SIPRegisterPlanModel {
+	if in == nil || (prior == nil && *in == (vapi.SIPRegisterPlan{})) {
+		return nil
+	}
+	return &SIPRegisterPlanModel{
+		Domain:   types.StringValue(in.Domain),
+		Username: types.StringValue(in.Username),
+		Realm:    types.StringValue(in.Realm),
 	}
 }

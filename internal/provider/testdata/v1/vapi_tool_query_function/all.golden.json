@@ -141,11 +141,8 @@
       "name": "kb-search",
       "org_id": "<unknown>"
     },
-    "plan_apply_diff": [
-      "description"
-    ],
     "new_state": {
-      "description": "",
+      "description": null,
       "id": "tool-1",
       "knowledge_bases": [
         {
@@ -724,6 +721,34 @@
       }
     ]
   },
+  "read_description_omitted": {
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/tool/tool-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "description": null,
+      "id": "tool-1",
+      "knowledge_bases": [
+        {
+          "description": null,
+          "file_ids": [
+            "file-1"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "org-1"
+    },
+    "diagnostics": []
+  },
   "read_empty_id": {
     "requests": [],
     "new_state": null,
@@ -834,6 +859,43 @@
         "detail": "Error reading resource: request failed: Get \"{{api}}/tool/tool-1\": EOF"
       }
     ]
+  },
+  "read_unset_explicit_zeros": {
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/tool/tool-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "description": null,
+      "id": "tool-1",
+      "knowledge_bases": [
+        {
+          "description": null,
+          "file_ids": [
+            "file-1"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        },
+        {
+          "description": "",
+          "file_ids": [
+            "file-1"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-b",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "org-1"
+    },
+    "diagnostics": []
   },
   "update": {
     "requests": [

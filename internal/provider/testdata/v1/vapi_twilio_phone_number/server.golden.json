@@ -29,14 +29,11 @@
       "twilio_auth_token": "token-1",
       "updated_at": "<unknown>"
     },
-    "plan_apply_diff": [
-      "fallback_destination_extension"
-    ],
     "new_state": {
       "assistant_id": null,
       "created_at": "2026-01-01T00:00:00Z",
       "fallback_destination_description": "fallback line",
-      "fallback_destination_extension": "",
+      "fallback_destination_extension": null,
       "fallback_destination_message": "fallback",
       "fallback_destination_number": "+15550100003",
       "fallback_destination_number_e164_check_enabled": "true",

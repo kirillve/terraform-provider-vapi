@@ -306,11 +306,13 @@ func (m *VAPITwilioPhoneNumberResourceModel) flatten(in *vapi.TwilioPhoneNumber)
 	m.PhoneProvider = types.StringValue(in.Provider)
 
 	if fb := in.Fallback; fb != nil {
-		m.FallbackType = types.StringValue(fb.Type)
-		m.FallbackE164CheckEnabled = types.StringValue(strconv.FormatBool(fb.NumberE164CheckEnabled))
-		m.FallbackNumber = types.StringValue(fb.Number)
-		m.FallbackExtension = types.StringValue(fb.Extension)
-		m.FallbackMessage = types.StringValue(fb.Message)
-		m.FallbackDescription = types.StringValue(fb.Description)
+		m.FallbackType = optionalString(m.FallbackType, fb.Type)
+		if fb.NumberE164CheckEnabled || m.FallbackE164CheckEnabled.ValueString() != "" {
+			m.FallbackE164CheckEnabled = types.StringValue(strconv.FormatBool(fb.NumberE164CheckEnabled))
+		}
+		m.FallbackNumber = optionalString(m.FallbackNumber, fb.Number)
+		m.FallbackExtension = optionalString(m.FallbackExtension, fb.Extension)
+		m.FallbackMessage = optionalString(m.FallbackMessage, fb.Message)
+		m.FallbackDescription = optionalString(m.FallbackDescription, fb.Description)
 	}
 }
