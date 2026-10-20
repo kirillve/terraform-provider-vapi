@@ -1,12 +1,19 @@
 version: "2"
+# Gates are defined in docs/quality/STANDARD.md. Existing violations are listed in
+# docs/quality/baseline.md and excluded below one by one (path + linter + text + reason).
 linters:
   default: none
   enable:
     - copyloopvar
+    - depguard
+    - dupl
     - durationcheck
     - errcheck
     - forcetypeassert
     - godot
+    - gocognit
+    - gocyclo
+    - gosec
     - ineffassign
     - makezero
     - misspell
@@ -17,6 +24,67 @@ linters:
     - unparam
     - unused
     - usetesting
+  settings:
+    gocyclo:
+      min-complexity: 15
+    gocognit:
+      min-complexity: 15
+    depguard:
+      rules:
+        main:
+          list-mode: lax
+          files:
+            - "**/main.go"
+          deny:
+            - pkg: github.com/kirillve/terraform-provider-vapi/internal/vapiv1
+              desc: main depends on internal/provider only
+            - pkg: github.com/kirillve/terraform-provider-vapi/internal/vapi
+              desc: main depends on internal/provider only
+            - pkg: github.com/kirillve/terraform-provider-vapi/internal/providerdata
+              desc: main depends on internal/provider only
+        provider:
+          list-mode: lax
+          files:
+            - "**/internal/provider/*.go"
+            - "!$test"
+          allow:
+            - github.com/kirillve/terraform-provider-vapi/internal/vapiv1
+          deny:
+            - pkg: github.com/kirillve/terraform-provider-vapi/internal/vapi
+              desc: internal/provider may import internal/providerdata and internal/vapiv1 only
+        vapiv1:
+          list-mode: lax
+          files:
+            - "**/internal/vapiv1/*.go"
+          allow:
+            - github.com/kirillve/terraform-provider-vapi/internal/providerdata
+          deny:
+            - pkg: github.com/kirillve/terraform-provider-vapi/internal/provider
+              desc: internal/vapiv1 must not import internal/provider
+            - pkg: main
+              desc: internal/vapiv1 must not import main
+        vapi:
+          list-mode: lax
+          files:
+            - "**/internal/vapi/*.go"
+          deny:
+            - pkg: github.com/kirillve/terraform-provider-vapi/internal/provider
+              desc: internal/vapi imports no other internal package
+            - pkg: github.com/kirillve/terraform-provider-vapi/internal/vapiv1
+              desc: internal/vapi imports no other internal package
+            - pkg: github.com/kirillve/terraform-provider-vapi/internal/providerdata
+              desc: internal/vapi imports no other internal package
+        providerdata:
+          list-mode: lax
+          files:
+            - "**/internal/providerdata/*.go"
+          deny:
+            - pkg: github.com/kirillve/terraform-provider-vapi/internal/provider
+              desc: internal/providerdata imports no other internal package
+            - pkg: github.com/kirillve/terraform-provider-vapi/internal/vapiv1
+              desc: internal/providerdata imports no other internal package
+            - pkg: github.com/kirillve/terraform-provider-vapi/internal/vapi
+              desc: internal/providerdata imports no other internal package
   exclusions:
     generated: lax
     presets:
@@ -28,6 +96,30 @@ linters:
       - third_party$
       - builtin$
       - examples$
+    # Baseline: existing violations only (docs/quality/baseline.md). New code gets no entry here.
+    rules:
+      # baseline B1: Create handlers share one decode-error shape across three resources.
+      - path: internal/vapiv1/vapi_assistant_resource\.go
+        linters: [dupl]
+        text: "lines are duplicate of"
+      - path: internal/vapiv1/vapi_sip_trunk_phone_number_resource\.go
+        linters: [dupl]
+        text: "lines are duplicate of"
+      - path: internal/vapiv1/vapi_twilio_phone_number_resource\.go
+        linters: [dupl]
+        text: "lines are duplicate of"
+      # baseline B2: test-harness value converter, complexity 16 (fix by splitting per tftypes kind).
+      - path: internal/provider/tfvalue_test\.go
+        linters: [gocognit]
+        text: "cognitive complexity 16 of func `jsonToValue`"
+      # baseline B3: test-harness fingerprint walker, complexity 18.
+      - path: internal/provider/tfvalue_test\.go
+        linters: [gocognit]
+        text: "cognitive complexity 18 of func `tfFingerprintWalk`"
+      # baseline B4: assistant model flatten, complexity 18 (one branch per optional API block).
+      - path: internal/vapiv1/vapi_assistant_resource\.go
+        linters: [gocognit]
+        text: "cognitive complexity 18 of func `\\(\\*VAPIAssistantResourceModel\\)\\.flatten`"
 issues:
   max-issues-per-linter: 0
   max-same-issues: 0

@@ -34,7 +34,7 @@ func (fr *FileResponse) UnmarshalJSON(data []byte) error {
 		Alias: (*Alias)(fr),
 	}
 
-	if err := json.Unmarshal(data, &temp); err != nil {
+	if err := json.Unmarshal(data, temp); err != nil {
 		return err
 	}
 
