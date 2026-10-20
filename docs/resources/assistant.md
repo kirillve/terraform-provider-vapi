@@ -59,7 +59,6 @@ resource "vapi_assistant" "example_assistant" {
     provider = "deepgram"
     model    = "nova-2-phonecall"
     language = "en"
-    keywords = []
   }
 
   model = {
