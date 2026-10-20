@@ -124,7 +124,8 @@ func (r *VAPISIPTrunkPhoneNumberResource) Create(ctx context.Context, req resour
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-// Read fetches the current state from the API.
+// Read fetches the current state from the API. A phone number that no longer exists (HTTP 404)
+// is removed from the state.
 func (r *VAPISIPTrunkPhoneNumberResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data VAPISIPTrunkPhoneNumberResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
@@ -139,7 +140,12 @@ func (r *VAPISIPTrunkPhoneNumberResource) Read(ctx context.Context, req resource
 	}
 
 	var sipResp vapi.ImportSIPTrunkPhoneNumberResponse
-	if err := r.client.Do(http.MethodGet, "phone-number/"+id, nil, &sipResp); err != nil {
+	err := r.client.Do(http.MethodGet, "phone-number/"+id, nil, &sipResp)
+	if vapi.StatusCode(err) == http.StatusNotFound {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+	if err != nil {
 		var decErr *vapi.DecodeError
 		if errors.As(err, &decErr) {
 			resp.Diagnostics.AddError("Unmarshal Error", fmt.Sprintf("Failed to parse API response: %s", err))
@@ -185,7 +191,8 @@ func (r *VAPISIPTrunkPhoneNumberResource) Update(ctx context.Context, req resour
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
-// Delete removes the SIP trunk phone number.
+// Delete removes the SIP trunk phone number. A phone number that no longer exists (HTTP 404)
+// counts as deleted.
 func (r *VAPISIPTrunkPhoneNumberResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var data VAPISIPTrunkPhoneNumberResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
@@ -194,7 +201,7 @@ func (r *VAPISIPTrunkPhoneNumberResource) Delete(ctx context.Context, req resour
 	}
 
 	if id := data.ID.ValueString(); id != "" {
-		if err := r.client.Do(http.MethodDelete, "phone-number/"+id, nil, nil); err != nil {
+		if err := r.client.Do(http.MethodDelete, "phone-number/"+id, nil, nil); err != nil && vapi.StatusCode(err) != http.StatusNotFound {
 			resp.Diagnostics.AddError("Delete Error", fmt.Sprintf("Unable to delete SIP phone number: %s", err))
 			return
 		}

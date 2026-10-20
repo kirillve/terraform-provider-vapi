@@ -318,40 +318,8 @@
         "content_type": "application/json"
       }
     ],
-    "new_state": {
-      "description": "Search the knowledge bases",
-      "id": "tool-1",
-      "knowledge_bases": [
-        {
-          "description": "first base",
-          "file_ids": [
-            "file-1",
-            "file-2"
-          ],
-          "model": "gemini-1.5-flash",
-          "name": "kb-a",
-          "provider": "google"
-        },
-        {
-          "description": "second base",
-          "file_ids": [
-            "file-3"
-          ],
-          "model": "gemini-1.5-flash",
-          "name": "kb-b",
-          "provider": "google"
-        }
-      ],
-      "name": "kb-search",
-      "org_id": "org-1"
-    },
-    "diagnostics": [
-      {
-        "severity": "error",
-        "summary": "API Error",
-        "detail": "Error deleting resource: HTTP 404: {\"message\":\"not found\"}"
-      }
-    ]
+    "new_state": null,
+    "diagnostics": []
   },
   "delete_empty_id": {
     "requests": [],
