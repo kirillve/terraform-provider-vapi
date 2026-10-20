@@ -106,6 +106,22 @@ resource "vapi_tool_function" "booking_outgoing" {
 - `org_id` (String) The ID of the tool function.
 - `updated_at` (String) The timestamp when the tool function was last updated.
 
+<a id="nestedatt--destinations"></a>
+### Nested Schema for `destinations`
+
+Required:
+
+- `description` (String) Description for the destination.
+- `message` (String) Message to play before forwarding.
+- `number` (String) The phone number to forward to.
+- `type` (String) The type of the destination (e.g., number).
+
+Optional:
+
+- `extension` (String) The phone number extension to forward to.
+- `number_e164_check_enabled` (Boolean) Indicates whether to check the number for E.164 format.
+
+
 <a id="nestedatt--parameters"></a>
 ### Nested Schema for `parameters`
 
@@ -127,20 +143,3 @@ Optional:
 
 - `description` (String) A description of the property.
 - `enum` (List of String) List of possible values for the property.
-
-
-
-<a id="nestedatt--destinations"></a>
-### Nested Schema for `destinations`
-
-Required:
-
-- `description` (String) Description for the destination.
-- `message` (String) Message to play before forwarding.
-- `number` (String) The phone number to forward to.
-- `type` (String) The type of the destination (e.g., number).
-
-Optional:
-
-- `extension` (String) The phone number extension to forward to.
-- `number_e164_check_enabled` (Boolean) Indicates whether to check the number for E.164 format.
