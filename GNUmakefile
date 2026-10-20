@@ -31,7 +31,7 @@ testacc:
 verify: fmt-check vet lint vuln secrets test-race fuzz
 
 fmt-check:
-	@out="$$(gofmt -s -l .)"; if [ -n "$$out" ]; then echo "gofmt needed:"; echo "$$out"; exit 1; fi
+	@out="$$(gofmt -s -l $$(git ls-files '*.go'))"; if [ -n "$$out" ]; then echo "gofmt needed:"; echo "$$out"; exit 1; fi
 
 vet:
 	go vet ./...
