@@ -25,6 +25,8 @@ var requiredCases = []string{
 	"read_500",
 	"read_404",
 	"delete_404",
+	"delete_500",
+	"delete_403",
 	"create_malformed",
 	"update_malformed",
 	"read_malformed",

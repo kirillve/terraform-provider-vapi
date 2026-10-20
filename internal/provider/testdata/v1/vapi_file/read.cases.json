@@ -161,5 +161,21 @@
     "op": "delete",
     "prior_state": {"content":"hello world\n","filename":"notes.txt","id":"","org_id":"org-1","name":"notes.txt","original_name":"notes.txt","bytes":12,"mimetype":"text/plain","path":"files/file-1/notes.txt","url":"/files/file-1/notes.txt","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","status":"ready","bucket":"uploads","purpose":"knowledge_base"},
     "api": []
+  },
+  {
+    "name": "delete_500",
+    "op": "delete",
+    "prior_state": {"content":"hello world\n","filename":"notes.txt","id":"file-1","org_id":"org-1","name":"notes.txt","original_name":"notes.txt","bytes":12,"mimetype":"text/plain","path":"files/file-1/notes.txt","url":"/files/file-1/notes.txt","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","status":"ready","bucket":"uploads","purpose":"knowledge_base"},
+    "api": [
+      {"method":"DELETE","path":"/file/file-1","status":500,"body":"{\"message\":\"server error\"}"}
+    ]
+  },
+  {
+    "name": "delete_403",
+    "op": "delete",
+    "prior_state": {"content":"hello world\n","filename":"notes.txt","id":"file-1","org_id":"org-1","name":"notes.txt","original_name":"notes.txt","bytes":12,"mimetype":"text/plain","path":"files/file-1/notes.txt","url":"/files/file-1/notes.txt","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","status":"ready","bucket":"uploads","purpose":"knowledge_base"},
+    "api": [
+      {"method":"DELETE","path":"/file/file-1","status":403,"body":"{\"message\":\"forbidden\"}"}
+    ]
   }
 ]

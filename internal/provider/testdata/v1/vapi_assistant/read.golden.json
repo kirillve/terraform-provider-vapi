@@ -11,6 +11,64 @@
     "new_state": null,
     "diagnostics": []
   },
+  "delete_403": {
+    "requests": [
+      {
+        "method": "DELETE",
+        "path": "/assistant/asst-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "analysis_plan": null,
+      "artifact_plan": null,
+      "background_denoising": null,
+      "background_sound": null,
+      "client_messages": null,
+      "dial_keypad_function_enabled": null,
+      "end_call_function_enabled": null,
+      "end_call_message": null,
+      "end_call_phrases": null,
+      "fillers_enabled": null,
+      "first_message": null,
+      "first_message_mode": null,
+      "forwarding_phone_number": null,
+      "hipaa_enabled": null,
+      "id": "asst-1",
+      "interruptions_enabled": null,
+      "keywords": null,
+      "language": null,
+      "live_transcripts_enabled": null,
+      "max_duration_seconds": null,
+      "message_plan": null,
+      "model": null,
+      "model_output_enabled": null,
+      "name": "support-bot",
+      "num_words_to_interrupt_assistant": null,
+      "org_id": "org-1",
+      "parent_id": null,
+      "phone_number_id": null,
+      "recording_enabled": null,
+      "response_delay_seconds": null,
+      "server_messages": null,
+      "server_url": null,
+      "server_url_secret": null,
+      "silence_timeout_seconds": null,
+      "start_speaking_plan": null,
+      "stop_speaking_plan": null,
+      "transcriber": null,
+      "voice": null,
+      "voicemail_message": null
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Client Error",
+        "detail": "Unable to delete assistant: HTTP 403: {\"message\":\"forbidden\"}"
+      }
+    ]
+  },
   "delete_404": {
     "requests": [
       {
@@ -22,6 +80,64 @@
     ],
     "new_state": null,
     "diagnostics": []
+  },
+  "delete_500": {
+    "requests": [
+      {
+        "method": "DELETE",
+        "path": "/assistant/asst-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "analysis_plan": null,
+      "artifact_plan": null,
+      "background_denoising": null,
+      "background_sound": null,
+      "client_messages": null,
+      "dial_keypad_function_enabled": null,
+      "end_call_function_enabled": null,
+      "end_call_message": null,
+      "end_call_phrases": null,
+      "fillers_enabled": null,
+      "first_message": null,
+      "first_message_mode": null,
+      "forwarding_phone_number": null,
+      "hipaa_enabled": null,
+      "id": "asst-1",
+      "interruptions_enabled": null,
+      "keywords": null,
+      "language": null,
+      "live_transcripts_enabled": null,
+      "max_duration_seconds": null,
+      "message_plan": null,
+      "model": null,
+      "model_output_enabled": null,
+      "name": "support-bot",
+      "num_words_to_interrupt_assistant": null,
+      "org_id": "org-1",
+      "parent_id": null,
+      "phone_number_id": null,
+      "recording_enabled": null,
+      "response_delay_seconds": null,
+      "server_messages": null,
+      "server_url": null,
+      "server_url_secret": null,
+      "silence_timeout_seconds": null,
+      "start_speaking_plan": null,
+      "stop_speaking_plan": null,
+      "transcriber": null,
+      "voice": null,
+      "voicemail_message": null
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Client Error",
+        "detail": "Unable to delete assistant: HTTP 500: {\"message\":\"server error\"}"
+      }
+    ]
   },
   "delete_empty_id": {
     "requests": [],

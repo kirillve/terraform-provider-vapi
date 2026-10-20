@@ -433,6 +433,45 @@
     "new_state": null,
     "diagnostics": []
   },
+  "delete_403": {
+    "requests": [
+      {
+        "method": "DELETE",
+        "path": "/credential/trunk-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "gateways": [
+        {
+          "ip": "203.0.113.10"
+        }
+      ],
+      "id": "trunk-1",
+      "name": "trunk-main",
+      "outbound_authentication_plan": {
+        "auth_password": "pass1",
+        "auth_username": "user1",
+        "sip_register_plan": {
+          "domain": "sip.example.invalid",
+          "realm": "example.invalid",
+          "username": "user1"
+        }
+      },
+      "outbound_leading_plus_enabled": true,
+      "sip_diversion_header": "sip:+15550100001@sip.example.invalid",
+      "sip_provider": "byo-sip-trunk",
+      "tech_prefix": "9"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Delete Failed",
+        "detail": "Status: 403, Error: HTTP 403: {\"message\":\"forbidden\"}"
+      }
+    ]
+  },
   "delete_404": {
     "requests": [
       {
@@ -444,6 +483,45 @@
     ],
     "new_state": null,
     "diagnostics": []
+  },
+  "delete_500": {
+    "requests": [
+      {
+        "method": "DELETE",
+        "path": "/credential/trunk-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "gateways": [
+        {
+          "ip": "203.0.113.10"
+        }
+      ],
+      "id": "trunk-1",
+      "name": "trunk-main",
+      "outbound_authentication_plan": {
+        "auth_password": "pass1",
+        "auth_username": "user1",
+        "sip_register_plan": {
+          "domain": "sip.example.invalid",
+          "realm": "example.invalid",
+          "username": "user1"
+        }
+      },
+      "outbound_leading_plus_enabled": true,
+      "sip_diversion_header": "sip:+15550100001@sip.example.invalid",
+      "sip_provider": "byo-sip-trunk",
+      "tech_prefix": "9"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Delete Failed",
+        "detail": "Status: 500, Error: HTTP 500: {\"message\":\"server error\"}"
+      }
+    ]
   },
   "delete_empty_id": {
     "requests": [],

@@ -11,6 +11,43 @@
     "new_state": null,
     "diagnostics": []
   },
+  "delete_403": {
+    "requests": [
+      {
+        "method": "DELETE",
+        "path": "/phone-number/pn-2",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "assistant_id": null,
+      "created_at": "2026-01-01T00:00:00Z",
+      "fallback_destination_description": "fallback line",
+      "fallback_destination_extension": null,
+      "fallback_destination_message": "fallback",
+      "fallback_destination_number": "+15550100003",
+      "fallback_destination_number_e164_check_enabled": "true",
+      "fallback_destination_type": "number",
+      "id": "pn-2",
+      "name": "support line",
+      "number": "+15550100002",
+      "org_id": "org-1",
+      "phone_provider": "twilio",
+      "server_url": "https://hooks.example.invalid/vapi",
+      "sms_enabled": true,
+      "twilio_account_sid": "AC0000000001",
+      "twilio_auth_token": "token-1",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Client Error",
+        "detail": "Unable to delete phone number: HTTP 403: {\"message\":\"forbidden\"}"
+      }
+    ]
+  },
   "delete_404": {
     "requests": [
       {
@@ -22,6 +59,43 @@
     ],
     "new_state": null,
     "diagnostics": []
+  },
+  "delete_500": {
+    "requests": [
+      {
+        "method": "DELETE",
+        "path": "/phone-number/pn-2",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "assistant_id": null,
+      "created_at": "2026-01-01T00:00:00Z",
+      "fallback_destination_description": "fallback line",
+      "fallback_destination_extension": null,
+      "fallback_destination_message": "fallback",
+      "fallback_destination_number": "+15550100003",
+      "fallback_destination_number_e164_check_enabled": "true",
+      "fallback_destination_type": "number",
+      "id": "pn-2",
+      "name": "support line",
+      "number": "+15550100002",
+      "org_id": "org-1",
+      "phone_provider": "twilio",
+      "server_url": "https://hooks.example.invalid/vapi",
+      "sms_enabled": true,
+      "twilio_account_sid": "AC0000000001",
+      "twilio_auth_token": "token-1",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Client Error",
+        "detail": "Unable to delete phone number: HTTP 500: {\"message\":\"server error\"}"
+      }
+    ]
   },
   "delete_empty_id": {
     "requests": [],

@@ -309,6 +309,50 @@
     "new_state": null,
     "diagnostics": []
   },
+  "delete_403": {
+    "requests": [
+      {
+        "method": "DELETE",
+        "path": "/tool/tool-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "description": "Search the knowledge bases",
+      "id": "tool-1",
+      "knowledge_bases": [
+        {
+          "description": "first base",
+          "file_ids": [
+            "file-1",
+            "file-2"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        },
+        {
+          "description": "second base",
+          "file_ids": [
+            "file-3"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-b",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "org-1"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "API Error",
+        "detail": "Error deleting resource: HTTP 403: {\"message\":\"forbidden\"}"
+      }
+    ]
+  },
   "delete_404": {
     "requests": [
       {
@@ -320,6 +364,50 @@
     ],
     "new_state": null,
     "diagnostics": []
+  },
+  "delete_500": {
+    "requests": [
+      {
+        "method": "DELETE",
+        "path": "/tool/tool-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "description": "Search the knowledge bases",
+      "id": "tool-1",
+      "knowledge_bases": [
+        {
+          "description": "first base",
+          "file_ids": [
+            "file-1",
+            "file-2"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-a",
+          "provider": "google"
+        },
+        {
+          "description": "second base",
+          "file_ids": [
+            "file-3"
+          ],
+          "model": "gemini-1.5-flash",
+          "name": "kb-b",
+          "provider": "google"
+        }
+      ],
+      "name": "kb-search",
+      "org_id": "org-1"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "API Error",
+        "detail": "Error deleting resource: HTTP 500: {\"message\":\"server error\"}"
+      }
+    ]
   },
   "delete_empty_id": {
     "requests": [],

@@ -104,5 +104,21 @@
     "api": [
       {"method":"GET","path":"/assistant/asst-1","status":200,"body":"{\"id\":\"asst-1\",\"orgId\":\"org-1\",\"name\":\"support-bot\",\"model\":{\"model\":\"gpt-4o\",\"provider\":\"openai\"},\"startSpeakingPlan\":{\"waitSeconds\":1.5},\"analysisPlan\":{\"summaryPrompt\":\"s\"}}"}
     ]
+  },
+  {
+    "name": "delete_500",
+    "op": "delete",
+    "prior_state": {"id":"asst-1","org_id":"org-1","name":"support-bot"},
+    "api": [
+      {"method":"DELETE","path":"/assistant/asst-1","status":500,"body":"{\"message\":\"server error\"}"}
+    ]
+  },
+  {
+    "name": "delete_403",
+    "op": "delete",
+    "prior_state": {"id":"asst-1","org_id":"org-1","name":"support-bot"},
+    "api": [
+      {"method":"DELETE","path":"/assistant/asst-1","status":403,"body":"{\"message\":\"forbidden\"}"}
+    ]
   }
 ]
