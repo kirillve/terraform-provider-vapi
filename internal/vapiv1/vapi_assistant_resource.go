@@ -530,7 +530,7 @@ func (r *VAPIAssistantResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	requestBody := mapVAPIAssistantRequest(&data)
+	requestBody := data.expand()
 
 	response, responseCode, err := r.client.CreateAssistant(requestBody)
 	if err != nil {
@@ -605,7 +605,7 @@ func (r *VAPIAssistantResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 
-	requestBody := mapVAPIAssistantRequest(&data)
+	requestBody := data.expand()
 
 	response, responseCode, err := r.client.UpdateAssistant(state.ID.ValueString(), requestBody)
 	if err != nil {
@@ -785,158 +785,115 @@ func mapResponseObject(data *VAPIAssistantResourceModel, assistantResponse *vapi
 	}
 }
 
-func mapVAPIAssistantRequest(data *VAPIAssistantResourceModel) vapi.CreateAssistantRequest {
-	return vapi.CreateAssistantRequest{
-		Name:                         data.Name.ValueString(),
-		FirstMessageMode:             data.FirstMessageMode.ValueString(),
-		HipaaEnabled:                 data.HipaaEnabled.ValueBool(),
-		BackgroundSound:              data.BackgroundSound.ValueString(),
-		BackgroundDenoising:          data.BackgroundDenoising.ValueBool(),
-		ModelOutputEnabled:           data.ModelOutputEnabled.ValueBool(),
-		Language:                     data.Language.ValueString(),
-		ForwardingPhoneNumber:        data.ForwardingPhoneNumber.ValueString(),
-		InterruptionsEnabled:         data.InterruptionsEnabled.ValueBool(),
-		EndCallFunctionEnabled:       data.EndCallFunctionEnabled.ValueBool(),
-		DialKeypadFunctionEnabled:    data.DialKeypadFunctionEnabled.ValueBool(),
-		FillersEnabled:               data.FillersEnabled.ValueBool(),
-		SilenceTimeoutSeconds:        data.SilenceTimeoutSeconds.ValueFloat64Pointer(),
-		ResponseDelaySeconds:         data.ResponseDelaySeconds.ValueFloat64Pointer(),
-		NumWordsToInterruptAssistant: data.NumWordsToInterruptAssistant.ValueInt64Pointer(),
-		LiveTranscriptsEnabled:       data.LiveTranscriptsEnabled.ValueBoolPointer(),
-		Keywords:                     ElementsAsString(data.Keywords),
-		ServerMessages:               ElementsAsString(data.ServerMessages),
-
-		MessagePlan: func() *vapi.MessagePlan {
-			if data.MessagePlan != nil {
-				return &vapi.MessagePlan{
-					IdleMessages: ElementsAsString(data.MessagePlan.IdleMessages),
-				}
-			}
-			return nil
-		}(),
-
-		Voice: func() *vapi.Voice {
-			if data.Voice != nil {
-				return &vapi.Voice{
-					Model:           data.Voice.Model.ValueString(),
-					VoiceID:         data.Voice.VoiceID.ValueString(),
-					Provider:        data.Voice.Provider.ValueString(),
-					Stability:       data.Voice.Stability.ValueFloat64(),
-					SimilarityBoost: data.Voice.SimilarityBoost.ValueFloat64(),
-				}
-			}
-			return nil
-		}(),
-
-		Model: func() *vapi.Model {
-			if data.Model != nil {
-				return &vapi.Model{
-					Model:        data.Model.Model.ValueString(),
-					SystemPrompt: data.Model.SystemPrompt.ValueString(),
-					Provider:     data.Model.Provider.ValueString(),
-					MaxTokens:    data.Model.MaxTokens.ValueInt64(),
-					Temperature:  data.Model.Temperature.ValueFloat64(),
-					ToolIDs:      ElementsAsString(data.Model.ToolIDs),
-					KnowledgeBase: func() *vapi.KnowledgeBase {
-						if data.Model.KnowledgeBase != nil {
-							return &vapi.KnowledgeBase{
-								TopK:     data.Model.KnowledgeBase.TopK.ValueInt64(),
-								FileIDs:  ElementsAsString(data.Model.KnowledgeBase.FileIDs),
-								Provider: data.Model.KnowledgeBase.Provider.ValueString(),
-							}
-						}
-						return nil
-					}(),
-				}
-			}
-			return nil
-		}(),
-
-		RecordingEnabled: data.RecordingEnabled.ValueBool(),
-		FirstMessage:     data.FirstMessage.ValueString(),
-		VoicemailMessage: data.VoicemailMessage.ValueString(),
-		EndCallMessage:   data.EndCallMessage.ValueString(),
-
-		Transcriber: func() *vapi.Transcriber {
-			if data.Transcriber != nil {
-				return &vapi.Transcriber{
-					Provider: data.Transcriber.Provider.ValueString(),
-					Model:    data.Transcriber.Model.ValueString(),
-					Language: data.Transcriber.Language.ValueString(),
-				}
-			}
-			return nil
-		}(),
-
+// expand builds the API request from the planned model.
+func (m *VAPIAssistantResourceModel) expand() vapi.CreateAssistantRequest {
+	out := vapi.CreateAssistantRequest{
+		Name:                         m.Name.ValueString(),
+		FirstMessageMode:             m.FirstMessageMode.ValueString(),
+		HipaaEnabled:                 m.HipaaEnabled.ValueBool(),
+		BackgroundSound:              m.BackgroundSound.ValueString(),
+		BackgroundDenoising:          m.BackgroundDenoising.ValueBool(),
+		ModelOutputEnabled:           m.ModelOutputEnabled.ValueBool(),
+		Language:                     m.Language.ValueString(),
+		ForwardingPhoneNumber:        m.ForwardingPhoneNumber.ValueString(),
+		InterruptionsEnabled:         m.InterruptionsEnabled.ValueBool(),
+		EndCallFunctionEnabled:       m.EndCallFunctionEnabled.ValueBool(),
+		DialKeypadFunctionEnabled:    m.DialKeypadFunctionEnabled.ValueBool(),
+		FillersEnabled:               m.FillersEnabled.ValueBool(),
+		SilenceTimeoutSeconds:        m.SilenceTimeoutSeconds.ValueFloat64Pointer(),
+		ResponseDelaySeconds:         m.ResponseDelaySeconds.ValueFloat64Pointer(),
+		NumWordsToInterruptAssistant: m.NumWordsToInterruptAssistant.ValueInt64Pointer(),
+		LiveTranscriptsEnabled:       m.LiveTranscriptsEnabled.ValueBoolPointer(),
+		Keywords:                     ElementsAsString(m.Keywords),
+		ServerMessages:               ElementsAsString(m.ServerMessages),
+		RecordingEnabled:             m.RecordingEnabled.ValueBool(),
+		FirstMessage:                 m.FirstMessage.ValueString(),
+		VoicemailMessage:             m.VoicemailMessage.ValueString(),
+		EndCallMessage:               m.EndCallMessage.ValueString(),
 		Server: &vapi.Server{
-			URL:            data.ServerURL.ValueString(),
-			Secret:         data.ServerURLSecret.ValueString(),
+			URL:            m.ServerURL.ValueString(),
+			Secret:         m.ServerURLSecret.ValueString(),
 			TimeoutSeconds: 20,
 		},
-
-		ClientMessages:     ElementsAsString(data.ClientMessages),
-		EndCallPhrases:     ElementsAsString(data.EndCallPhrases),
-		MaxDurationSeconds: data.MaxDurationSeconds.ValueInt64(),
-
-		AnalysisPlan: func() *vapi.AnalysisPlan {
-			if data.AnalysisPlan != nil {
-				return &vapi.AnalysisPlan{
-					SummaryPrompt:           data.AnalysisPlan.SummaryPrompt.ValueString(),
-					StructuredDataPrompt:    data.AnalysisPlan.StructuredDataPrompt.ValueString(),
-					StructuredDataSchema:    createRequestObject(data.AnalysisPlan.StructuredDataSchema),
-					SuccessEvaluationPrompt: data.AnalysisPlan.SuccessEvaluationPrompt.ValueString(),
-					SuccessEvaluationRubric: data.AnalysisPlan.SuccessEvaluationRubric.ValueString(),
-				}
-			}
-			return nil
-		}(),
-
-		StartSpeakingPlan: func() *vapi.StartSpeakingPlan {
-			if data.StartSpeakingPlan != nil {
-				return &vapi.StartSpeakingPlan{
-					WaitSeconds:             data.StartSpeakingPlan.WaitSeconds.ValueFloat64(),
-					SmartEndpointingEnabled: data.StartSpeakingPlan.SmartEndpointingEnabled.ValueBool(),
-					TranscriptionEndpointingPlan: func() *vapi.TranscriptionEndpointingPlan {
-						if data.StartSpeakingPlan.TranscriptionEndpointingPlan != nil {
-							return &vapi.TranscriptionEndpointingPlan{
-								OnPunctuationSeconds:   data.StartSpeakingPlan.TranscriptionEndpointingPlan.OnPunctuationSeconds.ValueFloat64(),
-								OnNoPunctuationSeconds: data.StartSpeakingPlan.TranscriptionEndpointingPlan.OnNoPunctuationSeconds.ValueFloat64(),
-								OnNumberSeconds:        data.StartSpeakingPlan.TranscriptionEndpointingPlan.OnNumberSeconds.ValueFloat64(),
-							}
-						}
-						return nil
-					}(),
-				}
-			}
-			return nil
-		}(),
-
-		StopSpeakingPlan: func() *vapi.StopSpeakingPlan {
-			if data.StopSpeakingPlan != nil {
-				return &vapi.StopSpeakingPlan{
-					NumWords:       data.StopSpeakingPlan.NumWords.ValueFloat64(),
-					VoiceSeconds:   data.StopSpeakingPlan.VoiceSeconds.ValueFloat64(),
-					BackoffSeconds: data.StopSpeakingPlan.BackoffSeconds.ValueFloat64(),
-				}
-			}
-			return nil
-		}(),
-
-		ArtifactPlan: func() *vapi.ArtifactPlan {
-			if data.ArtifactPlan != nil {
-				var recordingFormat string
-				if len(data.ArtifactPlan.RecordingFormat.ValueString()) == 0 {
-					recordingFormat = "mp3"
-				} else {
-					recordingFormat = data.ArtifactPlan.RecordingFormat.ValueString()
-				}
-				return &vapi.ArtifactPlan{
-					RecordingFormat: recordingFormat,
-				}
-			}
-			return nil
-		}(),
+		ClientMessages:     ElementsAsString(m.ClientMessages),
+		EndCallPhrases:     ElementsAsString(m.EndCallPhrases),
+		MaxDurationSeconds: m.MaxDurationSeconds.ValueInt64(),
 	}
+
+	if m.MessagePlan != nil {
+		out.MessagePlan = &vapi.MessagePlan{
+			IdleMessages: ElementsAsString(m.MessagePlan.IdleMessages),
+		}
+	}
+	if m.Voice != nil {
+		out.Voice = &vapi.Voice{
+			Model:           m.Voice.Model.ValueString(),
+			VoiceID:         m.Voice.VoiceID.ValueString(),
+			Provider:        m.Voice.Provider.ValueString(),
+			Stability:       m.Voice.Stability.ValueFloat64(),
+			SimilarityBoost: m.Voice.SimilarityBoost.ValueFloat64(),
+		}
+	}
+	if m.Model != nil {
+		out.Model = &vapi.Model{
+			Model:        m.Model.Model.ValueString(),
+			SystemPrompt: m.Model.SystemPrompt.ValueString(),
+			Provider:     m.Model.Provider.ValueString(),
+			MaxTokens:    m.Model.MaxTokens.ValueInt64(),
+			Temperature:  m.Model.Temperature.ValueFloat64(),
+			ToolIDs:      ElementsAsString(m.Model.ToolIDs),
+		}
+		if m.Model.KnowledgeBase != nil {
+			out.Model.KnowledgeBase = &vapi.KnowledgeBase{
+				TopK:     m.Model.KnowledgeBase.TopK.ValueInt64(),
+				FileIDs:  ElementsAsString(m.Model.KnowledgeBase.FileIDs),
+				Provider: m.Model.KnowledgeBase.Provider.ValueString(),
+			}
+		}
+	}
+	if m.Transcriber != nil {
+		out.Transcriber = &vapi.Transcriber{
+			Provider: m.Transcriber.Provider.ValueString(),
+			Model:    m.Transcriber.Model.ValueString(),
+			Language: m.Transcriber.Language.ValueString(),
+		}
+	}
+	if m.AnalysisPlan != nil {
+		out.AnalysisPlan = &vapi.AnalysisPlan{
+			SummaryPrompt:           m.AnalysisPlan.SummaryPrompt.ValueString(),
+			StructuredDataPrompt:    m.AnalysisPlan.StructuredDataPrompt.ValueString(),
+			StructuredDataSchema:    createRequestObject(m.AnalysisPlan.StructuredDataSchema),
+			SuccessEvaluationPrompt: m.AnalysisPlan.SuccessEvaluationPrompt.ValueString(),
+			SuccessEvaluationRubric: m.AnalysisPlan.SuccessEvaluationRubric.ValueString(),
+		}
+	}
+	if m.StartSpeakingPlan != nil {
+		out.StartSpeakingPlan = &vapi.StartSpeakingPlan{
+			WaitSeconds:             m.StartSpeakingPlan.WaitSeconds.ValueFloat64(),
+			SmartEndpointingEnabled: m.StartSpeakingPlan.SmartEndpointingEnabled.ValueBool(),
+		}
+		if m.StartSpeakingPlan.TranscriptionEndpointingPlan != nil {
+			out.StartSpeakingPlan.TranscriptionEndpointingPlan = &vapi.TranscriptionEndpointingPlan{
+				OnPunctuationSeconds:   m.StartSpeakingPlan.TranscriptionEndpointingPlan.OnPunctuationSeconds.ValueFloat64(),
+				OnNoPunctuationSeconds: m.StartSpeakingPlan.TranscriptionEndpointingPlan.OnNoPunctuationSeconds.ValueFloat64(),
+				OnNumberSeconds:        m.StartSpeakingPlan.TranscriptionEndpointingPlan.OnNumberSeconds.ValueFloat64(),
+			}
+		}
+	}
+	if m.StopSpeakingPlan != nil {
+		out.StopSpeakingPlan = &vapi.StopSpeakingPlan{
+			NumWords:       m.StopSpeakingPlan.NumWords.ValueFloat64(),
+			VoiceSeconds:   m.StopSpeakingPlan.VoiceSeconds.ValueFloat64(),
+			BackoffSeconds: m.StopSpeakingPlan.BackoffSeconds.ValueFloat64(),
+		}
+	}
+	if m.ArtifactPlan != nil {
+		out.ArtifactPlan = &vapi.ArtifactPlan{RecordingFormat: m.ArtifactPlan.RecordingFormat.ValueString()}
+		if out.ArtifactPlan.RecordingFormat == "" {
+			out.ArtifactPlan.RecordingFormat = "mp3"
+		}
+	}
+	return out
 }
 
 func createRequestObject(data *StructuredDataSchemaResourceModel) *vapi.StructuredDataSchema {
