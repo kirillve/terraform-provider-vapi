@@ -11,6 +11,8 @@ CHANGES:
 - creating or updating a `vapi_assistant` without `phone_number_id` no longer fails with an unknown value after apply; the attribute stays null until it is set
 - creating or updating a `vapi_assistant` with only its required arguments no longer fails with `Provider produced inconsistent result after apply`: an optional argument the configuration leaves unset stays null in the state when VAPI returns an empty or zero value, while a value the configuration sets (including an explicit `false`, `0` or empty string) is kept
 - `vapi_twilio_phone_number` (with a partly configured fallback destination), `vapi_tool_query_function` (without a description), `vapi_sip_trunk` (without tech prefix or diversion header) and `vapi_tool_function` (a parameter property without description) no longer fail with `Provider produced inconsistent result after apply`, and no longer show a difference after refresh, when those optional arguments are left unset
+- fixed a panic when decoding a null file response
+- added a single `make verify` quality gate (see docs/quality/STANDARD.md)
 
 ## v0.14.0
 
