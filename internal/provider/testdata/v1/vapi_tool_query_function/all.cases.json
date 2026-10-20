@@ -1,0 +1,214 @@
+[
+  {
+    "name": "plan_create",
+    "op": "plan_create",
+    "config": {"name":"kb-search","description":"Search the knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base","file_ids":["file-1","file-2"]},{"provider":"google","name":"kb-b","model":"gemini-1.5-flash","description":"second base","file_ids":["file-3"]}]},
+    "api": []
+  },
+  {
+    "name": "plan_update",
+    "op": "plan_update",
+    "config": {"name":"kb-search","description":"Search the updated knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base updated","file_ids":["file-1","file-2"]},{"provider":"google","name":"kb-b","model":"gemini-1.5-flash","description":"second base","file_ids":["file-3"]}]},
+    "prior_state": {"id":"tool-1","org_id":"org-1","name":"kb-search","description":"Search the knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base","file_ids":["file-1","file-2"]},{"provider":"google","name":"kb-b","model":"gemini-1.5-flash","description":"second base","file_ids":["file-3"]}]},
+    "api": []
+  },
+  {
+    "name": "create",
+    "op": "create",
+    "config": {"name":"kb-search","description":"Search the knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base","file_ids":["file-1","file-2"]},{"provider":"google","name":"kb-b","model":"gemini-1.5-flash","description":"second base","file_ids":["file-3"]}]},
+    "api": [
+      {"method":"POST","path":"/tool","status":200,"body":"{\"id\":\"tool-1\",\"orgId\":\"org-1\",\"type\":\"query\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-01-01T00:00:00Z\",\"function\":{\"name\":\"kb-search-server\",\"description\":\"Search the knowledge bases (server)\"},\"knowledgeBases\":[{\"provider\":\"openai\",\"name\":\"kb-server\",\"model\":\"gpt-4o\",\"description\":\"server side\",\"fileIds\":[\"file-9\"]}]}"}
+    ]
+  },
+  {
+    "name": "update",
+    "op": "update",
+    "config": {"name":"kb-search","description":"Search the updated knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base updated","file_ids":["file-1","file-2"]},{"provider":"google","name":"kb-b","model":"gemini-1.5-flash","description":"second base","file_ids":["file-3"]}]},
+    "prior_state": {"id":"tool-1","org_id":"org-1","name":"kb-search","description":"Search the knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base","file_ids":["file-1","file-2"]},{"provider":"google","name":"kb-b","model":"gemini-1.5-flash","description":"second base","file_ids":["file-3"]}]},
+    "api": [
+      {"method":"PATCH","path":"/tool/tool-1","status":200,"body":"{\"id\":\"tool-1\",\"orgId\":\"org-1\",\"type\":\"query\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-01-01T00:00:00Z\",\"function\":{\"name\":\"kb-search-server\",\"description\":\"Search the updated knowledge bases (server)\"},\"knowledgeBases\":[{\"provider\":\"openai\",\"name\":\"kb-server\",\"model\":\"gpt-4o\",\"description\":\"server side\",\"fileIds\":[\"file-9\"]}]}"}
+    ]
+  },
+  {
+    "name": "read",
+    "op": "read",
+    "prior_state": {"id":"tool-1","org_id":"org-1","name":"kb-search","description":"Search the knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base","file_ids":["file-1","file-2"]},{"provider":"google","name":"kb-b","model":"gemini-1.5-flash","description":"second base","file_ids":["file-3"]}]},
+    "api": [
+      {"method":"GET","path":"/tool/tool-1","status":200,"body":"{\"id\":\"tool-1\",\"orgId\":\"org-1\",\"type\":\"query\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-01-01T00:00:00Z\",\"function\":{\"name\":\"kb-search\",\"description\":\"Search the knowledge bases (refreshed)\"},\"knowledgeBases\":[{\"provider\":\"google\",\"name\":\"kb-a\",\"model\":\"gemini-1.5-flash\",\"description\":\"first base (refreshed)\",\"fileIds\":[\"file-1\",\"file-2\"]},{\"provider\":\"google\",\"name\":\"kb-b\",\"model\":\"gemini-1.5-flash\",\"description\":\"second base (refreshed)\",\"fileIds\":[\"file-3\"]}]}"}
+    ]
+  },
+  {
+    "name": "read_partial",
+    "op": "read",
+    "prior_state": {"id":"tool-1","org_id":"org-1","name":"kb-search","description":"Search the knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base","file_ids":["file-1","file-2"]},{"provider":"google","name":"kb-b","model":"gemini-1.5-flash","description":"second base","file_ids":["file-3"]}]},
+    "api": [
+      {"method":"GET","path":"/tool/tool-1","status":200,"body":"{\"id\":\"tool-1\",\"function\":{\"name\":\"kb-search\"}}"}
+    ]
+  },
+  {
+    "name": "delete",
+    "op": "delete",
+    "prior_state": {"id":"tool-1","org_id":"org-1","name":"kb-search","description":"Search the knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base","file_ids":["file-1","file-2"]},{"provider":"google","name":"kb-b","model":"gemini-1.5-flash","description":"second base","file_ids":["file-3"]}]},
+    "api": [
+      {"method":"DELETE","path":"/tool/tool-1","status":200,"body":"{\"id\":\"tool-1\"}"}
+    ]
+  },
+  {
+    "name": "create_500",
+    "op": "create",
+    "config": {"name":"kb-search","description":"Search the knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base","file_ids":["file-1","file-2"]},{"provider":"google","name":"kb-b","model":"gemini-1.5-flash","description":"second base","file_ids":["file-3"]}]},
+    "api": [
+      {"method":"POST","path":"/tool","status":500,"body":"{\"message\":\"internal error\"}"}
+    ]
+  },
+  {
+    "name": "update_500",
+    "op": "update",
+    "config": {"name":"kb-search","description":"Search the updated knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base updated","file_ids":["file-1","file-2"]},{"provider":"google","name":"kb-b","model":"gemini-1.5-flash","description":"second base","file_ids":["file-3"]}]},
+    "prior_state": {"id":"tool-1","org_id":"org-1","name":"kb-search","description":"Search the knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base","file_ids":["file-1","file-2"]},{"provider":"google","name":"kb-b","model":"gemini-1.5-flash","description":"second base","file_ids":["file-3"]}]},
+    "api": [
+      {"method":"PATCH","path":"/tool/tool-1","status":500,"body":"{\"message\":\"internal error\"}"}
+    ]
+  },
+  {
+    "name": "read_500",
+    "op": "read",
+    "prior_state": {"id":"tool-1","org_id":"org-1","name":"kb-search","description":"Search the knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base","file_ids":["file-1","file-2"]},{"provider":"google","name":"kb-b","model":"gemini-1.5-flash","description":"second base","file_ids":["file-3"]}]},
+    "api": [
+      {"method":"GET","path":"/tool/tool-1","status":500,"body":"{\"message\":\"internal error\"}"}
+    ]
+  },
+  {
+    "name": "read_404",
+    "op": "read",
+    "prior_state": {"id":"tool-1","org_id":"org-1","name":"kb-search","description":"Search the knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base","file_ids":["file-1","file-2"]},{"provider":"google","name":"kb-b","model":"gemini-1.5-flash","description":"second base","file_ids":["file-3"]}]},
+    "api": [
+      {"method":"GET","path":"/tool/tool-1","status":404,"body":"{\"message\":\"not found\"}"}
+    ]
+  },
+  {
+    "name": "delete_404",
+    "op": "delete",
+    "prior_state": {"id":"tool-1","org_id":"org-1","name":"kb-search","description":"Search the knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base","file_ids":["file-1","file-2"]},{"provider":"google","name":"kb-b","model":"gemini-1.5-flash","description":"second base","file_ids":["file-3"]}]},
+    "api": [
+      {"method":"DELETE","path":"/tool/tool-1","status":404,"body":"{\"message\":\"not found\"}"}
+    ]
+  },
+  {
+    "name": "create_malformed",
+    "op": "create",
+    "config": {"name":"kb-search","description":"Search the knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base","file_ids":["file-1","file-2"]},{"provider":"google","name":"kb-b","model":"gemini-1.5-flash","description":"second base","file_ids":["file-3"]}]},
+    "api": [
+      {"method":"POST","path":"/tool","status":200,"body":"{\"id\":\"tool-1\",\"function\":"}
+    ]
+  },
+  {
+    "name": "update_malformed",
+    "op": "update",
+    "config": {"name":"kb-search","description":"Search the updated knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base updated","file_ids":["file-1","file-2"]},{"provider":"google","name":"kb-b","model":"gemini-1.5-flash","description":"second base","file_ids":["file-3"]}]},
+    "prior_state": {"id":"tool-1","org_id":"org-1","name":"kb-search","description":"Search the knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base","file_ids":["file-1","file-2"]},{"provider":"google","name":"kb-b","model":"gemini-1.5-flash","description":"second base","file_ids":["file-3"]}]},
+    "api": [
+      {"method":"PATCH","path":"/tool/tool-1","status":200,"body":"{\"id\":\"tool-1\",\"function\":"}
+    ]
+  },
+  {
+    "name": "read_malformed",
+    "op": "read",
+    "prior_state": {"id":"tool-1","org_id":"org-1","name":"kb-search","description":"Search the knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base","file_ids":["file-1","file-2"]},{"provider":"google","name":"kb-b","model":"gemini-1.5-flash","description":"second base","file_ids":["file-3"]}]},
+    "api": [
+      {"method":"GET","path":"/tool/tool-1","status":200,"body":"{\"id\":\"tool-1\",\"function\":"}
+    ]
+  },
+  {
+    "name": "read_body_error",
+    "op": "read",
+    "prior_state": {"id":"tool-1","org_id":"org-1","name":"kb-search","description":"Search the knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base","file_ids":["file-1","file-2"]},{"provider":"google","name":"kb-b","model":"gemini-1.5-flash","description":"second base","file_ids":["file-3"]}]},
+    "api": [
+      {"method":"GET","path":"/tool/tool-1","status":200,"body":"{\"id\":\"tool-1\",\"orgId\":\"org-1\",\"type\":\"query\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-01-01T00:00:00Z\",\"function\":{\"name\":\"kb-search\",\"description\":\"Search the knowledge bases (refreshed)\"},\"knowledgeBases\":[{\"provider\":\"google\",\"name\":\"kb-a\",\"model\":\"gemini-1.5-flash\",\"description\":\"first base (refreshed)\",\"fileIds\":[\"file-1\",\"file-2\"]},{\"provider\":\"google\",\"name\":\"kb-b\",\"model\":\"gemini-1.5-flash\",\"description\":\"second base (refreshed)\",\"fileIds\":[\"file-3\"]}]}","failure":"short_body"}
+    ]
+  },
+  {
+    "name": "create_transport_error",
+    "op": "create",
+    "config": {"name":"kb-search","description":"Search the knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base","file_ids":["file-1","file-2"]},{"provider":"google","name":"kb-b","model":"gemini-1.5-flash","description":"second base","file_ids":["file-3"]}]},
+    "api": [
+      {"method":"POST","path":"/tool","status":0,"body":"","failure":"disconnect"}
+    ]
+  },
+  {
+    "name": "read_transport_error",
+    "op": "read",
+    "prior_state": {"id":"tool-1","org_id":"org-1","name":"kb-search","description":"Search the knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base","file_ids":["file-1","file-2"]},{"provider":"google","name":"kb-b","model":"gemini-1.5-flash","description":"second base","file_ids":["file-3"]}]},
+    "api": [
+      {"method":"GET","path":"/tool/tool-1","status":0,"body":"","failure":"disconnect"}
+    ]
+  },
+  {
+    "name": "update_transport_error",
+    "op": "update",
+    "config": {"name":"kb-search","description":"Search the updated knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base updated","file_ids":["file-1","file-2"]},{"provider":"google","name":"kb-b","model":"gemini-1.5-flash","description":"second base","file_ids":["file-3"]}]},
+    "prior_state": {"id":"tool-1","org_id":"org-1","name":"kb-search","description":"Search the knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base","file_ids":["file-1","file-2"]},{"provider":"google","name":"kb-b","model":"gemini-1.5-flash","description":"second base","file_ids":["file-3"]}]},
+    "api": [
+      {"method":"PATCH","path":"/tool/tool-1","status":0,"body":"","failure":"disconnect"}
+    ]
+  },
+  {
+    "name": "delete_transport_error",
+    "op": "delete",
+    "prior_state": {"id":"tool-1","org_id":"org-1","name":"kb-search","description":"Search the knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base","file_ids":["file-1","file-2"]},{"provider":"google","name":"kb-b","model":"gemini-1.5-flash","description":"second base","file_ids":["file-3"]}]},
+    "api": [
+      {"method":"DELETE","path":"/tool/tool-1","status":0,"body":"","failure":"disconnect"}
+    ]
+  },
+  {
+    "name": "read_empty_id",
+    "op": "read",
+    "prior_state": {"id":"","org_id":"org-1","name":"kb-search","description":"Search the knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base","file_ids":["file-1","file-2"]},{"provider":"google","name":"kb-b","model":"gemini-1.5-flash","description":"second base","file_ids":["file-3"]}]},
+    "api": []
+  },
+  {
+    "name": "update_empty_id",
+    "op": "update",
+    "config": {"name":"kb-search","description":"Search the updated knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base updated","file_ids":["file-1","file-2"]},{"provider":"google","name":"kb-b","model":"gemini-1.5-flash","description":"second base","file_ids":["file-3"]}]},
+    "prior_state": {"id":"","org_id":"org-1","name":"kb-search","description":"Search the knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base","file_ids":["file-1","file-2"]},{"provider":"google","name":"kb-b","model":"gemini-1.5-flash","description":"second base","file_ids":["file-3"]}]},
+    "api": []
+  },
+  {
+    "name": "delete_empty_id",
+    "op": "delete",
+    "prior_state": {"id":"","org_id":"org-1","name":"kb-search","description":"Search the knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base","file_ids":["file-1","file-2"]},{"provider":"google","name":"kb-b","model":"gemini-1.5-flash","description":"second base","file_ids":["file-3"]}]},
+    "api": []
+  },
+  {
+    "name": "import",
+    "op": "import",
+    "import_id": "tool-1",
+    "api": [
+      {"method":"GET","path":"/tool/tool-1","status":200,"body":"{\"id\":\"tool-1\",\"orgId\":\"org-1\",\"type\":\"query\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-01-01T00:00:00Z\",\"function\":{\"name\":\"kb-search\",\"description\":\"Search the knowledge bases (refreshed)\"},\"knowledgeBases\":[{\"provider\":\"google\",\"name\":\"kb-a\",\"model\":\"gemini-1.5-flash\",\"description\":\"first base (refreshed)\",\"fileIds\":[\"file-1\",\"file-2\"]},{\"provider\":\"google\",\"name\":\"kb-b\",\"model\":\"gemini-1.5-flash\",\"description\":\"second base (refreshed)\",\"fileIds\":[\"file-3\"]}]}"}
+    ]
+  },
+  {
+    "name": "import_read_404",
+    "op": "import",
+    "import_id": "tool-1",
+    "api": [
+      {"method":"GET","path":"/tool/tool-1","status":404,"body":"{\"message\":\"not found\"}"}
+    ]
+  },
+  {
+    "name": "create_descriptions_optional",
+    "op": "create",
+    "config": {"name":"kb-search","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","file_ids":["file-1"]}]},
+    "api": [
+      {"method":"POST","path":"/tool","status":200,"body":"{\"id\":\"tool-1\",\"orgId\":\"org-1\",\"type\":\"query\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-01-01T00:00:00Z\",\"function\":{\"name\":\"kb-search\",\"description\":\"\"},\"knowledgeBases\":[{\"provider\":\"google\",\"name\":\"kb-a\",\"model\":\"gemini-1.5-flash\",\"description\":\"\",\"fileIds\":[\"file-1\"]}]}"}
+    ]
+  },
+  {
+    "name": "create_file_ids_empty",
+    "op": "create",
+    "config": {"name":"kb-search","description":"Search the knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base","file_ids":[]}]},
+    "api": [
+      {"method":"POST","path":"/tool","status":200,"body":"{\"id\":\"tool-1\",\"orgId\":\"org-1\",\"type\":\"query\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-01-01T00:00:00Z\",\"function\":{\"name\":\"kb-search\",\"description\":\"Search the knowledge bases\"},\"knowledgeBases\":[{\"provider\":\"google\",\"name\":\"kb-a\",\"model\":\"gemini-1.5-flash\",\"description\":\"first base\",\"fileIds\":[]}]}"}
+    ]
+  }
+]

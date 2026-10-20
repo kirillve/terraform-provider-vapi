@@ -1,0 +1,45 @@
+{
+  "import_property_extra_key": {
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/tool/tool-2",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "imported_state": {
+      "async": null,
+      "created_at": null,
+      "description": null,
+      "destinations": null,
+      "id": "tool-2",
+      "name": null,
+      "org_id": null,
+      "parameters": null,
+      "parameters_json": null,
+      "server_secret": null,
+      "server_timeout_seconds": null,
+      "server_url": null,
+      "type": null,
+      "updated_at": null
+    },
+    "new_state": {
+      "async": false,
+      "created_at": "2026-01-01T00:00:00Z",
+      "description": "Look up an order by id.",
+      "destinations": null,
+      "id": "tool-2",
+      "name": "lookup_order",
+      "org_id": "org-1",
+      "parameters": null,
+      "parameters_json": "{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\",\"pattern\":\"^ord-[0-9]+$\"}},\"required\":[\"order_id\"]}",
+      "server_secret": null,
+      "server_timeout_seconds": null,
+      "server_url": "https://tools.example.invalid/orders",
+      "type": "function",
+      "updated_at": "2026-02-01T00:00:00Z"
+    },
+    "diagnostics": []
+  }
+}

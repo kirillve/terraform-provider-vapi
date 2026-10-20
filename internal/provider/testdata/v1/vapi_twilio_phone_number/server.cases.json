@@ -1,0 +1,10 @@
+[
+  {
+    "name": "create_server_url_omitted",
+    "op": "create",
+    "config": {"name":"support line","number":"+15550100002","twilio_account_sid":"AC0000000001","twilio_auth_token":"token-1","fallback_destination_type":"number","fallback_destination_number_e164_check_enabled":"true","fallback_destination_number":"+15550100003","fallback_destination_message":"fallback","fallback_destination_description":"fallback line"},
+    "api": [
+      {"method":"POST","path":"/phone-number","status":200,"body":"{\"id\":\"pn-2\",\"orgId\":\"org-1\",\"number\":\"+15550100002\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-01-01T00:00:00Z\",\"twilioAccountSid\":\"AC0000000001\",\"twilioAuthToken\":\"token-1\",\"name\":\"support line\",\"provider\":\"twilio\",\"fallbackDestination\":{\"type\":\"number\",\"numberE164CheckEnabled\":true,\"number\":\"+15550100003\",\"message\":\"fallback\",\"description\":\"fallback line\"}}"}
+    ]
+  }
+]

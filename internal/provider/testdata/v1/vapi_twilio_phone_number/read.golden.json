@@ -1,0 +1,453 @@
+{
+  "delete": {
+    "requests": [
+      {
+        "method": "DELETE",
+        "path": "/phone-number/pn-2",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": null,
+    "diagnostics": []
+  },
+  "delete_404": {
+    "requests": [
+      {
+        "method": "DELETE",
+        "path": "/phone-number/pn-2",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "assistant_id": null,
+      "created_at": "2026-01-01T00:00:00Z",
+      "fallback_destination_description": "fallback line",
+      "fallback_destination_extension": null,
+      "fallback_destination_message": "fallback",
+      "fallback_destination_number": "+15550100003",
+      "fallback_destination_number_e164_check_enabled": "true",
+      "fallback_destination_type": "number",
+      "id": "pn-2",
+      "name": "support line",
+      "number": "+15550100002",
+      "org_id": "org-1",
+      "phone_provider": "twilio",
+      "server_url": "https://hooks.example.invalid/vapi",
+      "sms_enabled": true,
+      "twilio_account_sid": "AC0000000001",
+      "twilio_auth_token": "token-1",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Client Error",
+        "detail": "Unable to delete phone number: HTTP 404: {\"message\":\"not found\"}"
+      }
+    ]
+  },
+  "delete_empty_id": {
+    "requests": [],
+    "new_state": null,
+    "diagnostics": []
+  },
+  "delete_transport_error": {
+    "requests": [
+      {
+        "method": "DELETE",
+        "path": "/phone-number/pn-2",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "assistant_id": null,
+      "created_at": "2026-01-01T00:00:00Z",
+      "fallback_destination_description": "fallback line",
+      "fallback_destination_extension": null,
+      "fallback_destination_message": "fallback",
+      "fallback_destination_number": "+15550100003",
+      "fallback_destination_number_e164_check_enabled": "true",
+      "fallback_destination_type": "number",
+      "id": "pn-2",
+      "name": "support line",
+      "number": "+15550100002",
+      "org_id": "org-1",
+      "phone_provider": "twilio",
+      "server_url": "https://hooks.example.invalid/vapi",
+      "sms_enabled": true,
+      "twilio_account_sid": "AC0000000001",
+      "twilio_auth_token": "token-1",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Client Error",
+        "detail": "Unable to delete phone number: request failed: Delete \"{{api}}/phone-number/pn-2\": EOF"
+      }
+    ]
+  },
+  "import": {
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/phone-number/pn-2",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "imported_state": {
+      "assistant_id": null,
+      "created_at": null,
+      "fallback_destination_description": null,
+      "fallback_destination_extension": null,
+      "fallback_destination_message": null,
+      "fallback_destination_number": null,
+      "fallback_destination_number_e164_check_enabled": null,
+      "fallback_destination_type": null,
+      "id": "pn-2",
+      "name": null,
+      "number": null,
+      "org_id": null,
+      "phone_provider": null,
+      "server_url": null,
+      "sms_enabled": null,
+      "twilio_account_sid": null,
+      "twilio_auth_token": null,
+      "updated_at": null
+    },
+    "new_state": {
+      "assistant_id": null,
+      "created_at": "2026-01-01T00:00:00Z",
+      "fallback_destination_description": "fallback line",
+      "fallback_destination_extension": "",
+      "fallback_destination_message": "fallback",
+      "fallback_destination_number": "+15550100003",
+      "fallback_destination_number_e164_check_enabled": "true",
+      "fallback_destination_type": "number",
+      "id": "pn-2",
+      "name": "support line",
+      "number": null,
+      "org_id": "org-1",
+      "phone_provider": "twilio",
+      "server_url": null,
+      "sms_enabled": null,
+      "twilio_account_sid": null,
+      "twilio_auth_token": null,
+      "updated_at": "2026-02-01T00:00:00Z"
+    },
+    "diagnostics": []
+  },
+  "import_read_404": {
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/phone-number/pn-2",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "imported_state": {
+      "assistant_id": null,
+      "created_at": null,
+      "fallback_destination_description": null,
+      "fallback_destination_extension": null,
+      "fallback_destination_message": null,
+      "fallback_destination_number": null,
+      "fallback_destination_number_e164_check_enabled": null,
+      "fallback_destination_type": null,
+      "id": "pn-2",
+      "name": null,
+      "number": null,
+      "org_id": null,
+      "phone_provider": null,
+      "server_url": null,
+      "sms_enabled": null,
+      "twilio_account_sid": null,
+      "twilio_auth_token": null,
+      "updated_at": null
+    },
+    "new_state": {
+      "assistant_id": null,
+      "created_at": null,
+      "fallback_destination_description": null,
+      "fallback_destination_extension": null,
+      "fallback_destination_message": null,
+      "fallback_destination_number": null,
+      "fallback_destination_number_e164_check_enabled": null,
+      "fallback_destination_type": null,
+      "id": "pn-2",
+      "name": null,
+      "number": null,
+      "org_id": null,
+      "phone_provider": null,
+      "server_url": null,
+      "sms_enabled": null,
+      "twilio_account_sid": null,
+      "twilio_auth_token": null,
+      "updated_at": null
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Client Error",
+        "detail": "Unable to read phone number: HTTP 404: {\"message\":\"not found\"}"
+      }
+    ]
+  },
+  "read": {
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/phone-number/pn-2",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "assistant_id": null,
+      "created_at": "2026-01-01T00:00:00Z",
+      "fallback_destination_description": "fallback line",
+      "fallback_destination_extension": "",
+      "fallback_destination_message": "fallback",
+      "fallback_destination_number": "+15550100003",
+      "fallback_destination_number_e164_check_enabled": "true",
+      "fallback_destination_type": "number",
+      "id": "pn-2",
+      "name": "support line",
+      "number": "+15550100002",
+      "org_id": "org-1",
+      "phone_provider": "twilio",
+      "server_url": "https://hooks.example.invalid/vapi",
+      "sms_enabled": true,
+      "twilio_account_sid": "AC0000000001",
+      "twilio_auth_token": "token-1",
+      "updated_at": "2026-02-01T00:00:00Z"
+    },
+    "diagnostics": []
+  },
+  "read_404": {
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/phone-number/pn-2",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "assistant_id": null,
+      "created_at": "2026-01-01T00:00:00Z",
+      "fallback_destination_description": "fallback line",
+      "fallback_destination_extension": null,
+      "fallback_destination_message": "fallback",
+      "fallback_destination_number": "+15550100003",
+      "fallback_destination_number_e164_check_enabled": "true",
+      "fallback_destination_type": "number",
+      "id": "pn-2",
+      "name": "support line",
+      "number": "+15550100002",
+      "org_id": "org-1",
+      "phone_provider": "twilio",
+      "server_url": "https://hooks.example.invalid/vapi",
+      "sms_enabled": true,
+      "twilio_account_sid": "AC0000000001",
+      "twilio_auth_token": "token-1",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Client Error",
+        "detail": "Unable to read phone number: HTTP 404: {\"message\":\"not found\"}"
+      }
+    ]
+  },
+  "read_500": {
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/phone-number/pn-2",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "assistant_id": null,
+      "created_at": "2026-01-01T00:00:00Z",
+      "fallback_destination_description": "fallback line",
+      "fallback_destination_extension": null,
+      "fallback_destination_message": "fallback",
+      "fallback_destination_number": "+15550100003",
+      "fallback_destination_number_e164_check_enabled": "true",
+      "fallback_destination_type": "number",
+      "id": "pn-2",
+      "name": "support line",
+      "number": "+15550100002",
+      "org_id": "org-1",
+      "phone_provider": "twilio",
+      "server_url": "https://hooks.example.invalid/vapi",
+      "sms_enabled": true,
+      "twilio_account_sid": "AC0000000001",
+      "twilio_auth_token": "token-1",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Client Error",
+        "detail": "Unable to read phone number: HTTP 500: {\"message\":\"internal error\"}"
+      }
+    ]
+  },
+  "read_body_error": {
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/phone-number/pn-2",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "assistant_id": null,
+      "created_at": "2026-01-01T00:00:00Z",
+      "fallback_destination_description": "fallback line",
+      "fallback_destination_extension": null,
+      "fallback_destination_message": "fallback",
+      "fallback_destination_number": "+15550100003",
+      "fallback_destination_number_e164_check_enabled": "true",
+      "fallback_destination_type": "number",
+      "id": "pn-2",
+      "name": "support line",
+      "number": "+15550100002",
+      "org_id": "org-1",
+      "phone_provider": "twilio",
+      "server_url": "https://hooks.example.invalid/vapi",
+      "sms_enabled": true,
+      "twilio_account_sid": "AC0000000001",
+      "twilio_auth_token": "token-1",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Client Error",
+        "detail": "Unable to read phone number: error reading response body: unexpected EOF"
+      }
+    ]
+  },
+  "read_empty_id": {
+    "requests": [],
+    "new_state": null,
+    "diagnostics": []
+  },
+  "read_malformed": {
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/phone-number/pn-2",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "assistant_id": null,
+      "created_at": "2026-01-01T00:00:00Z",
+      "fallback_destination_description": "fallback line",
+      "fallback_destination_extension": null,
+      "fallback_destination_message": "fallback",
+      "fallback_destination_number": "+15550100003",
+      "fallback_destination_number_e164_check_enabled": "true",
+      "fallback_destination_type": "number",
+      "id": "pn-2",
+      "name": "support line",
+      "number": "+15550100002",
+      "org_id": "org-1",
+      "phone_provider": "twilio",
+      "server_url": "https://hooks.example.invalid/vapi",
+      "sms_enabled": true,
+      "twilio_account_sid": "AC0000000001",
+      "twilio_auth_token": "token-1",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Parse Error",
+        "detail": "Unable to parse phone number response: unexpected end of JSON input"
+      }
+    ]
+  },
+  "read_partial": {
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/phone-number/pn-2",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "assistant_id": null,
+      "created_at": "",
+      "fallback_destination_description": "fallback line",
+      "fallback_destination_extension": null,
+      "fallback_destination_message": "fallback",
+      "fallback_destination_number": "+15550100003",
+      "fallback_destination_number_e164_check_enabled": "true",
+      "fallback_destination_type": "number",
+      "id": "pn-2",
+      "name": "support line",
+      "number": "+15550100002",
+      "org_id": "",
+      "phone_provider": "",
+      "server_url": "https://hooks.example.invalid/vapi",
+      "sms_enabled": true,
+      "twilio_account_sid": "AC0000000001",
+      "twilio_auth_token": "token-1",
+      "updated_at": ""
+    },
+    "diagnostics": []
+  },
+  "read_transport_error": {
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/phone-number/pn-2",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "assistant_id": null,
+      "created_at": "2026-01-01T00:00:00Z",
+      "fallback_destination_description": "fallback line",
+      "fallback_destination_extension": null,
+      "fallback_destination_message": "fallback",
+      "fallback_destination_number": "+15550100003",
+      "fallback_destination_number_e164_check_enabled": "true",
+      "fallback_destination_type": "number",
+      "id": "pn-2",
+      "name": "support line",
+      "number": "+15550100002",
+      "org_id": "org-1",
+      "phone_provider": "twilio",
+      "server_url": "https://hooks.example.invalid/vapi",
+      "sms_enabled": true,
+      "twilio_account_sid": "AC0000000001",
+      "twilio_auth_token": "token-1",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Client Error",
+        "detail": "Unable to read phone number: request failed: Get \"{{api}}/phone-number/pn-2\": EOF"
+      }
+    ]
+  }
+}

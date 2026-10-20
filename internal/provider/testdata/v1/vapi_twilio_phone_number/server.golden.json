@@ -1,0 +1,57 @@
+{
+  "create_server_url_omitted": {
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/phone-number",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"provider\":\"twilio\",\"name\":\"support line\",\"number\":\"+15550100002\",\"twilioAccountSid\":\"AC0000000001\",\"twilioAuthToken\":\"token-1\",\"fallbackDestination\":{\"type\":\"number\",\"numberE164CheckEnabled\":true,\"number\":\"+15550100003\",\"message\":\"fallback\",\"description\":\"fallback line\"}}\n"
+      }
+    ],
+    "planned_state": {
+      "assistant_id": null,
+      "created_at": "<unknown>",
+      "fallback_destination_description": "fallback line",
+      "fallback_destination_extension": null,
+      "fallback_destination_message": "fallback",
+      "fallback_destination_number": "+15550100003",
+      "fallback_destination_number_e164_check_enabled": "true",
+      "fallback_destination_type": "number",
+      "id": "<unknown>",
+      "name": "support line",
+      "number": "+15550100002",
+      "org_id": "<unknown>",
+      "phone_provider": "<unknown>",
+      "server_url": null,
+      "sms_enabled": null,
+      "twilio_account_sid": "AC0000000001",
+      "twilio_auth_token": "token-1",
+      "updated_at": "<unknown>"
+    },
+    "plan_apply_diff": [
+      "fallback_destination_extension"
+    ],
+    "new_state": {
+      "assistant_id": null,
+      "created_at": "2026-01-01T00:00:00Z",
+      "fallback_destination_description": "fallback line",
+      "fallback_destination_extension": "",
+      "fallback_destination_message": "fallback",
+      "fallback_destination_number": "+15550100003",
+      "fallback_destination_number_e164_check_enabled": "true",
+      "fallback_destination_type": "number",
+      "id": "pn-2",
+      "name": "support line",
+      "number": "+15550100002",
+      "org_id": "org-1",
+      "phone_provider": "twilio",
+      "server_url": null,
+      "sms_enabled": null,
+      "twilio_account_sid": "AC0000000001",
+      "twilio_auth_token": "token-1",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    "diagnostics": []
+  }
+}

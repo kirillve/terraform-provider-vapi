@@ -1,0 +1,206 @@
+[
+  {
+    "name": "plan_create",
+    "op": "plan_create",
+    "config": {"name":"main line","number":"+15550100001","credential_id":"cred-1","number_e164_check_enabled":true},
+    "api": []
+  },
+  {
+    "name": "plan_update",
+    "op": "plan_update",
+    "config": {"name":"backup line","number":"+15550100001","credential_id":"cred-1","number_e164_check_enabled":true},
+    "prior_state": {"id":"pn-1","org_id":"org-1","name":"main line","number":"+15550100001","credential_id":"cred-1","number_e164_check_enabled":true,"phone_provider":"byo-phone-number","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z"},
+    "api": []
+  },
+  {
+    "name": "create",
+    "op": "create",
+    "config": {"name":"main line","number":"+15550100001","credential_id":"cred-1","number_e164_check_enabled":true},
+    "api": [
+      {"method":"POST","path":"/phone-number","status":200,"body":"{\"id\":\"pn-1\",\"orgId\":\"org-1\",\"number\":\"+15550100001\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-01-01T00:00:00Z\",\"provider\":\"byo-phone-number\",\"name\":\"main line\",\"numberE164CheckEnabled\":true,\"credentialId\":\"cred-1\"}"}
+    ]
+  },
+  {
+    "name": "update",
+    "op": "update",
+    "config": {"name":"backup line","number":"+15550100001","credential_id":"cred-1","number_e164_check_enabled":true},
+    "prior_state": {"id":"pn-1","org_id":"org-1","name":"main line","number":"+15550100001","credential_id":"cred-1","number_e164_check_enabled":true,"phone_provider":"byo-phone-number","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z"},
+    "api": [
+      {"method":"PATCH","path":"/phone-number/pn-1","status":200,"body":"{\"id\":\"pn-1\",\"orgId\":\"org-1\",\"number\":\"+15550100001\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-02-01T00:00:00Z\",\"provider\":\"byo-phone-number\",\"name\":\"backup line\",\"numberE164CheckEnabled\":true,\"credentialId\":\"cred-1\"}"}
+    ]
+  },
+  {
+    "name": "read",
+    "op": "read",
+    "prior_state": {"id":"pn-1","org_id":"org-1","name":"main line","number":"+15550100001","credential_id":"cred-1","number_e164_check_enabled":true,"phone_provider":"byo-phone-number","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z"},
+    "api": [
+      {"method":"GET","path":"/phone-number/pn-1","status":200,"body":"{\"id\":\"pn-1\",\"orgId\":\"org-1\",\"number\":\"+15550100001\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-02-01T00:00:00Z\",\"provider\":\"byo-phone-number\",\"name\":\"main line\",\"numberE164CheckEnabled\":true,\"credentialId\":\"cred-1\"}"}
+    ]
+  },
+  {
+    "name": "read_partial",
+    "op": "read",
+    "prior_state": {"id":"pn-1","org_id":"org-1","name":"main line","number":"+15550100001","credential_id":"cred-1","number_e164_check_enabled":true,"phone_provider":"byo-phone-number","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z"},
+    "api": [
+      {"method":"GET","path":"/phone-number/pn-1","status":200,"body":"{\"id\":\"pn-1\",\"number\":\"+15550100001\"}"}
+    ]
+  },
+  {
+    "name": "delete",
+    "op": "delete",
+    "prior_state": {"id":"pn-1","org_id":"org-1","name":"main line","number":"+15550100001","credential_id":"cred-1","number_e164_check_enabled":true,"phone_provider":"byo-phone-number","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z"},
+    "api": [
+      {"method":"DELETE","path":"/phone-number/pn-1","status":200,"body":"{\"id\":\"pn-1\"}"}
+    ]
+  },
+  {
+    "name": "create_500",
+    "op": "create",
+    "config": {"name":"main line","number":"+15550100001","credential_id":"cred-1","number_e164_check_enabled":true},
+    "api": [
+      {"method":"POST","path":"/phone-number","status":500,"body":"{\"message\":\"internal error\"}"}
+    ]
+  },
+  {
+    "name": "update_500",
+    "op": "update",
+    "config": {"name":"backup line","number":"+15550100001","credential_id":"cred-1","number_e164_check_enabled":true},
+    "prior_state": {"id":"pn-1","org_id":"org-1","name":"main line","number":"+15550100001","credential_id":"cred-1","number_e164_check_enabled":true,"phone_provider":"byo-phone-number","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z"},
+    "api": [
+      {"method":"PATCH","path":"/phone-number/pn-1","status":500,"body":"{\"message\":\"internal error\"}"}
+    ]
+  },
+  {
+    "name": "read_500",
+    "op": "read",
+    "prior_state": {"id":"pn-1","org_id":"org-1","name":"main line","number":"+15550100001","credential_id":"cred-1","number_e164_check_enabled":true,"phone_provider":"byo-phone-number","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z"},
+    "api": [
+      {"method":"GET","path":"/phone-number/pn-1","status":500,"body":"{\"message\":\"internal error\"}"}
+    ]
+  },
+  {
+    "name": "read_404",
+    "op": "read",
+    "prior_state": {"id":"pn-1","org_id":"org-1","name":"main line","number":"+15550100001","credential_id":"cred-1","number_e164_check_enabled":true,"phone_provider":"byo-phone-number","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z"},
+    "api": [
+      {"method":"GET","path":"/phone-number/pn-1","status":404,"body":"{\"message\":\"not found\"}"}
+    ]
+  },
+  {
+    "name": "delete_404",
+    "op": "delete",
+    "prior_state": {"id":"pn-1","org_id":"org-1","name":"main line","number":"+15550100001","credential_id":"cred-1","number_e164_check_enabled":true,"phone_provider":"byo-phone-number","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z"},
+    "api": [
+      {"method":"DELETE","path":"/phone-number/pn-1","status":404,"body":"{\"message\":\"not found\"}"}
+    ]
+  },
+  {
+    "name": "create_malformed",
+    "op": "create",
+    "config": {"name":"main line","number":"+15550100001","credential_id":"cred-1","number_e164_check_enabled":true},
+    "api": [
+      {"method":"POST","path":"/phone-number","status":200,"body":"{\"id\":\"pn-1\",\"name\":"}
+    ]
+  },
+  {
+    "name": "update_malformed",
+    "op": "update",
+    "config": {"name":"backup line","number":"+15550100001","credential_id":"cred-1","number_e164_check_enabled":true},
+    "prior_state": {"id":"pn-1","org_id":"org-1","name":"main line","number":"+15550100001","credential_id":"cred-1","number_e164_check_enabled":true,"phone_provider":"byo-phone-number","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z"},
+    "api": [
+      {"method":"PATCH","path":"/phone-number/pn-1","status":200,"body":"{\"id\":\"pn-1\",\"name\":"}
+    ]
+  },
+  {
+    "name": "read_malformed",
+    "op": "read",
+    "prior_state": {"id":"pn-1","org_id":"org-1","name":"main line","number":"+15550100001","credential_id":"cred-1","number_e164_check_enabled":true,"phone_provider":"byo-phone-number","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z"},
+    "api": [
+      {"method":"GET","path":"/phone-number/pn-1","status":200,"body":"{\"id\":\"pn-1\",\"name\":"}
+    ]
+  },
+  {
+    "name": "read_body_error",
+    "op": "read",
+    "prior_state": {"id":"pn-1","org_id":"org-1","name":"main line","number":"+15550100001","credential_id":"cred-1","number_e164_check_enabled":true,"phone_provider":"byo-phone-number","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z"},
+    "api": [
+      {"method":"GET","path":"/phone-number/pn-1","status":200,"body":"{\"id\":\"pn-1\",\"orgId\":\"org-1\",\"number\":\"+15550100001\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-02-01T00:00:00Z\",\"provider\":\"byo-phone-number\",\"name\":\"main line\",\"numberE164CheckEnabled\":true,\"credentialId\":\"cred-1\"}","failure":"short_body"}
+    ]
+  },
+  {
+    "name": "create_transport_error",
+    "op": "create",
+    "config": {"name":"main line","number":"+15550100001","credential_id":"cred-1","number_e164_check_enabled":true},
+    "api": [
+      {"method":"POST","path":"/phone-number","status":0,"body":"","failure":"disconnect"}
+    ]
+  },
+  {
+    "name": "read_transport_error",
+    "op": "read",
+    "prior_state": {"id":"pn-1","org_id":"org-1","name":"main line","number":"+15550100001","credential_id":"cred-1","number_e164_check_enabled":true,"phone_provider":"byo-phone-number","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z"},
+    "api": [
+      {"method":"GET","path":"/phone-number/pn-1","status":0,"body":"","failure":"disconnect"}
+    ]
+  },
+  {
+    "name": "update_transport_error",
+    "op": "update",
+    "config": {"name":"backup line","number":"+15550100001","credential_id":"cred-1","number_e164_check_enabled":true},
+    "prior_state": {"id":"pn-1","org_id":"org-1","name":"main line","number":"+15550100001","credential_id":"cred-1","number_e164_check_enabled":true,"phone_provider":"byo-phone-number","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z"},
+    "api": [
+      {"method":"PATCH","path":"/phone-number/pn-1","status":0,"body":"","failure":"disconnect"}
+    ]
+  },
+  {
+    "name": "delete_transport_error",
+    "op": "delete",
+    "prior_state": {"id":"pn-1","org_id":"org-1","name":"main line","number":"+15550100001","credential_id":"cred-1","number_e164_check_enabled":true,"phone_provider":"byo-phone-number","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z"},
+    "api": [
+      {"method":"DELETE","path":"/phone-number/pn-1","status":0,"body":"","failure":"disconnect"}
+    ]
+  },
+  {
+    "name": "read_empty_id",
+    "op": "read",
+    "prior_state": {"id":"","org_id":"org-1","name":"main line","number":"+15550100001","credential_id":"cred-1","number_e164_check_enabled":true,"phone_provider":"byo-phone-number","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z"},
+    "api": []
+  },
+  {
+    "name": "update_empty_id",
+    "op": "update",
+    "config": {"name":"backup line","number":"+15550100001","credential_id":"cred-1","number_e164_check_enabled":true},
+    "prior_state": {"id":"","org_id":"org-1","name":"main line","number":"+15550100001","credential_id":"cred-1","number_e164_check_enabled":true,"phone_provider":"byo-phone-number","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z"},
+    "api": []
+  },
+  {
+    "name": "delete_empty_id",
+    "op": "delete",
+    "prior_state": {"id":"","org_id":"org-1","name":"main line","number":"+15550100001","credential_id":"cred-1","number_e164_check_enabled":true,"phone_provider":"byo-phone-number","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z"},
+    "api": []
+  },
+  {
+    "name": "import",
+    "op": "import",
+    "import_id": "pn-1",
+    "api": [
+      {"method":"GET","path":"/phone-number/pn-1","status":200,"body":"{\"id\":\"pn-1\",\"orgId\":\"org-1\",\"number\":\"+15550100001\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-02-01T00:00:00Z\",\"provider\":\"byo-phone-number\",\"name\":\"main line\",\"numberE164CheckEnabled\":true,\"credentialId\":\"cred-1\"}"}
+    ]
+  },
+  {
+    "name": "import_read_404",
+    "op": "import",
+    "import_id": "pn-1",
+    "api": [
+      {"method":"GET","path":"/phone-number/pn-1","status":404,"body":"{\"message\":\"not found\"}"}
+    ]
+  },
+  {
+    "name": "create_bool_false",
+    "op": "create",
+    "config": {"name":"main line","number":"+15550100001","credential_id":"cred-1","number_e164_check_enabled":false},
+    "api": [
+      {"method":"POST","path":"/phone-number","status":200,"body":"{\"id\":\"pn-1\",\"orgId\":\"org-1\",\"number\":\"+15550100001\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-01-01T00:00:00Z\",\"provider\":\"byo-phone-number\",\"name\":\"main line\",\"numberE164CheckEnabled\":false,\"credentialId\":\"cred-1\"}"}
+    ]
+  }
+]

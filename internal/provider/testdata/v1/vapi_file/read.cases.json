@@ -1,0 +1,165 @@
+[
+  {
+    "name": "read",
+    "op": "read",
+    "prior_state": {"content":"hello world\n","filename":"notes.txt","id":"file-1","org_id":"org-1","name":"notes.txt","original_name":"notes.txt","bytes":12,"mimetype":"text/plain","path":"files/file-1/notes.txt","url":"/files/file-1/notes.txt","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","status":"ready","bucket":"uploads","purpose":"knowledge_base"},
+    "api": [
+      {"method":"GET","path":"/file/file-1","status":200,"body":"{\"id\":\"file-1\",\"orgId\":\"org-1\",\"name\":\"notes.txt\",\"originalName\":\"notes.txt\",\"bytes\":12,\"mimetype\":\"text/plain\",\"path\":\"files/file-1/notes.txt\",\"url\":\"/files/file-1/notes.txt\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-02-01T00:00:00Z\",\"status\":\"processed\",\"bucket\":\"uploads\",\"purpose\":\"knowledge_base\"}"}
+    ]
+  },
+  {
+    "name": "read_partial",
+    "op": "read",
+    "prior_state": {"content":"hello world\n","filename":"notes.txt","id":"file-1","org_id":"org-1","name":"notes.txt","original_name":"notes.txt","bytes":12,"mimetype":"text/plain","path":"files/file-1/notes.txt","url":"/files/file-1/notes.txt","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","status":"ready","bucket":"uploads","purpose":"knowledge_base"},
+    "api": [
+      {"method":"GET","path":"/file/file-1","status":200,"body":"{\"id\":\"file-1\",\"name\":\"notes.txt\",\"bytes\":12}"}
+    ]
+  },
+  {
+    "name": "read_malformed",
+    "op": "read",
+    "prior_state": {"content":"hello world\n","filename":"notes.txt","id":"file-1","org_id":"org-1","name":"notes.txt","original_name":"notes.txt","bytes":12,"mimetype":"text/plain","path":"files/file-1/notes.txt","url":"/files/file-1/notes.txt","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","status":"ready","bucket":"uploads","purpose":"knowledge_base"},
+    "api": [
+      {"method":"GET","path":"/file/file-1","status":200,"body":"{\"id\":\"file-1\",\"name\":\"notes.txt\",\"bytes\":\"x\"}"}
+    ]
+  },
+  {
+    "name": "read_body_error",
+    "op": "read",
+    "prior_state": {"content":"hello world\n","filename":"notes.txt","id":"file-1","org_id":"org-1","name":"notes.txt","original_name":"notes.txt","bytes":12,"mimetype":"text/plain","path":"files/file-1/notes.txt","url":"/files/file-1/notes.txt","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","status":"ready","bucket":"uploads","purpose":"knowledge_base"},
+    "api": [
+      {"method":"GET","path":"/file/file-1","status":200,"body":"{\"id\":\"file-1\",\"orgId\":\"org-1\",\"name\":\"notes.txt\",\"originalName\":\"notes.txt\",\"bytes\":12,\"mimetype\":\"text/plain\",\"path\":\"files/file-1/notes.txt\",\"url\":\"/files/file-1/notes.txt\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-02-01T00:00:00Z\",\"status\":\"processed\",\"bucket\":\"uploads\",\"purpose\":\"knowledge_base\"}","failure":"short_body"}
+    ]
+  },
+  {
+    "name": "read_404",
+    "op": "read",
+    "prior_state": {"content":"hello world\n","filename":"notes.txt","id":"file-1","org_id":"org-1","name":"notes.txt","original_name":"notes.txt","bytes":12,"mimetype":"text/plain","path":"files/file-1/notes.txt","url":"/files/file-1/notes.txt","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","status":"ready","bucket":"uploads","purpose":"knowledge_base"},
+    "api": [
+      {"method":"GET","path":"/file/file-1","status":404,"body":"{\"message\":\"not found\"}"}
+    ]
+  },
+  {
+    "name": "read_500",
+    "op": "read",
+    "prior_state": {"content":"hello world\n","filename":"notes.txt","id":"file-1","org_id":"org-1","name":"notes.txt","original_name":"notes.txt","bytes":12,"mimetype":"text/plain","path":"files/file-1/notes.txt","url":"/files/file-1/notes.txt","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","status":"ready","bucket":"uploads","purpose":"knowledge_base"},
+    "api": [
+      {"method":"GET","path":"/file/file-1","status":500,"body":"{\"message\":\"internal error\"}"}
+    ]
+  },
+  {
+    "name": "read_transport_error",
+    "op": "read",
+    "prior_state": {"content":"hello world\n","filename":"notes.txt","id":"file-1","org_id":"org-1","name":"notes.txt","original_name":"notes.txt","bytes":12,"mimetype":"text/plain","path":"files/file-1/notes.txt","url":"/files/file-1/notes.txt","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","status":"ready","bucket":"uploads","purpose":"knowledge_base"},
+    "api": [
+      {"method":"GET","path":"/file/file-1","status":0,"body":"","failure":"disconnect"}
+    ]
+  },
+  {
+    "name": "read_empty_id",
+    "op": "read",
+    "prior_state": {"content":"hello world\n","filename":"notes.txt","id":"","org_id":"org-1","name":"notes.txt","original_name":"notes.txt","bytes":12,"mimetype":"text/plain","path":"files/file-1/notes.txt","url":"/files/file-1/notes.txt","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","status":"ready","bucket":"uploads","purpose":"knowledge_base"},
+    "api": []
+  },
+  {
+    "name": "import",
+    "op": "import",
+    "import_id": "file-1",
+    "api": [
+      {"method":"GET","path":"/file/file-1","status":200,"body":"{\"id\":\"file-1\",\"orgId\":\"org-1\",\"name\":\"notes.txt\",\"originalName\":\"notes.txt\",\"bytes\":12,\"mimetype\":\"text/plain\",\"path\":\"files/file-1/notes.txt\",\"url\":\"/files/file-1/notes.txt\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-02-01T00:00:00Z\",\"status\":\"processed\",\"bucket\":\"uploads\",\"purpose\":\"knowledge_base\"}"}
+    ]
+  },
+  {
+    "name": "import_read_404",
+    "op": "import",
+    "import_id": "file-1",
+    "api": [
+      {"method":"GET","path":"/file/file-1","status":404,"body":"{\"message\":\"not found\"}"}
+    ]
+  },
+  {
+    "name": "update",
+    "op": "update",
+    "config": {"content":"hello world\n","filename":"notes.txt"},
+    "prior_state": {"content":"hello world\n","filename":"notes.txt","id":"file-1","org_id":"org-1","name":"notes.txt","original_name":"notes.txt","bytes":12,"mimetype":"text/plain","path":"files/file-1/notes.txt","url":"/files/file-1/notes.txt","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","status":"ready","bucket":"uploads","purpose":"knowledge_base"},
+    "api": [
+      {"method":"DELETE","path":"/file/file-1","status":200,"body":"{}"},
+      {"method":"POST","path":"/file","status":200,"body":"{\"id\":\"file-2\",\"orgId\":\"org-1\",\"name\":\"notes.txt\",\"originalName\":\"notes.txt\",\"bytes\":12,\"mimetype\":\"text/plain\",\"path\":\"files/file-2/notes.txt\",\"url\":\"/files/file-2/notes.txt\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-02-01T00:00:00Z\",\"status\":\"ready\",\"bucket\":\"uploads\",\"purpose\":\"knowledge_base\"}"}
+    ]
+  },
+  {
+    "name": "update_500",
+    "op": "update",
+    "config": {"content":"hello world\n","filename":"notes.txt"},
+    "prior_state": {"content":"hello world\n","filename":"notes.txt","id":"file-1","org_id":"org-1","name":"notes.txt","original_name":"notes.txt","bytes":12,"mimetype":"text/plain","path":"files/file-1/notes.txt","url":"/files/file-1/notes.txt","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","status":"ready","bucket":"uploads","purpose":"knowledge_base"},
+    "api": [
+      {"method":"DELETE","path":"/file/file-1","status":500,"body":"{\"message\":\"internal error\"}"}
+    ]
+  },
+  {
+    "name": "update_malformed",
+    "op": "update",
+    "config": {"content":"hello world\n","filename":"notes.txt"},
+    "prior_state": {"content":"hello world\n","filename":"notes.txt","id":"file-1","org_id":"org-1","name":"notes.txt","original_name":"notes.txt","bytes":12,"mimetype":"text/plain","path":"files/file-1/notes.txt","url":"/files/file-1/notes.txt","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","status":"ready","bucket":"uploads","purpose":"knowledge_base"},
+    "api": [
+      {"method":"DELETE","path":"/file/file-1","status":200,"body":"{}"},
+      {"method":"POST","path":"/file","status":200,"body":"{\"id\":\"file-2\",\"name\":\"notes.txt\",\"bytes\":\"x\"}"}
+    ]
+  },
+  {
+    "name": "update_transport_error",
+    "op": "update",
+    "config": {"content":"hello world\n","filename":"notes.txt"},
+    "prior_state": {"content":"hello world\n","filename":"notes.txt","id":"file-1","org_id":"org-1","name":"notes.txt","original_name":"notes.txt","bytes":12,"mimetype":"text/plain","path":"files/file-1/notes.txt","url":"/files/file-1/notes.txt","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","status":"ready","bucket":"uploads","purpose":"knowledge_base"},
+    "api": [
+      {"method":"DELETE","path":"/file/file-1","status":0,"body":"","failure":"disconnect"}
+    ]
+  },
+  {
+    "name": "update_empty_id",
+    "op": "update",
+    "config": {"content":"hello world\n","filename":"notes.txt"},
+    "prior_state": {"content":"hello world\n","filename":"notes.txt","id":"","org_id":"org-1","name":"notes.txt","original_name":"notes.txt","bytes":12,"mimetype":"text/plain","path":"files/file-1/notes.txt","url":"/files/file-1/notes.txt","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","status":"ready","bucket":"uploads","purpose":"knowledge_base"},
+    "api": []
+  },
+  {
+    "name": "update_upload_fails_after_delete",
+    "op": "update",
+    "config": {"content":"hello world\n","filename":"notes.txt"},
+    "prior_state": {"content":"hello world\n","filename":"notes.txt","id":"file-1","org_id":"org-1","name":"notes.txt","original_name":"notes.txt","bytes":12,"mimetype":"text/plain","path":"files/file-1/notes.txt","url":"/files/file-1/notes.txt","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","status":"ready","bucket":"uploads","purpose":"knowledge_base"},
+    "api": [
+      {"method":"DELETE","path":"/file/file-1","status":200,"body":"{}"},
+      {"method":"POST","path":"/file","status":500,"body":"upload failed"}
+    ]
+  },
+  {
+    "name": "delete",
+    "op": "delete",
+    "prior_state": {"content":"hello world\n","filename":"notes.txt","id":"file-1","org_id":"org-1","name":"notes.txt","original_name":"notes.txt","bytes":12,"mimetype":"text/plain","path":"files/file-1/notes.txt","url":"/files/file-1/notes.txt","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","status":"ready","bucket":"uploads","purpose":"knowledge_base"},
+    "api": [
+      {"method":"DELETE","path":"/file/file-1","status":200,"body":"{}"}
+    ]
+  },
+  {
+    "name": "delete_404",
+    "op": "delete",
+    "prior_state": {"content":"hello world\n","filename":"notes.txt","id":"file-1","org_id":"org-1","name":"notes.txt","original_name":"notes.txt","bytes":12,"mimetype":"text/plain","path":"files/file-1/notes.txt","url":"/files/file-1/notes.txt","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","status":"ready","bucket":"uploads","purpose":"knowledge_base"},
+    "api": [
+      {"method":"DELETE","path":"/file/file-1","status":404,"body":"{\"message\":\"not found\"}"}
+    ]
+  },
+  {
+    "name": "delete_transport_error",
+    "op": "delete",
+    "prior_state": {"content":"hello world\n","filename":"notes.txt","id":"file-1","org_id":"org-1","name":"notes.txt","original_name":"notes.txt","bytes":12,"mimetype":"text/plain","path":"files/file-1/notes.txt","url":"/files/file-1/notes.txt","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","status":"ready","bucket":"uploads","purpose":"knowledge_base"},
+    "api": [
+      {"method":"DELETE","path":"/file/file-1","status":0,"body":"","failure":"disconnect"}
+    ]
+  },
+  {
+    "name": "delete_empty_id",
+    "op": "delete",
+    "prior_state": {"content":"hello world\n","filename":"notes.txt","id":"","org_id":"org-1","name":"notes.txt","original_name":"notes.txt","bytes":12,"mimetype":"text/plain","path":"files/file-1/notes.txt","url":"/files/file-1/notes.txt","created_at":"2026-01-01T00:00:00Z","updated_at":"2026-01-01T00:00:00Z","status":"ready","bucket":"uploads","purpose":"knowledge_base"},
+    "api": []
+  }
+]

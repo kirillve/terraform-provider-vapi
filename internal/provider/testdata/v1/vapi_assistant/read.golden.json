@@ -1,0 +1,790 @@
+{
+  "delete": {
+    "requests": [
+      {
+        "method": "DELETE",
+        "path": "/assistant/asst-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": null,
+    "diagnostics": []
+  },
+  "delete_404": {
+    "requests": [
+      {
+        "method": "DELETE",
+        "path": "/assistant/asst-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "analysis_plan": null,
+      "artifact_plan": null,
+      "background_denoising": null,
+      "background_sound": null,
+      "client_messages": null,
+      "dial_keypad_function_enabled": null,
+      "end_call_function_enabled": null,
+      "end_call_message": null,
+      "end_call_phrases": null,
+      "fillers_enabled": null,
+      "first_message": null,
+      "first_message_mode": null,
+      "forwarding_phone_number": null,
+      "hipaa_enabled": null,
+      "id": "asst-1",
+      "interruptions_enabled": null,
+      "keywords": null,
+      "language": null,
+      "live_transcripts_enabled": null,
+      "max_duration_seconds": null,
+      "message_plan": null,
+      "model": null,
+      "model_output_enabled": null,
+      "name": "support-bot",
+      "num_words_to_interrupt_assistant": null,
+      "org_id": "org-1",
+      "parent_id": null,
+      "phone_number_id": null,
+      "recording_enabled": null,
+      "response_delay_seconds": null,
+      "server_messages": null,
+      "server_url": null,
+      "server_url_secret": null,
+      "silence_timeout_seconds": null,
+      "start_speaking_plan": null,
+      "stop_speaking_plan": null,
+      "transcriber": null,
+      "voice": null,
+      "voicemail_message": null
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Client Error",
+        "detail": "Unable to delete assistant: HTTP 404: {\"message\":\"not found\"}"
+      }
+    ]
+  },
+  "delete_empty_id": {
+    "requests": [],
+    "new_state": {
+      "analysis_plan": null,
+      "artifact_plan": null,
+      "background_denoising": null,
+      "background_sound": null,
+      "client_messages": null,
+      "dial_keypad_function_enabled": null,
+      "end_call_function_enabled": null,
+      "end_call_message": null,
+      "end_call_phrases": null,
+      "fillers_enabled": null,
+      "first_message": null,
+      "first_message_mode": null,
+      "forwarding_phone_number": null,
+      "hipaa_enabled": null,
+      "id": "",
+      "interruptions_enabled": null,
+      "keywords": null,
+      "language": null,
+      "live_transcripts_enabled": null,
+      "max_duration_seconds": null,
+      "message_plan": null,
+      "model": null,
+      "model_output_enabled": null,
+      "name": "support-bot",
+      "num_words_to_interrupt_assistant": null,
+      "org_id": "org-1",
+      "parent_id": null,
+      "phone_number_id": null,
+      "recording_enabled": null,
+      "response_delay_seconds": null,
+      "server_messages": null,
+      "server_url": null,
+      "server_url_secret": null,
+      "silence_timeout_seconds": null,
+      "start_speaking_plan": null,
+      "stop_speaking_plan": null,
+      "transcriber": null,
+      "voice": null,
+      "voicemail_message": null
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Client Error",
+        "detail": "Unable to delete assistant: ID cannot be empty"
+      }
+    ]
+  },
+  "delete_transport_error": {
+    "requests": [
+      {
+        "method": "DELETE",
+        "path": "/assistant/asst-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "analysis_plan": null,
+      "artifact_plan": null,
+      "background_denoising": null,
+      "background_sound": null,
+      "client_messages": null,
+      "dial_keypad_function_enabled": null,
+      "end_call_function_enabled": null,
+      "end_call_message": null,
+      "end_call_phrases": null,
+      "fillers_enabled": null,
+      "first_message": null,
+      "first_message_mode": null,
+      "forwarding_phone_number": null,
+      "hipaa_enabled": null,
+      "id": "asst-1",
+      "interruptions_enabled": null,
+      "keywords": null,
+      "language": null,
+      "live_transcripts_enabled": null,
+      "max_duration_seconds": null,
+      "message_plan": null,
+      "model": null,
+      "model_output_enabled": null,
+      "name": "support-bot",
+      "num_words_to_interrupt_assistant": null,
+      "org_id": "org-1",
+      "parent_id": null,
+      "phone_number_id": null,
+      "recording_enabled": null,
+      "response_delay_seconds": null,
+      "server_messages": null,
+      "server_url": null,
+      "server_url_secret": null,
+      "silence_timeout_seconds": null,
+      "start_speaking_plan": null,
+      "stop_speaking_plan": null,
+      "transcriber": null,
+      "voice": null,
+      "voicemail_message": null
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Client Error",
+        "detail": "Unable to delete assistant: request failed: Delete \"{{api}}/assistant/asst-1\": EOF"
+      }
+    ]
+  },
+  "import_unsupported": {
+    "requests": [],
+    "new_state": null,
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Resource Import Not Implemented",
+        "detail": "This resource does not support import. Please contact the provider developer for additional information."
+      }
+    ]
+  },
+  "read": {
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/assistant/asst-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "analysis_plan": {
+        "structured_data_prompt": "Structured data prompt",
+        "structured_data_schema": {
+          "properties": {
+            "isCallNotAnswered": {
+              "description": "Indicates whether the call was not answered by the customer.",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "success_evaluation_prompt": "Success evaluation prompt",
+        "success_evaluation_rubric": "Checklist",
+        "summary_prompt": "Summary prompt"
+      },
+      "artifact_plan": null,
+      "background_denoising": true,
+      "background_sound": "office",
+      "client_messages": [
+        "function-call",
+        "hang",
+        "status-update",
+        "tool-calls",
+        "user-interrupted"
+      ],
+      "dial_keypad_function_enabled": false,
+      "end_call_function_enabled": false,
+      "end_call_message": null,
+      "end_call_phrases": [
+        "Bye for now",
+        "Talk to you soon",
+        "Goodbye",
+        "Talk to you later"
+      ],
+      "fillers_enabled": false,
+      "first_message": "First message",
+      "first_message_mode": "assistant-speaks-first",
+      "forwarding_phone_number": "",
+      "hipaa_enabled": false,
+      "id": "asst-1",
+      "interruptions_enabled": false,
+      "keywords": [],
+      "language": "",
+      "live_transcripts_enabled": null,
+      "max_duration_seconds": 600,
+      "message_plan": {
+        "idle_messages": [
+          "I’ll proceed with scheduling unless you have any questions.",
+          "If you don't mind, I will continue with booking your appointment?",
+          "Sorry, I kind of lost track for a moment. Mind if we continued?",
+          "I will continue, but feel free to ask me any questions, ok?",
+          "Are you ready to proceed?"
+        ]
+      },
+      "model": {
+        "knowledge_base": {
+          "file_ids": [
+            "920f2f78-1234-5678-afec-9a3a79b8f687"
+          ],
+          "provider": "canonical",
+          "top_k": 0
+        },
+        "max_tokens": 0,
+        "model": "gpt-4o",
+        "provider": "openai",
+        "system_prompt": "System prompt",
+        "temperature": 0.3,
+        "tool_ids": []
+      },
+      "model_output_enabled": true,
+      "name": "example-assistant",
+      "num_words_to_interrupt_assistant": null,
+      "org_id": "org-1",
+      "parent_id": null,
+      "phone_number_id": null,
+      "recording_enabled": true,
+      "response_delay_seconds": null,
+      "server_messages": [
+        "end-of-call-report",
+        "function-call",
+        "hang",
+        "status-update",
+        "tool-calls",
+        "user-interrupted",
+        "transfer-destination-request"
+      ],
+      "server_url": null,
+      "server_url_secret": null,
+      "silence_timeout_seconds": 30,
+      "start_speaking_plan": {
+        "smart_endpointing_enabled": true,
+        "transcription_endpointing_plan": {
+          "on_no_punctuation_seconds": 1,
+          "on_number_seconds": 0.75,
+          "on_punctuation_seconds": 0.5
+        },
+        "wait_seconds": 2.5
+      },
+      "stop_speaking_plan": {
+        "backoff_seconds": 0,
+        "num_words": 3,
+        "voice_seconds": 0
+      },
+      "transcriber": {
+        "language": "en",
+        "model": "nova-2-phonecall",
+        "provider": "deepgram"
+      },
+      "voice": {
+        "model": "eleven_turbo_v2_5",
+        "provider": "11labs",
+        "similarity_boost": 0.75,
+        "stability": 1,
+        "voice_id": "FVQMzxJGPUBtfz1Azdoy"
+      },
+      "voicemail_message": "Voicemain message"
+    },
+    "diagnostics": []
+  },
+  "read_404": {
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/assistant/asst-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "analysis_plan": null,
+      "artifact_plan": null,
+      "background_denoising": null,
+      "background_sound": null,
+      "client_messages": null,
+      "dial_keypad_function_enabled": null,
+      "end_call_function_enabled": null,
+      "end_call_message": null,
+      "end_call_phrases": null,
+      "fillers_enabled": null,
+      "first_message": null,
+      "first_message_mode": null,
+      "forwarding_phone_number": null,
+      "hipaa_enabled": null,
+      "id": "asst-1",
+      "interruptions_enabled": null,
+      "keywords": null,
+      "language": null,
+      "live_transcripts_enabled": null,
+      "max_duration_seconds": null,
+      "message_plan": null,
+      "model": null,
+      "model_output_enabled": null,
+      "name": "support-bot",
+      "num_words_to_interrupt_assistant": null,
+      "org_id": "org-1",
+      "parent_id": null,
+      "phone_number_id": null,
+      "recording_enabled": null,
+      "response_delay_seconds": null,
+      "server_messages": null,
+      "server_url": null,
+      "server_url_secret": null,
+      "silence_timeout_seconds": null,
+      "start_speaking_plan": null,
+      "stop_speaking_plan": null,
+      "transcriber": null,
+      "voice": null,
+      "voicemail_message": null
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Client Error",
+        "detail": "Unable to read assistant: HTTP 404: {\"message\":\"not found\"}"
+      }
+    ]
+  },
+  "read_500": {
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/assistant/asst-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "analysis_plan": null,
+      "artifact_plan": null,
+      "background_denoising": null,
+      "background_sound": null,
+      "client_messages": null,
+      "dial_keypad_function_enabled": null,
+      "end_call_function_enabled": null,
+      "end_call_message": null,
+      "end_call_phrases": null,
+      "fillers_enabled": null,
+      "first_message": null,
+      "first_message_mode": null,
+      "forwarding_phone_number": null,
+      "hipaa_enabled": null,
+      "id": "asst-1",
+      "interruptions_enabled": null,
+      "keywords": null,
+      "language": null,
+      "live_transcripts_enabled": null,
+      "max_duration_seconds": null,
+      "message_plan": null,
+      "model": null,
+      "model_output_enabled": null,
+      "name": "support-bot",
+      "num_words_to_interrupt_assistant": null,
+      "org_id": "org-1",
+      "parent_id": null,
+      "phone_number_id": null,
+      "recording_enabled": null,
+      "response_delay_seconds": null,
+      "server_messages": null,
+      "server_url": null,
+      "server_url_secret": null,
+      "silence_timeout_seconds": null,
+      "start_speaking_plan": null,
+      "stop_speaking_plan": null,
+      "transcriber": null,
+      "voice": null,
+      "voicemail_message": null
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Client Error",
+        "detail": "Unable to read assistant: HTTP 500: {\"message\":\"internal error\"}"
+      }
+    ]
+  },
+  "read_body_error": {
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/assistant/asst-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "analysis_plan": null,
+      "artifact_plan": null,
+      "background_denoising": null,
+      "background_sound": null,
+      "client_messages": null,
+      "dial_keypad_function_enabled": null,
+      "end_call_function_enabled": null,
+      "end_call_message": null,
+      "end_call_phrases": null,
+      "fillers_enabled": null,
+      "first_message": null,
+      "first_message_mode": null,
+      "forwarding_phone_number": null,
+      "hipaa_enabled": null,
+      "id": "asst-1",
+      "interruptions_enabled": null,
+      "keywords": null,
+      "language": null,
+      "live_transcripts_enabled": null,
+      "max_duration_seconds": null,
+      "message_plan": null,
+      "model": null,
+      "model_output_enabled": null,
+      "name": "support-bot",
+      "num_words_to_interrupt_assistant": null,
+      "org_id": "org-1",
+      "parent_id": null,
+      "phone_number_id": null,
+      "recording_enabled": null,
+      "response_delay_seconds": null,
+      "server_messages": null,
+      "server_url": null,
+      "server_url_secret": null,
+      "silence_timeout_seconds": null,
+      "start_speaking_plan": null,
+      "stop_speaking_plan": null,
+      "transcriber": null,
+      "voice": null,
+      "voicemail_message": null
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Client Error",
+        "detail": "Unable to read assistant: error reading response body: unexpected EOF"
+      }
+    ]
+  },
+  "read_empty_id": {
+    "requests": [],
+    "new_state": {
+      "analysis_plan": null,
+      "artifact_plan": null,
+      "background_denoising": null,
+      "background_sound": null,
+      "client_messages": null,
+      "dial_keypad_function_enabled": null,
+      "end_call_function_enabled": null,
+      "end_call_message": null,
+      "end_call_phrases": null,
+      "fillers_enabled": null,
+      "first_message": null,
+      "first_message_mode": null,
+      "forwarding_phone_number": null,
+      "hipaa_enabled": null,
+      "id": "",
+      "interruptions_enabled": null,
+      "keywords": null,
+      "language": null,
+      "live_transcripts_enabled": null,
+      "max_duration_seconds": null,
+      "message_plan": null,
+      "model": null,
+      "model_output_enabled": null,
+      "name": "support-bot",
+      "num_words_to_interrupt_assistant": null,
+      "org_id": "org-1",
+      "parent_id": null,
+      "phone_number_id": null,
+      "recording_enabled": null,
+      "response_delay_seconds": null,
+      "server_messages": null,
+      "server_url": null,
+      "server_url_secret": null,
+      "silence_timeout_seconds": null,
+      "start_speaking_plan": null,
+      "stop_speaking_plan": null,
+      "transcriber": null,
+      "voice": null,
+      "voicemail_message": null
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Client Error",
+        "detail": "Unable to read assistant: ID cannot be empty"
+      }
+    ]
+  },
+  "read_malformed": {
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/assistant/asst-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "analysis_plan": null,
+      "artifact_plan": null,
+      "background_denoising": null,
+      "background_sound": null,
+      "client_messages": null,
+      "dial_keypad_function_enabled": null,
+      "end_call_function_enabled": null,
+      "end_call_message": null,
+      "end_call_phrases": null,
+      "fillers_enabled": null,
+      "first_message": null,
+      "first_message_mode": null,
+      "forwarding_phone_number": null,
+      "hipaa_enabled": null,
+      "id": "asst-1",
+      "interruptions_enabled": null,
+      "keywords": null,
+      "language": null,
+      "live_transcripts_enabled": null,
+      "max_duration_seconds": null,
+      "message_plan": null,
+      "model": null,
+      "model_output_enabled": null,
+      "name": "support-bot",
+      "num_words_to_interrupt_assistant": null,
+      "org_id": "org-1",
+      "parent_id": null,
+      "phone_number_id": null,
+      "recording_enabled": null,
+      "response_delay_seconds": null,
+      "server_messages": null,
+      "server_url": null,
+      "server_url_secret": null,
+      "silence_timeout_seconds": null,
+      "start_speaking_plan": null,
+      "stop_speaking_plan": null,
+      "transcriber": null,
+      "voice": null,
+      "voicemail_message": null
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Parse Error",
+        "detail": "Unable to parse response: unexpected end of JSON input"
+      }
+    ]
+  },
+  "read_nil_nested_child": {
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/assistant/asst-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "analysis_plan": {
+        "structured_data_prompt": "",
+        "structured_data_schema": null,
+        "success_evaluation_prompt": "",
+        "success_evaluation_rubric": "",
+        "summary_prompt": "s"
+      },
+      "artifact_plan": null,
+      "background_denoising": false,
+      "background_sound": "",
+      "client_messages": [],
+      "dial_keypad_function_enabled": false,
+      "end_call_function_enabled": false,
+      "end_call_message": null,
+      "end_call_phrases": [],
+      "fillers_enabled": false,
+      "first_message": "",
+      "first_message_mode": "",
+      "forwarding_phone_number": "",
+      "hipaa_enabled": false,
+      "id": "asst-1",
+      "interruptions_enabled": false,
+      "keywords": [],
+      "language": "",
+      "live_transcripts_enabled": null,
+      "max_duration_seconds": 0,
+      "message_plan": null,
+      "model": {
+        "knowledge_base": null,
+        "max_tokens": 0,
+        "model": "gpt-4o",
+        "provider": "openai",
+        "system_prompt": "",
+        "temperature": 0,
+        "tool_ids": []
+      },
+      "model_output_enabled": false,
+      "name": "support-bot",
+      "num_words_to_interrupt_assistant": null,
+      "org_id": "org-1",
+      "parent_id": null,
+      "phone_number_id": null,
+      "recording_enabled": false,
+      "response_delay_seconds": null,
+      "server_messages": [],
+      "server_url": null,
+      "server_url_secret": null,
+      "silence_timeout_seconds": null,
+      "start_speaking_plan": {
+        "smart_endpointing_enabled": false,
+        "transcription_endpointing_plan": null,
+        "wait_seconds": 1.5
+      },
+      "stop_speaking_plan": null,
+      "transcriber": null,
+      "voice": null,
+      "voicemail_message": ""
+    },
+    "diagnostics": []
+  },
+  "read_partial": {
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/assistant/asst-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "analysis_plan": null,
+      "artifact_plan": null,
+      "background_denoising": false,
+      "background_sound": "",
+      "client_messages": [],
+      "dial_keypad_function_enabled": false,
+      "end_call_function_enabled": false,
+      "end_call_message": null,
+      "end_call_phrases": [],
+      "fillers_enabled": false,
+      "first_message": "Hi",
+      "first_message_mode": "",
+      "forwarding_phone_number": "",
+      "hipaa_enabled": false,
+      "id": "asst-1",
+      "interruptions_enabled": false,
+      "keywords": [],
+      "language": "",
+      "live_transcripts_enabled": null,
+      "max_duration_seconds": 0,
+      "message_plan": null,
+      "model": null,
+      "model_output_enabled": false,
+      "name": "support-bot",
+      "num_words_to_interrupt_assistant": null,
+      "org_id": "org-1",
+      "parent_id": null,
+      "phone_number_id": null,
+      "recording_enabled": false,
+      "response_delay_seconds": null,
+      "server_messages": [],
+      "server_url": null,
+      "server_url_secret": null,
+      "silence_timeout_seconds": null,
+      "start_speaking_plan": null,
+      "stop_speaking_plan": null,
+      "transcriber": null,
+      "voice": {
+        "model": "",
+        "provider": "11labs",
+        "similarity_boost": 0,
+        "stability": 0,
+        "voice_id": "v-1"
+      },
+      "voicemail_message": ""
+    },
+    "diagnostics": []
+  },
+  "read_transport_error": {
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/assistant/asst-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "analysis_plan": null,
+      "artifact_plan": null,
+      "background_denoising": null,
+      "background_sound": null,
+      "client_messages": null,
+      "dial_keypad_function_enabled": null,
+      "end_call_function_enabled": null,
+      "end_call_message": null,
+      "end_call_phrases": null,
+      "fillers_enabled": null,
+      "first_message": null,
+      "first_message_mode": null,
+      "forwarding_phone_number": null,
+      "hipaa_enabled": null,
+      "id": "asst-1",
+      "interruptions_enabled": null,
+      "keywords": null,
+      "language": null,
+      "live_transcripts_enabled": null,
+      "max_duration_seconds": null,
+      "message_plan": null,
+      "model": null,
+      "model_output_enabled": null,
+      "name": "support-bot",
+      "num_words_to_interrupt_assistant": null,
+      "org_id": "org-1",
+      "parent_id": null,
+      "phone_number_id": null,
+      "recording_enabled": null,
+      "response_delay_seconds": null,
+      "server_messages": null,
+      "server_url": null,
+      "server_url_secret": null,
+      "silence_timeout_seconds": null,
+      "start_speaking_plan": null,
+      "stop_speaking_plan": null,
+      "transcriber": null,
+      "voice": null,
+      "voicemail_message": null
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Client Error",
+        "detail": "Unable to read assistant: request failed: Get \"{{api}}/assistant/asst-1\": EOF"
+      }
+    ]
+  }
+}

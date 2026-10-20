@@ -1,0 +1,26 @@
+[
+  {
+    "name": "create_nil_nested_child",
+    "op": "create",
+    "config": {"name":"support-bot","model":{"model":"gpt-4o"},"start_speaking_plan":{"wait_seconds":1.5}},
+    "api": [
+      {"method":"POST","path":"/assistant","status":200,"body":"{\"id\":\"asst-1\",\"orgId\":\"org-1\",\"name\":\"support-bot\",\"model\":{\"model\":\"gpt-4o\",\"provider\":\"openai\",\"systemPrompt\":\"\",\"maxTokens\":0,\"temperature\":0},\"startSpeakingPlan\":{\"waitSeconds\":1.5}}"}
+    ]
+  },
+  {
+    "name": "create_artifact_default_mp3",
+    "op": "create",
+    "config": {"name":"support-bot","artifact_plan":{}},
+    "api": [
+      {"method":"POST","path":"/assistant","status":200,"body":"{\"id\":\"asst-1\",\"orgId\":\"org-1\",\"name\":\"support-bot\"}"}
+    ]
+  },
+  {
+    "name": "create_unicode_false_zero",
+    "op": "create",
+    "config": {"name":"Café ☎ 日本語","first_message":"Grüß Gott — ¿qué tal?","hipaa_enabled":false,"live_transcripts_enabled":false,"silence_timeout_seconds":0,"response_delay_seconds":0,"num_words_to_interrupt_assistant":0},
+    "api": [
+      {"method":"POST","path":"/assistant","status":200,"body":"{\"id\":\"asst-1\",\"orgId\":\"org-1\",\"name\":\"Café ☎ 日本語\",\"firstMessage\":\"Grüß Gott — ¿qué tal?\",\"liveTranscriptsEnabled\":false,\"silenceTimeoutSeconds\":0,\"responseDelaySeconds\":0,\"numWordsToInterruptAssistant\":0}"}
+    ]
+  }
+]

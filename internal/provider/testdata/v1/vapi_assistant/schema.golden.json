@@ -1,0 +1,1090 @@
+{
+  "attributes": {
+    "analysis_plan": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Configuration for the analysis plan.",
+      "description_kind": 1,
+      "nesting": "SINGLE",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": [
+        "object",
+        {
+          "structured_data_prompt": "string",
+          "structured_data_schema": [
+            "object",
+            {
+              "properties": [
+                "map",
+                [
+                  "object",
+                  {
+                    "description": "string",
+                    "type": "string"
+                  }
+                ]
+              ],
+              "type": "string"
+            }
+          ],
+          "success_evaluation_prompt": "string",
+          "success_evaluation_rubric": "string",
+          "summary_prompt": "string"
+        }
+      ]
+    },
+    "analysis_plan.structured_data_prompt": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Prompt for structured data generation.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "analysis_plan.structured_data_schema": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Schema for structured data.",
+      "description_kind": 1,
+      "nesting": "SINGLE",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": [
+        "object",
+        {
+          "properties": [
+            "map",
+            [
+              "object",
+              {
+                "description": "string",
+                "type": "string"
+              }
+            ]
+          ],
+          "type": "string"
+        }
+      ]
+    },
+    "analysis_plan.structured_data_schema.properties": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Properties of structured data fields.",
+      "description_kind": 1,
+      "nesting": "MAP",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": [
+        "map",
+        [
+          "object",
+          {
+            "description": "string",
+            "type": "string"
+          }
+        ]
+      ]
+    },
+    "analysis_plan.structured_data_schema.properties.description": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Description of the property.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "analysis_plan.structured_data_schema.properties.type": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Type of the property.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "analysis_plan.structured_data_schema.type": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Type of structured data.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "analysis_plan.success_evaluation_prompt": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Prompt for success evaluation.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "analysis_plan.success_evaluation_rubric": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Rubric for evaluating success.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "analysis_plan.summary_prompt": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Prompt for generating a summary.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "artifact_plan": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Configuration for artifact plan.",
+      "description_kind": 1,
+      "nesting": "SINGLE",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": [
+        "object",
+        {
+          "recording_format": "string"
+        }
+      ]
+    },
+    "artifact_plan.recording_format": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Recording format wav or mp3.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "background_denoising": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Indicates whether background denoising is enabled.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "bool"
+    },
+    "background_sound": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Background sound used during the call.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "client_messages": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "List of messages from the client.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": [
+        "list",
+        "string"
+      ]
+    },
+    "dial_keypad_function_enabled": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Dial Keypad Function enabled",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "bool"
+    },
+    "end_call_function_enabled": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Enables the end call function.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "bool"
+    },
+    "end_call_message": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Message to be used when ending the call.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "end_call_phrases": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "List of phrases to end the call.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": [
+        "list",
+        "string"
+      ]
+    },
+    "fillers_enabled": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Fillers enabled",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "bool"
+    },
+    "first_message": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Initial message sent to the client.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "first_message_mode": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Mode of the first message.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "forwarding_phone_number": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Phone number to which calls are forwarded.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "hipaa_enabled": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Indicates whether HIPAA compliance is enabled.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "bool"
+    },
+    "id": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Unique identifier for the assistant resource.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "interruptions_enabled": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Interruptions enabled",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "bool"
+    },
+    "keywords": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Keywords.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": [
+        "list",
+        "string"
+      ]
+    },
+    "language": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Language",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "live_transcripts_enabled": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Parent ID.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "bool"
+    },
+    "max_duration_seconds": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Maximum duration of the call in seconds.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "number"
+    },
+    "message_plan": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Configuration for message plan.",
+      "description_kind": 1,
+      "nesting": "SINGLE",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": [
+        "object",
+        {
+          "idle_messages": [
+            "list",
+            "string"
+          ]
+        }
+      ]
+    },
+    "message_plan.idle_messages": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "List of idle messages.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": [
+        "list",
+        "string"
+      ]
+    },
+    "model": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Configuration for the assistant model.",
+      "description_kind": 1,
+      "nesting": "SINGLE",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": [
+        "object",
+        {
+          "knowledge_base": [
+            "object",
+            {
+              "file_ids": [
+                "list",
+                "string"
+              ],
+              "provider": "string",
+              "top_k": "number"
+            }
+          ],
+          "max_tokens": "number",
+          "model": "string",
+          "provider": "string",
+          "system_prompt": "string",
+          "temperature": "number",
+          "tool_ids": [
+            "list",
+            "string"
+          ]
+        }
+      ]
+    },
+    "model.knowledge_base": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Knowledge base configuration for the assistant model.",
+      "description_kind": 1,
+      "nesting": "SINGLE",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": [
+        "object",
+        {
+          "file_ids": [
+            "list",
+            "string"
+          ],
+          "provider": "string",
+          "top_k": "number"
+        }
+      ]
+    },
+    "model.knowledge_base.file_ids": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "List of file IDs in the knowledge base.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": [
+        "list",
+        "string"
+      ]
+    },
+    "model.knowledge_base.provider": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Provider for the knowledge base.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "model.knowledge_base.top_k": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The maximum number of documents to retrieve from the knowledge base.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "number"
+    },
+    "model.max_tokens": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The maximum number of tokens allowed for the model's response.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "number"
+    },
+    "model.model": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The assistant model type.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "model.provider": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Provider for the assistant model: openai, azure-openai, together-ai, anyscale, openrouter, perplexity-ai, deepinfra, custom-llm, runpod, groq, vapi, anthropic, google",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "model.system_prompt": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Prompt text used to guide the assistant model.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "model.temperature": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Temperature setting for the model's response randomness.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "number"
+    },
+    "model.tool_ids": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "List of tool IDs used by the model.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": [
+        "list",
+        "string"
+      ]
+    },
+    "model_output_enabled": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Indicates whether model output is enabled.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "bool"
+    },
+    "name": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Name of the assistant resource.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "num_words_to_interrupt_assistant": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Num words to interrupt assistant",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "number"
+    },
+    "org_id": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Org identifier for the assistant resource.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "parent_id": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Parent ID.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "phone_number_id": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "ID of the phone number associated with the assistant.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "recording_enabled": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Indicates if call recording is enabled.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "bool"
+    },
+    "response_delay_seconds": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Response Delay Seconds",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "number"
+    },
+    "server_messages": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "List of messages from the server.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": [
+        "list",
+        "string"
+      ]
+    },
+    "server_url": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Server URL.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "server_url_secret": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Server URL Secret.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "silence_timeout_seconds": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Timeout in seconds for silence.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "number"
+    },
+    "start_speaking_plan": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Configuration for starting the speaking plan.",
+      "description_kind": 1,
+      "nesting": "SINGLE",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": [
+        "object",
+        {
+          "smart_endpointing_enabled": "bool",
+          "transcription_endpointing_plan": [
+            "object",
+            {
+              "on_no_punctuation_seconds": "number",
+              "on_number_seconds": "number",
+              "on_punctuation_seconds": "number"
+            }
+          ],
+          "wait_seconds": "number"
+        }
+      ]
+    },
+    "start_speaking_plan.smart_endpointing_enabled": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Enable smart endpointing for better control.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "bool"
+    },
+    "start_speaking_plan.transcription_endpointing_plan": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Endpointing plan for transcription.",
+      "description_kind": 1,
+      "nesting": "SINGLE",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": [
+        "object",
+        {
+          "on_no_punctuation_seconds": "number",
+          "on_number_seconds": "number",
+          "on_punctuation_seconds": "number"
+        }
+      ]
+    },
+    "start_speaking_plan.transcription_endpointing_plan.on_no_punctuation_seconds": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Delay in seconds for no punctuation.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "number"
+    },
+    "start_speaking_plan.transcription_endpointing_plan.on_number_seconds": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Delay in seconds for number-based endpointing.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "number"
+    },
+    "start_speaking_plan.transcription_endpointing_plan.on_punctuation_seconds": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Delay in seconds for punctuation-based endpointing.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "number"
+    },
+    "start_speaking_plan.wait_seconds": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Seconds to wait before speaking starts.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "number"
+    },
+    "stop_speaking_plan": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Configuration for stopping the speaking plan.",
+      "description_kind": 1,
+      "nesting": "SINGLE",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": [
+        "object",
+        {
+          "backoff_seconds": "number",
+          "num_words": "number",
+          "voice_seconds": "number"
+        }
+      ]
+    },
+    "stop_speaking_plan.backoff_seconds": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Backoff period in seconds before stopping.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "number"
+    },
+    "stop_speaking_plan.num_words": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Number of words required to stop speaking.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "number"
+    },
+    "stop_speaking_plan.voice_seconds": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Duration in seconds to stop speaking.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "number"
+    },
+    "transcriber": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Configuration for the transcriber model.",
+      "description_kind": 1,
+      "nesting": "SINGLE",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": [
+        "object",
+        {
+          "language": "string",
+          "model": "string",
+          "provider": "string"
+        }
+      ]
+    },
+    "transcriber.language": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Language used for transcription.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "transcriber.model": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Model used for transcription.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "transcriber.provider": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Provider for the transcriber service.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "voice": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Configuration for the voice model.",
+      "description_kind": 1,
+      "nesting": "SINGLE",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": [
+        "object",
+        {
+          "model": "string",
+          "provider": "string",
+          "similarity_boost": "number",
+          "stability": "number",
+          "voice_id": "string"
+        }
+      ]
+    },
+    "voice.model": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Model for the voice model.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "voice.provider": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Provider for the voice model.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "voice.similarity_boost": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Boost factor for similarity in voice.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "number"
+    },
+    "voice.stability": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Stability of the voice output.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "number"
+    },
+    "voice.voice_id": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "ID of the voice model.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "voicemail_message": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Message to be used for voicemail.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    }
+  },
+  "fingerprints": {},
+  "schema_version": 0
+}

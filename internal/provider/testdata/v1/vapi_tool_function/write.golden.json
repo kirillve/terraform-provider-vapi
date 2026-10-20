@@ -1,0 +1,1095 @@
+{
+  "create": {
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/tool",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"server\":{\"url\":\"https://tools.example.invalid/orders\",\"secret\":\"secret-1\",\"timeoutSeconds\":20},\"function\":{\"description\":\"Look up an order by id.\",\"name\":\"lookup_order\",\"parameters\":{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\",\"description\":\"Order identifier\"}},\"required\":[\"order_id\"]}},\"type\":\"function\",\"async\":false}\n"
+      }
+    ],
+    "planned_state": {
+      "async": false,
+      "created_at": "<unknown>",
+      "description": "Look up an order by id.",
+      "destinations": null,
+      "id": "<unknown>",
+      "name": "lookup_order",
+      "org_id": "<unknown>",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "order_id": {
+            "description": "Order identifier",
+            "enum": null,
+            "type": "string"
+          }
+        },
+        "required": [
+          "order_id"
+        ],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": "secret-1",
+      "server_timeout_seconds": null,
+      "server_url": "https://tools.example.invalid/orders",
+      "type": "function",
+      "updated_at": "<unknown>"
+    },
+    "new_state": {
+      "async": false,
+      "created_at": "2026-01-01T00:00:00Z",
+      "description": "Look up an order by id.",
+      "destinations": null,
+      "id": "tool-2",
+      "name": "lookup_order",
+      "org_id": "org-1",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "order_id": {
+            "description": "Order identifier",
+            "enum": null,
+            "type": "string"
+          }
+        },
+        "required": [
+          "order_id"
+        ],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": "secret-1",
+      "server_timeout_seconds": null,
+      "server_url": "https://tools.example.invalid/orders",
+      "type": "function",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    "diagnostics": []
+  },
+  "create_500": {
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/tool",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"server\":{\"url\":\"https://tools.example.invalid/orders\",\"secret\":\"secret-1\",\"timeoutSeconds\":20},\"function\":{\"description\":\"Look up an order by id.\",\"name\":\"lookup_order\",\"parameters\":{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\",\"description\":\"Order identifier\"}},\"required\":[\"order_id\"]}},\"type\":\"function\",\"async\":false}\n"
+      }
+    ],
+    "planned_state": {
+      "async": false,
+      "created_at": "<unknown>",
+      "description": "Look up an order by id.",
+      "destinations": null,
+      "id": "<unknown>",
+      "name": "lookup_order",
+      "org_id": "<unknown>",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "order_id": {
+            "description": "Order identifier",
+            "enum": null,
+            "type": "string"
+          }
+        },
+        "required": [
+          "order_id"
+        ],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": "secret-1",
+      "server_timeout_seconds": null,
+      "server_url": "https://tools.example.invalid/orders",
+      "type": "function",
+      "updated_at": "<unknown>"
+    },
+    "new_state": null,
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Client Error",
+        "detail": "Unable to create tool function: HTTP 500: {\"message\":\"internal error\"}"
+      }
+    ]
+  },
+  "create_default_kind": {
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/tool",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"server\":{\"url\":\"https://tools.example.invalid/orders\",\"secret\":\"secret-1\",\"timeoutSeconds\":20},\"function\":{\"description\":\"Look up an order by id.\",\"name\":\"lookup_order\",\"parameters\":{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\",\"description\":\"Order identifier\"}},\"required\":[\"order_id\"]}},\"type\":\"function\",\"async\":false}\n"
+      }
+    ],
+    "planned_state": {
+      "async": false,
+      "created_at": "<unknown>",
+      "description": "Look up an order by id.",
+      "destinations": null,
+      "id": "<unknown>",
+      "name": "lookup_order",
+      "org_id": "<unknown>",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "order_id": {
+            "description": "Order identifier",
+            "enum": null,
+            "type": "string"
+          }
+        },
+        "required": [
+          "order_id"
+        ],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": "secret-1",
+      "server_timeout_seconds": null,
+      "server_url": "https://tools.example.invalid/orders",
+      "type": "custom-kind",
+      "updated_at": "<unknown>"
+    },
+    "plan_apply_diff": [
+      "type"
+    ],
+    "new_state": {
+      "async": false,
+      "created_at": "2026-01-01T00:00:00Z",
+      "description": "Look up an order by id.",
+      "destinations": null,
+      "id": "tool-2",
+      "name": "lookup_order",
+      "org_id": "org-1",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "order_id": {
+            "description": "Order identifier",
+            "enum": null,
+            "type": "string"
+          }
+        },
+        "required": [
+          "order_id"
+        ],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": "secret-1",
+      "server_timeout_seconds": null,
+      "server_url": "https://tools.example.invalid/orders",
+      "type": "function",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    "diagnostics": []
+  },
+  "create_dtmf": {
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/tool",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"server\":null,\"function\":{\"description\":\"Press digits.\",\"name\":\"press_digits\",\"parameters\":{\"type\":\"object\",\"properties\":{\"digits\":{\"type\":\"string\",\"description\":\"Digits to press\"}}}},\"type\":\"dtmf\",\"async\":false}\n"
+      }
+    ],
+    "planned_state": {
+      "async": false,
+      "created_at": "<unknown>",
+      "description": "Press digits.",
+      "destinations": null,
+      "id": "<unknown>",
+      "name": "press_digits",
+      "org_id": "<unknown>",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "digits": {
+            "description": "Digits to press",
+            "enum": null,
+            "type": "string"
+          }
+        },
+        "required": [],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": null,
+      "server_timeout_seconds": null,
+      "server_url": null,
+      "type": "dtmf",
+      "updated_at": "<unknown>"
+    },
+    "new_state": {
+      "async": false,
+      "created_at": "2026-01-01T00:00:00Z",
+      "description": "Press digits.",
+      "destinations": null,
+      "id": "tool-2",
+      "name": "press_digits",
+      "org_id": "org-1",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "digits": {
+            "description": "Digits to press",
+            "enum": null,
+            "type": "string"
+          }
+        },
+        "required": [],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": null,
+      "server_timeout_seconds": null,
+      "server_url": null,
+      "type": "dtmf",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    "diagnostics": []
+  },
+  "create_enum_empty": {
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/tool",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"server\":{\"url\":\"https://tools.example.invalid/orders\",\"secret\":\"secret-1\",\"timeoutSeconds\":20},\"function\":{\"description\":\"Look up an order by id.\",\"name\":\"pick_color\",\"parameters\":{\"type\":\"object\",\"properties\":{\"color\":{\"type\":\"string\",\"description\":\"Color\"}}}},\"type\":\"function\",\"async\":false}\n"
+      }
+    ],
+    "planned_state": {
+      "async": false,
+      "created_at": "<unknown>",
+      "description": "Look up an order by id.",
+      "destinations": null,
+      "id": "<unknown>",
+      "name": "pick_color",
+      "org_id": "<unknown>",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "color": {
+            "description": "Color",
+            "enum": [],
+            "type": "string"
+          }
+        },
+        "required": [],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": "secret-1",
+      "server_timeout_seconds": null,
+      "server_url": "https://tools.example.invalid/orders",
+      "type": "function",
+      "updated_at": "<unknown>"
+    },
+    "new_state": {
+      "async": false,
+      "created_at": "2026-01-01T00:00:00Z",
+      "description": "Look up an order by id.",
+      "destinations": null,
+      "id": "tool-2",
+      "name": "pick_color",
+      "org_id": "org-1",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "color": {
+            "description": "Color",
+            "enum": [],
+            "type": "string"
+          }
+        },
+        "required": [],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": "secret-1",
+      "server_timeout_seconds": null,
+      "server_url": "https://tools.example.invalid/orders",
+      "type": "function",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    "diagnostics": []
+  },
+  "create_malformed": {
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/tool",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"server\":{\"url\":\"https://tools.example.invalid/orders\",\"secret\":\"secret-1\",\"timeoutSeconds\":20},\"function\":{\"description\":\"Look up an order by id.\",\"name\":\"lookup_order\",\"parameters\":{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\",\"description\":\"Order identifier\"}},\"required\":[\"order_id\"]}},\"type\":\"function\",\"async\":false}\n"
+      }
+    ],
+    "planned_state": {
+      "async": false,
+      "created_at": "<unknown>",
+      "description": "Look up an order by id.",
+      "destinations": null,
+      "id": "<unknown>",
+      "name": "lookup_order",
+      "org_id": "<unknown>",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "order_id": {
+            "description": "Order identifier",
+            "enum": null,
+            "type": "string"
+          }
+        },
+        "required": [
+          "order_id"
+        ],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": "secret-1",
+      "server_timeout_seconds": null,
+      "server_url": "https://tools.example.invalid/orders",
+      "type": "function",
+      "updated_at": "<unknown>"
+    },
+    "new_state": null,
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Parse Error",
+        "detail": "Unable to parse response: unexpected end of JSON input"
+      }
+    ]
+  },
+  "create_params_nested": {
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/tool",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"server\":{\"url\":\"https://tools.example.invalid/orders\",\"secret\":\"secret-1\",\"timeoutSeconds\":20},\"function\":{\"description\":\"Look up an order by id.\",\"name\":\"lookup_order\",\"parameters\":{\"type\":\"object\",\"properties\":{\"order\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"}},\"required\":[\"id\"]}},\"required\":[\"order\"]}},\"type\":\"function\",\"async\":false}\n"
+      }
+    ],
+    "planned_state": {
+      "async": false,
+      "created_at": "<unknown>",
+      "description": "Look up an order by id.",
+      "destinations": null,
+      "id": "<unknown>",
+      "name": "lookup_order",
+      "org_id": "<unknown>",
+      "parameters": null,
+      "parameters_json": "{\"type\":\"object\",\"properties\":{\"order\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"}},\"required\":[\"id\"]}},\"required\":[\"order\"]}",
+      "server_secret": "secret-1",
+      "server_timeout_seconds": null,
+      "server_url": "https://tools.example.invalid/orders",
+      "type": "function",
+      "updated_at": "<unknown>"
+    },
+    "new_state": {
+      "async": false,
+      "created_at": "2026-01-01T00:00:00Z",
+      "description": "Look up an order by id.",
+      "destinations": null,
+      "id": "tool-2",
+      "name": "lookup_order",
+      "org_id": "org-1",
+      "parameters": null,
+      "parameters_json": "{\"type\":\"object\",\"properties\":{\"order\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"}},\"required\":[\"id\"]}},\"required\":[\"order\"]}",
+      "server_secret": "secret-1",
+      "server_timeout_seconds": null,
+      "server_url": "https://tools.example.invalid/orders",
+      "type": "function",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    "diagnostics": []
+  },
+  "create_timeout_explicit": {
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/tool",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"server\":{\"url\":\"https://tools.example.invalid/orders\",\"secret\":\"secret-1\",\"timeoutSeconds\":45},\"function\":{\"description\":\"Look up an order by id.\",\"name\":\"lookup_order\",\"parameters\":{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\",\"description\":\"Order identifier\"}},\"required\":[\"order_id\"]}},\"type\":\"function\",\"async\":false}\n"
+      }
+    ],
+    "planned_state": {
+      "async": false,
+      "created_at": "<unknown>",
+      "description": "Look up an order by id.",
+      "destinations": null,
+      "id": "<unknown>",
+      "name": "lookup_order",
+      "org_id": "<unknown>",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "order_id": {
+            "description": "Order identifier",
+            "enum": null,
+            "type": "string"
+          }
+        },
+        "required": [
+          "order_id"
+        ],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": "secret-1",
+      "server_timeout_seconds": 45,
+      "server_url": "https://tools.example.invalid/orders",
+      "type": "function",
+      "updated_at": "<unknown>"
+    },
+    "new_state": {
+      "async": false,
+      "created_at": "2026-01-01T00:00:00Z",
+      "description": "Look up an order by id.",
+      "destinations": null,
+      "id": "tool-2",
+      "name": "lookup_order",
+      "org_id": "org-1",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "order_id": {
+            "description": "Order identifier",
+            "enum": null,
+            "type": "string"
+          }
+        },
+        "required": [
+          "order_id"
+        ],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": "secret-1",
+      "server_timeout_seconds": 45,
+      "server_url": "https://tools.example.invalid/orders",
+      "type": "function",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    "diagnostics": []
+  },
+  "create_transfer_call": {
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/tool",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"destinations\":[{\"type\":\"number\",\"number\":\"+15550100004\",\"message\":\"Transferring you now.\",\"description\":\"Billing\",\"numberE164CheckEnabled\":true}],\"server\":null,\"function\":{\"description\":\"Transfer to billing.\",\"name\":\"transfer_billing\",\"parameters\":{\"type\":\"object\",\"properties\":{\"digits\":{\"type\":\"string\",\"description\":\"Digits to press\"}}}},\"type\":\"transferCall\",\"async\":false}\n"
+      }
+    ],
+    "planned_state": {
+      "async": false,
+      "created_at": "<unknown>",
+      "description": "Transfer to billing.",
+      "destinations": [
+        {
+          "description": "Billing",
+          "extension": null,
+          "message": "Transferring you now.",
+          "number": "+15550100004",
+          "number_e164_check_enabled": true,
+          "type": "number"
+        }
+      ],
+      "id": "<unknown>",
+      "name": "transfer_billing",
+      "org_id": "<unknown>",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "digits": {
+            "description": "Digits to press",
+            "enum": null,
+            "type": "string"
+          }
+        },
+        "required": [],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": null,
+      "server_timeout_seconds": null,
+      "server_url": null,
+      "type": "transferCall",
+      "updated_at": "<unknown>"
+    },
+    "new_state": {
+      "async": false,
+      "created_at": "2026-01-01T00:00:00Z",
+      "description": "Transfer to billing.",
+      "destinations": [
+        {
+          "description": "Billing",
+          "extension": null,
+          "message": "Transferring you now.",
+          "number": "+15550100004",
+          "number_e164_check_enabled": true,
+          "type": "number"
+        }
+      ],
+      "id": "tool-2",
+      "name": "transfer_billing",
+      "org_id": "org-1",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "digits": {
+            "description": "Digits to press",
+            "enum": null,
+            "type": "string"
+          }
+        },
+        "required": [],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": null,
+      "server_timeout_seconds": null,
+      "server_url": null,
+      "type": "transferCall",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    "diagnostics": []
+  },
+  "create_transport_error": {
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/tool",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"server\":{\"url\":\"https://tools.example.invalid/orders\",\"secret\":\"secret-1\",\"timeoutSeconds\":20},\"function\":{\"description\":\"Look up an order by id.\",\"name\":\"lookup_order\",\"parameters\":{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\",\"description\":\"Order identifier\"}},\"required\":[\"order_id\"]}},\"type\":\"function\",\"async\":false}\n"
+      }
+    ],
+    "planned_state": {
+      "async": false,
+      "created_at": "<unknown>",
+      "description": "Look up an order by id.",
+      "destinations": null,
+      "id": "<unknown>",
+      "name": "lookup_order",
+      "org_id": "<unknown>",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "order_id": {
+            "description": "Order identifier",
+            "enum": null,
+            "type": "string"
+          }
+        },
+        "required": [
+          "order_id"
+        ],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": "secret-1",
+      "server_timeout_seconds": null,
+      "server_url": "https://tools.example.invalid/orders",
+      "type": "function",
+      "updated_at": "<unknown>"
+    },
+    "new_state": null,
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Client Error",
+        "detail": "Unable to create tool function: request failed: Post \"{{api}}/tool\": EOF"
+      }
+    ]
+  },
+  "plan_create": {
+    "requests": [],
+    "planned_state": {
+      "async": false,
+      "created_at": "<unknown>",
+      "description": "Look up an order by id.",
+      "destinations": null,
+      "id": "<unknown>",
+      "name": "lookup_order",
+      "org_id": "<unknown>",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "order_id": {
+            "description": "Order identifier",
+            "enum": null,
+            "type": "string"
+          }
+        },
+        "required": [
+          "order_id"
+        ],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": "secret-1",
+      "server_timeout_seconds": null,
+      "server_url": "https://tools.example.invalid/orders",
+      "type": "function",
+      "updated_at": "<unknown>"
+    },
+    "new_state": null,
+    "diagnostics": []
+  },
+  "plan_update": {
+    "requests": [],
+    "planned_state": {
+      "async": false,
+      "created_at": "<unknown>",
+      "description": "Look up an order by its id.",
+      "destinations": null,
+      "id": "tool-2",
+      "name": "lookup_order",
+      "org_id": "org-1",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "order_id": {
+            "description": "Order identifier",
+            "enum": null,
+            "type": "string"
+          }
+        },
+        "required": [
+          "order_id"
+        ],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": "secret-1",
+      "server_timeout_seconds": null,
+      "server_url": "https://tools.example.invalid/orders",
+      "type": "function",
+      "updated_at": "<unknown>"
+    },
+    "requires_replace": [
+      "description"
+    ],
+    "new_state": null,
+    "diagnostics": []
+  },
+  "update": {
+    "requests": [
+      {
+        "method": "PATCH",
+        "path": "/tool/tool-2",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"server\":{\"url\":\"https://tools.example.invalid/orders\",\"secret\":\"secret-1\",\"timeoutSeconds\":30},\"function\":{\"description\":\"Look up an order by id.\",\"name\":\"lookup_order\",\"parameters\":{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\",\"description\":\"Order identifier\"}},\"required\":[\"order_id\"]}},\"type\":\"function\",\"async\":false}\n"
+      }
+    ],
+    "planned_state": {
+      "async": false,
+      "created_at": "<unknown>",
+      "description": "Look up an order by id.",
+      "destinations": null,
+      "id": "tool-2",
+      "name": "lookup_order",
+      "org_id": "org-1",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "order_id": {
+            "description": "Order identifier",
+            "enum": null,
+            "type": "string"
+          }
+        },
+        "required": [
+          "order_id"
+        ],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": "secret-1",
+      "server_timeout_seconds": 30,
+      "server_url": "https://tools.example.invalid/orders",
+      "type": "function",
+      "updated_at": "<unknown>"
+    },
+    "new_state": {
+      "async": false,
+      "created_at": "2026-01-01T00:00:00Z",
+      "description": "Look up an order by id.",
+      "destinations": null,
+      "id": "tool-2",
+      "name": "lookup_order",
+      "org_id": "org-1",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "order_id": {
+            "description": "Order identifier",
+            "enum": null,
+            "type": "string"
+          }
+        },
+        "required": [
+          "order_id"
+        ],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": "secret-1",
+      "server_timeout_seconds": 30,
+      "server_url": "https://tools.example.invalid/orders",
+      "type": "function",
+      "updated_at": "2026-02-01T00:00:00Z"
+    },
+    "diagnostics": []
+  },
+  "update_500": {
+    "requests": [
+      {
+        "method": "PATCH",
+        "path": "/tool/tool-2",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"server\":{\"url\":\"https://tools.example.invalid/orders\",\"secret\":\"secret-1\",\"timeoutSeconds\":30},\"function\":{\"description\":\"Look up an order by id.\",\"name\":\"lookup_order\",\"parameters\":{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\",\"description\":\"Order identifier\"}},\"required\":[\"order_id\"]}},\"type\":\"function\",\"async\":false}\n"
+      }
+    ],
+    "planned_state": {
+      "async": false,
+      "created_at": "<unknown>",
+      "description": "Look up an order by id.",
+      "destinations": null,
+      "id": "tool-2",
+      "name": "lookup_order",
+      "org_id": "org-1",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "order_id": {
+            "description": "Order identifier",
+            "enum": null,
+            "type": "string"
+          }
+        },
+        "required": [
+          "order_id"
+        ],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": "secret-1",
+      "server_timeout_seconds": 30,
+      "server_url": "https://tools.example.invalid/orders",
+      "type": "function",
+      "updated_at": "<unknown>"
+    },
+    "new_state": {
+      "async": false,
+      "created_at": "2026-01-01T00:00:00Z",
+      "description": "Look up an order by id.",
+      "destinations": null,
+      "id": "tool-2",
+      "name": "lookup_order",
+      "org_id": "org-1",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "order_id": {
+            "description": "Order identifier",
+            "enum": null,
+            "type": "string"
+          }
+        },
+        "required": [
+          "order_id"
+        ],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": "secret-1",
+      "server_timeout_seconds": null,
+      "server_url": "https://tools.example.invalid/orders",
+      "type": "function",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Client Error",
+        "detail": "Unable to update tool function: HTTP 500: {\"message\":\"internal error\"}"
+      }
+    ]
+  },
+  "update_empty_id": {
+    "requests": [],
+    "planned_state": {
+      "async": false,
+      "created_at": "<unknown>",
+      "description": "Look up an order by id.",
+      "destinations": null,
+      "id": "",
+      "name": "lookup_order",
+      "org_id": "org-1",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "order_id": {
+            "description": "Order identifier",
+            "enum": null,
+            "type": "string"
+          }
+        },
+        "required": [
+          "order_id"
+        ],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": "secret-1",
+      "server_timeout_seconds": 30,
+      "server_url": "https://tools.example.invalid/orders",
+      "type": "function",
+      "updated_at": "<unknown>"
+    },
+    "new_state": {
+      "async": false,
+      "created_at": "2026-01-01T00:00:00Z",
+      "description": "Look up an order by id.",
+      "destinations": null,
+      "id": "",
+      "name": "lookup_order",
+      "org_id": "org-1",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "order_id": {
+            "description": "Order identifier",
+            "enum": null,
+            "type": "string"
+          }
+        },
+        "required": [
+          "order_id"
+        ],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": "secret-1",
+      "server_timeout_seconds": null,
+      "server_url": "https://tools.example.invalid/orders",
+      "type": "function",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Client Error",
+        "detail": "Unable to parse response [404]: "
+      }
+    ]
+  },
+  "update_malformed": {
+    "requests": [
+      {
+        "method": "PATCH",
+        "path": "/tool/tool-2",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"server\":{\"url\":\"https://tools.example.invalid/orders\",\"secret\":\"secret-1\",\"timeoutSeconds\":30},\"function\":{\"description\":\"Look up an order by id.\",\"name\":\"lookup_order\",\"parameters\":{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\",\"description\":\"Order identifier\"}},\"required\":[\"order_id\"]}},\"type\":\"function\",\"async\":false}\n"
+      }
+    ],
+    "planned_state": {
+      "async": false,
+      "created_at": "<unknown>",
+      "description": "Look up an order by id.",
+      "destinations": null,
+      "id": "tool-2",
+      "name": "lookup_order",
+      "org_id": "org-1",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "order_id": {
+            "description": "Order identifier",
+            "enum": null,
+            "type": "string"
+          }
+        },
+        "required": [
+          "order_id"
+        ],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": "secret-1",
+      "server_timeout_seconds": 30,
+      "server_url": "https://tools.example.invalid/orders",
+      "type": "function",
+      "updated_at": "<unknown>"
+    },
+    "new_state": {
+      "async": false,
+      "created_at": "2026-01-01T00:00:00Z",
+      "description": "Look up an order by id.",
+      "destinations": null,
+      "id": "tool-2",
+      "name": "lookup_order",
+      "org_id": "org-1",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "order_id": {
+            "description": "Order identifier",
+            "enum": null,
+            "type": "string"
+          }
+        },
+        "required": [
+          "order_id"
+        ],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": "secret-1",
+      "server_timeout_seconds": null,
+      "server_url": "https://tools.example.invalid/orders",
+      "type": "function",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Parse Error",
+        "detail": "Unable to parse response: unexpected end of JSON input"
+      }
+    ]
+  },
+  "update_transport_error": {
+    "requests": [
+      {
+        "method": "PATCH",
+        "path": "/tool/tool-2",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"server\":{\"url\":\"https://tools.example.invalid/orders\",\"secret\":\"secret-1\",\"timeoutSeconds\":30},\"function\":{\"description\":\"Look up an order by id.\",\"name\":\"lookup_order\",\"parameters\":{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\",\"description\":\"Order identifier\"}},\"required\":[\"order_id\"]}},\"type\":\"function\",\"async\":false}\n"
+      }
+    ],
+    "planned_state": {
+      "async": false,
+      "created_at": "<unknown>",
+      "description": "Look up an order by id.",
+      "destinations": null,
+      "id": "tool-2",
+      "name": "lookup_order",
+      "org_id": "org-1",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "order_id": {
+            "description": "Order identifier",
+            "enum": null,
+            "type": "string"
+          }
+        },
+        "required": [
+          "order_id"
+        ],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": "secret-1",
+      "server_timeout_seconds": 30,
+      "server_url": "https://tools.example.invalid/orders",
+      "type": "function",
+      "updated_at": "<unknown>"
+    },
+    "new_state": {
+      "async": false,
+      "created_at": "2026-01-01T00:00:00Z",
+      "description": "Look up an order by id.",
+      "destinations": null,
+      "id": "tool-2",
+      "name": "lookup_order",
+      "org_id": "org-1",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "order_id": {
+            "description": "Order identifier",
+            "enum": null,
+            "type": "string"
+          }
+        },
+        "required": [
+          "order_id"
+        ],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": "secret-1",
+      "server_timeout_seconds": null,
+      "server_url": "https://tools.example.invalid/orders",
+      "type": "function",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Client Error",
+        "detail": "Unable to update tool function: request failed: Patch \"{{api}}/tool/tool-2\": EOF"
+      }
+    ]
+  },
+  "validate_both": {
+    "requests": [],
+    "new_state": null,
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Invalid function parameters",
+        "detail": "For type = function, exactly one of parameters and parameters_json must be set."
+      }
+    ]
+  },
+  "validate_non_object": {
+    "requests": [],
+    "new_state": null,
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Invalid parameters_json",
+        "detail": "parameters_json must be a valid JSON object containing the complete function parameters schema.",
+        "path": "parameters_json"
+      }
+    ]
+  },
+  "validate_none": {
+    "requests": [],
+    "new_state": null,
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Invalid function parameters",
+        "detail": "For type = function, exactly one of parameters and parameters_json must be set."
+      }
+    ]
+  },
+  "validate_unknown": {
+    "requests": [],
+    "new_state": null,
+    "diagnostics": []
+  }
+}

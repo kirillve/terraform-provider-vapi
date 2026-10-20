@@ -1,0 +1,199 @@
+{
+  "attributes": {
+    "bucket": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The uploaded file bucket.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "bytes": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The size of the file in bytes.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": false,
+      "sensitive": false,
+      "type": "number"
+    },
+    "content": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The file content to upload.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "created_at": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The timestamp when the file was created.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "filename": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The filename for upload.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "id": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The ID of the file.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "mimetype": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The MIME type of the file.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "name": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The name of the file.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "org_id": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The OrgId of the file.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "original_name": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The original name of the file.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "path": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The path to the file.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "purpose": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The uploaded file purpose.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "status": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The uploaded file status.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "updated_at": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The timestamp when the file was last updated.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "url": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The URL to access the file.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    }
+  },
+  "fingerprints": {
+    "content": [
+      "plan_modifier:If the value of this attribute changes, Terraform will destroy and recreate the resource."
+    ],
+    "filename": [
+      "plan_modifier:If the value of this attribute changes, Terraform will destroy and recreate the resource."
+    ],
+    "id": [
+      "plan_modifier:If the value of this attribute changes, Terraform will destroy and recreate the resource."
+    ],
+    "org_id": [
+      "plan_modifier:If the value of this attribute changes, Terraform will destroy and recreate the resource."
+    ]
+  },
+  "schema_version": 0
+}

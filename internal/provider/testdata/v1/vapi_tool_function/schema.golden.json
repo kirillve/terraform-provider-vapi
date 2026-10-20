@@ -1,0 +1,434 @@
+{
+  "attributes": {
+    "async": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Indicates whether the function is asynchronous.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "bool"
+    },
+    "created_at": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The timestamp when the tool function was created.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "description": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The description of the function.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "destinations": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "List of destinations to forward calls.",
+      "description_kind": 1,
+      "nesting": "LIST",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": [
+        "list",
+        [
+          "object",
+          {
+            "description": "string",
+            "extension": "string",
+            "message": "string",
+            "number": "string",
+            "number_e164_check_enabled": "bool",
+            "type": "string"
+          }
+        ]
+      ]
+    },
+    "destinations.description": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Description for the destination.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "destinations.extension": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The phone number extension to forward to.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "destinations.message": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Message to play before forwarding.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "destinations.number": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The phone number to forward to.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "destinations.number_e164_check_enabled": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Indicates whether to check the number for E.164 format.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "bool"
+    },
+    "destinations.type": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The type of the destination (e.g., number).",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "id": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The ID of the tool function.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "name": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The name of the function.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "org_id": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The ID of the tool function.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "parameters": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Function parameters including type, async, and properties.",
+      "description_kind": 1,
+      "nesting": "SINGLE",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": [
+        "object",
+        {
+          "async": "bool",
+          "properties": [
+            "map",
+            [
+              "object",
+              {
+                "description": "string",
+                "enum": [
+                  "list",
+                  "string"
+                ],
+                "type": "string"
+              }
+            ]
+          ],
+          "required": [
+            "list",
+            "string"
+          ],
+          "type": "string"
+        }
+      ]
+    },
+    "parameters.async": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Indicates whether the function parameters are async.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "bool"
+    },
+    "parameters.properties": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The properties for the function parameters.",
+      "description_kind": 1,
+      "nesting": "MAP",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": [
+        "map",
+        [
+          "object",
+          {
+            "description": "string",
+            "enum": [
+              "list",
+              "string"
+            ],
+            "type": "string"
+          }
+        ]
+      ]
+    },
+    "parameters.properties.description": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "A description of the property.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "parameters.properties.enum": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "List of possible values for the property.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": [
+        "list",
+        "string"
+      ]
+    },
+    "parameters.properties.type": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The type of the property.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "parameters.required": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "List of required fields.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": [
+        "list",
+        "string"
+      ]
+    },
+    "parameters.type": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The type of parameters (object).",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "parameters_json": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Complete JSON Schema object for function.parameters, including nested objects and arrays. JSON whitespace and key order are ignored. Mutually exclusive with parameters for function tools.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "server_secret": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The secret used to authenticate with the server.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": true,
+      "type": "string"
+    },
+    "server_timeout_seconds": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Server timeout in seconds for function tools. When omitted, requests use 20 and state remains null. Changes update the tool in place.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "number"
+    },
+    "server_url": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The URL of the server where the function is hosted.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "type": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The type of the tool (function).",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "updated_at": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The timestamp when the tool function was last updated.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    }
+  },
+  "fingerprints": {
+    "async": [
+      "plan_modifier:If the value of this attribute changes, Terraform will destroy and recreate the resource."
+    ],
+    "description": [
+      "plan_modifier:If the value of this attribute changes, Terraform will destroy and recreate the resource."
+    ],
+    "id": [
+      "plan_modifier:Once set, the value of this attribute in state will not change.",
+      "plan_modifier:If the value of this attribute changes, Terraform will destroy and recreate the resource."
+    ],
+    "name": [
+      "plan_modifier:If the value of this attribute changes, Terraform will destroy and recreate the resource."
+    ],
+    "org_id": [
+      "plan_modifier:Once set, the value of this attribute in state will not change.",
+      "plan_modifier:If the value of this attribute changes, Terraform will destroy and recreate the resource."
+    ],
+    "parameters.async": [
+      "plan_modifier:If the value of this attribute changes, Terraform will destroy and recreate the resource."
+    ],
+    "parameters.properties.description": [
+      "plan_modifier:If the value of this attribute changes, Terraform will destroy and recreate the resource."
+    ],
+    "parameters.properties.enum": [
+      "plan_modifier:If the value of this attribute changes, Terraform will destroy and recreate the resource."
+    ],
+    "parameters.properties.type": [
+      "plan_modifier:If the value of this attribute changes, Terraform will destroy and recreate the resource."
+    ],
+    "parameters.required": [
+      "plan_modifier:If the value of this attribute changes, Terraform will destroy and recreate the resource."
+    ],
+    "parameters.type": [
+      "plan_modifier:If the value of this attribute changes, Terraform will destroy and recreate the resource."
+    ],
+    "parameters_json": [
+      "plan_modifier:If the value of this attribute changes, Terraform will destroy and recreate the resource."
+    ],
+    "server_secret": [
+      "plan_modifier:If the value of this attribute changes, Terraform will destroy and recreate the resource."
+    ],
+    "server_url": [
+      "plan_modifier:If the value of this attribute changes, Terraform will destroy and recreate the resource."
+    ],
+    "type": [
+      "plan_modifier:If the value of this attribute changes, Terraform will destroy and recreate the resource."
+    ]
+  },
+  "schema_version": 0
+}

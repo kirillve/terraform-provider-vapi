@@ -1,0 +1,148 @@
+{
+  "attributes": {
+    "description": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Description of the function.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "id": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "ID of the resource.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "knowledge_bases": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "List of knowledge bases.",
+      "description_kind": 1,
+      "nesting": "LIST",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": [
+        "list",
+        [
+          "object",
+          {
+            "description": "string",
+            "file_ids": [
+              "list",
+              "string"
+            ],
+            "model": "string",
+            "name": "string",
+            "provider": "string"
+          }
+        ]
+      ]
+    },
+    "knowledge_bases.description": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Description.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "knowledge_bases.file_ids": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "List of file IDs.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": [
+        "list",
+        "string"
+      ]
+    },
+    "knowledge_bases.model": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Model used by the knowledge base.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "knowledge_bases.name": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Knowledge base name.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "knowledge_bases.provider": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Provider name.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "name": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Name of the tool query function.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "org_id": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Organization ID.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    }
+  },
+  "fingerprints": {
+    "name": [
+      "plan_modifier:If the value of this attribute changes, Terraform will destroy and recreate the resource."
+    ]
+  },
+  "schema_version": 0
+}

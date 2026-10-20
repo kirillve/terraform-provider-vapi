@@ -1,0 +1,118 @@
+{
+  "attributes": {
+    "created_at": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The creation timestamp.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "credential_id": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The ID of the SIP credential to use.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "id": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The ID of the phone number.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "name": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The name of the phone number.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "number": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The phone number in E.164 format.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    "number_e164_check_enabled": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Whether to enforce E.164 validation on the number.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": true,
+      "sensitive": false,
+      "type": "bool"
+    },
+    "org_id": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The OrgID of the phone number.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "phone_provider": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The provider of the phone number.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "updated_at": {
+      "computed": true,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "The last update timestamp.",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": false,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    }
+  },
+  "fingerprints": {
+    "id": [
+      "plan_modifier:If the value of this attribute changes, Terraform will destroy and recreate the resource."
+    ]
+  },
+  "schema_version": 0
+}
