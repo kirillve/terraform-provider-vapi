@@ -288,7 +288,8 @@ func (r *VAPIToolFunctionResource) Create(ctx context.Context, req resource.Crea
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-// Read fetches the current state from the API.
+// Read fetches the current state from the API. A tool that no longer exists (HTTP 404) is removed
+// from the state.
 func (r *VAPIToolFunctionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data VAPIToolFunctionResourceModel
 
@@ -304,7 +305,12 @@ func (r *VAPIToolFunctionResource) Read(ctx context.Context, req resource.ReadRe
 	}
 
 	var functionResponse vapi.ToolFunctionResponse
-	if err := r.client.Do(http.MethodGet, "tool/"+id, nil, &functionResponse); err != nil {
+	err := r.client.Do(http.MethodGet, "tool/"+id, nil, &functionResponse)
+	if vapi.StatusCode(err) == http.StatusNotFound {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+	if err != nil {
 		var decErr *vapi.DecodeError
 		if errors.As(err, &decErr) {
 			resp.Diagnostics.AddError("Parse Error", fmt.Sprintf("Unable to parse response: %s", err))
@@ -353,7 +359,7 @@ func (r *VAPIToolFunctionResource) Update(ctx context.Context, req resource.Upda
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
-// Delete removes the tool.
+// Delete removes the tool. A tool that no longer exists (HTTP 404) counts as deleted.
 func (r *VAPIToolFunctionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var data VAPIToolFunctionResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
@@ -362,7 +368,7 @@ func (r *VAPIToolFunctionResource) Delete(ctx context.Context, req resource.Dele
 	}
 
 	if id := data.ID.ValueString(); id != "" {
-		if err := r.client.Do(http.MethodDelete, "tool/"+id, nil, nil); err != nil {
+		if err := r.client.Do(http.MethodDelete, "tool/"+id, nil, nil); err != nil && vapi.StatusCode(err) != http.StatusNotFound {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete file: %s", err))
 			return
 		}

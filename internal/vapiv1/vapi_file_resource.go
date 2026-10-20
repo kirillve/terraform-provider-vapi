@@ -172,8 +172,9 @@ func (r *VAPIFileResource) Create(ctx context.Context, req resource.CreateReques
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-// Read fetches the current state from the API. A response that cannot be decoded is reported
-// as a warning and the partially decoded value is still bound.
+// Read fetches the current state from the API. A file that no longer exists (HTTP 404) is removed
+// from the state. A response that cannot be decoded is reported as a warning and the partially
+// decoded value is still bound.
 func (r *VAPIFileResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data VAPIFileResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
@@ -188,7 +189,12 @@ func (r *VAPIFileResource) Read(ctx context.Context, req resource.ReadRequest, r
 	}
 
 	var fileResponse vapi.FileResponse
-	if err := r.client.Do(http.MethodGet, "file/"+id, nil, &fileResponse); err != nil {
+	err := r.client.Do(http.MethodGet, "file/"+id, nil, &fileResponse)
+	if vapi.StatusCode(err) == http.StatusNotFound {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+	if err != nil {
 		var decErr *vapi.DecodeError
 		if !errors.As(err, &decErr) {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read file: %s", err))
@@ -238,7 +244,7 @@ func (r *VAPIFileResource) Update(ctx context.Context, req resource.UpdateReques
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-// Delete removes the file.
+// Delete removes the file. A file that no longer exists (HTTP 404) counts as deleted.
 func (r *VAPIFileResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var data VAPIFileResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
@@ -247,7 +253,7 @@ func (r *VAPIFileResource) Delete(ctx context.Context, req resource.DeleteReques
 	}
 
 	if id := data.ID.ValueString(); id != "" {
-		if err := r.client.Do(http.MethodDelete, "file/"+id, nil, nil); err != nil {
+		if err := r.client.Do(http.MethodDelete, "file/"+id, nil, nil); err != nil && vapi.StatusCode(err) != http.StatusNotFound {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete file: %s", err))
 			return
 		}

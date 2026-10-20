@@ -21,6 +21,10 @@ import (
 
 var update = flag.Bool("update", false, "record characterization goldens")
 
+// only narrows -update to the named cases: every other entry of an outcome golden is kept byte for byte and
+// the schema goldens are never written. It has no effect without -update.
+var only = flag.String("only", "", "comma-separated case names; with -update, record only these cases")
+
 // v1Types is the explicit, ordered list of pinned types.
 var v1Types = []string{"vapi_assistant", "vapi_file", "vapi_twilio_phone_number",
 	"vapi_sip_trunk_phone_number", "vapi_tool_function", "vapi_tool_query_function", "vapi_sip_trunk"}
@@ -154,18 +158,42 @@ func loadCases(t testing.TB, path string) []charCase {
 
 func compareGolden(t testing.TB, path string, got map[string]charOutcome) {
 	t.Helper()
+	if *update && *only != "" {
+		mergeGolden(t, path, got)
+		return
+	}
 	compareGoldenJSON(t, path, got)
 }
 
-func compareGoldenJSON(t testing.TB, path string, got any) {
+// mergeGolden replaces only the entries named by -only in the existing golden and writes the file back.
+func mergeGolden(t testing.TB, path string, got map[string]charOutcome) {
+	t.Helper()
+	raw, err := os.ReadFile(filepath.Clean(path))
+	require.NoError(t, err)
+	var merged map[string]json.RawMessage
+	require.NoError(t, json.Unmarshal(raw, &merged))
+	for _, name := range strings.Split(*only, ",") {
+		if outcome, ok := got[name]; ok {
+			merged[name] = json.RawMessage(bytes.TrimSpace(encodeGolden(t, outcome)))
+		}
+	}
+	require.NoError(t, os.WriteFile(filepath.Clean(path), encodeGolden(t, merged), 0o600))
+}
+
+func encodeGolden(t testing.TB, value any) []byte {
 	t.Helper()
 	var buffer bytes.Buffer
 	encoder := json.NewEncoder(&buffer)
 	encoder.SetEscapeHTML(false)
 	encoder.SetIndent("", "  ")
-	require.NoError(t, encoder.Encode(got))
-	encoded := buffer.Bytes()
-	if *update {
+	require.NoError(t, encoder.Encode(value))
+	return buffer.Bytes()
+}
+
+func compareGoldenJSON(t testing.TB, path string, got any) {
+	t.Helper()
+	encoded := encodeGolden(t, got)
+	if *update && *only == "" {
 		require.NoError(t, os.MkdirAll(filepath.Dir(path), 0o750))
 		require.NoError(t, os.WriteFile(filepath.Clean(path), encoded, 0o600))
 		return

@@ -172,7 +172,8 @@ func (r *VAPITwilioPhoneNumberResource) Create(ctx context.Context, req resource
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-// Read fetches the current state from the API.
+// Read fetches the current state from the API. A phone number that no longer exists (HTTP 404)
+// is removed from the state.
 func (r *VAPITwilioPhoneNumberResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data VAPITwilioPhoneNumberResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
@@ -187,7 +188,12 @@ func (r *VAPITwilioPhoneNumberResource) Read(ctx context.Context, req resource.R
 	}
 
 	var phoneNumberResp vapi.TwilioPhoneNumber
-	if err := r.client.Do(http.MethodGet, "phone-number/"+id, nil, &phoneNumberResp); err != nil {
+	err := r.client.Do(http.MethodGet, "phone-number/"+id, nil, &phoneNumberResp)
+	if vapi.StatusCode(err) == http.StatusNotFound {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+	if err != nil {
 		var decErr *vapi.DecodeError
 		if errors.As(err, &decErr) {
 			resp.Diagnostics.AddError("Parse Error", fmt.Sprintf("Unable to parse phone number response: %s", err))
@@ -233,7 +239,8 @@ func (r *VAPITwilioPhoneNumberResource) Update(ctx context.Context, req resource
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
-// Delete removes the Twilio phone number.
+// Delete removes the Twilio phone number. A phone number that no longer exists (HTTP 404)
+// counts as deleted.
 func (r *VAPITwilioPhoneNumberResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var data VAPITwilioPhoneNumberResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
@@ -242,7 +249,7 @@ func (r *VAPITwilioPhoneNumberResource) Delete(ctx context.Context, req resource
 	}
 
 	if id := data.ID.ValueString(); id != "" {
-		if err := r.client.Do(http.MethodDelete, "phone-number/"+id, nil, nil); err != nil {
+		if err := r.client.Do(http.MethodDelete, "phone-number/"+id, nil, nil); err != nil && vapi.StatusCode(err) != http.StatusNotFound {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete phone number: %s", err))
 			return
 		}

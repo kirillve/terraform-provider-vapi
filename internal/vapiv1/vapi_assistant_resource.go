@@ -563,7 +563,8 @@ func (r *VAPIAssistantResource) Create(ctx context.Context, req resource.CreateR
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-// Read implements the read operation for the assistant resource.
+// Read implements the read operation for the assistant resource. An assistant that no longer
+// exists (HTTP 404) is removed from the state.
 func (r *VAPIAssistantResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data VAPIAssistantResourceModel
 
@@ -579,7 +580,12 @@ func (r *VAPIAssistantResource) Read(ctx context.Context, req resource.ReadReque
 	}
 
 	var assistantResponse vapi.Assistant
-	if err := r.client.Do(http.MethodGet, "assistant/"+id, nil, &assistantResponse); err != nil {
+	err := r.client.Do(http.MethodGet, "assistant/"+id, nil, &assistantResponse)
+	if vapi.StatusCode(err) == http.StatusNotFound {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+	if err != nil {
 		var decErr *vapi.DecodeError
 		if errors.As(err, &decErr) {
 			resp.Diagnostics.AddError("Parse Error", fmt.Sprintf("Unable to parse response: %s", err))
@@ -631,7 +637,8 @@ func (r *VAPIAssistantResource) Update(ctx context.Context, req resource.UpdateR
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-// Delete implements the delete operation for the assistant resource.
+// Delete implements the delete operation for the assistant resource. An assistant that no longer
+// exists (HTTP 404) counts as deleted.
 func (r *VAPIAssistantResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var data VAPIAssistantResourceModel
 
@@ -646,7 +653,7 @@ func (r *VAPIAssistantResource) Delete(ctx context.Context, req resource.DeleteR
 		return
 	}
 
-	if err := r.client.Do(http.MethodDelete, "assistant/"+id, nil, nil); err != nil {
+	if err := r.client.Do(http.MethodDelete, "assistant/"+id, nil, nil); err != nil && vapi.StatusCode(err) != http.StatusNotFound {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete assistant: %s", err))
 		return
 	}
