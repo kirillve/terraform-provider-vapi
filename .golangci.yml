@@ -19,6 +19,7 @@ linters:
     - misspell
     - nilerr
     - predeclared
+    - revive
     - staticcheck
     - unconvert
     - unparam
