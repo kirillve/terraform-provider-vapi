@@ -4,6 +4,7 @@ CHANGES:
 - a refresh that finds the object missing in VAPI (HTTP 404) now removes the resource from the state instead of failing, for `vapi_assistant`, `vapi_file`, `vapi_twilio_phone_number`, `vapi_sip_trunk_phone_number` and `vapi_tool_function`; the same applies to an import of the four that support it (`vapi_sip_trunk` and `vapi_tool_query_function` already did)
 - destroying a resource that is already missing in VAPI (HTTP 404 on delete) now succeeds, for all seven resources
 - the provider reports the version of the release it was built from instead of a fixed 0.11.0, and `go install` of a tagged release reports that tag; a build without release information reports dev
+- updating a `vapi_file` whose previous file is already missing in VAPI (HTTP 404 on the delete that precedes the upload) now uploads the new content instead of failing; any other delete failure still fails the update
 
 ## v0.14.0
 

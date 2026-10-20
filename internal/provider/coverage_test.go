@@ -58,6 +58,8 @@ var requiredCasesByType = map[string][]string{
 		"create_dir_filename",
 		"create_bytes_as_string",
 		"update_upload_fails_after_delete",
+		"update_delete_404",
+		"update_delete_403",
 	},
 	"vapi_sip_trunk_phone_number": {
 		"import",
