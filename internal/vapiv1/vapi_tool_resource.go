@@ -1,4 +1,4 @@
-package provider
+package vapiv1
 
 import (
 	"context"
@@ -248,20 +248,7 @@ func (r *VAPIToolFunctionResource) Schema(ctx context.Context, req resource.Sche
 }
 
 func (r *VAPIToolFunctionResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	client, ok := req.ProviderData.(*vapi.APIClient)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *vapi.APIClient, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-
-	r.client = client
+	r.client = configureClient(req, resp)
 }
 
 func (r *VAPIToolFunctionResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {

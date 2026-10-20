@@ -1,15 +1,21 @@
+// Package provider composes the vapi Terraform provider.
+//
+// In scope: provider metadata, configuration schema (url, token), registration of resource
+// sets, and the black-box provider-protocol characterization suite.
+// Out of scope: resource models, API payload conversion, API transports.
 package provider
 
 import (
 	"context"
-	"github.com/kirillve/terraform-provider-vapi/internal/vapi"
-	"net/http"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/function"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+
+	"github.com/kirillve/terraform-provider-vapi/internal/providerdata"
+	"github.com/kirillve/terraform-provider-vapi/internal/vapiv1"
 )
 
 // Ensure VAPIProvider satisfies various provider interfaces.
@@ -30,12 +36,14 @@ type ScaffoldingProviderModel struct {
 	Token string `tfsdk:"token"`
 }
 
-func (p *VAPIProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
+// Metadata sets the provider type name and version.
+func (p *VAPIProvider) Metadata(_ context.Context, _ provider.MetadataRequest, resp *provider.MetadataResponse) {
 	resp.TypeName = "vapi"
 	resp.Version = p.version
 }
 
-func (p *VAPIProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
+// Schema defines the provider configuration attributes, url and token.
+func (p *VAPIProvider) Schema(_ context.Context, _ provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"url": schema.StringAttribute{
@@ -51,6 +59,7 @@ func (p *VAPIProvider) Schema(ctx context.Context, req provider.SchemaRequest, r
 	}
 }
 
+// Configure reads url and token and publishes them as a providerdata.Config to resources and data sources.
 func (p *VAPIProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
 	var data ScaffoldingProviderModel
 
@@ -60,36 +69,31 @@ func (p *VAPIProvider) Configure(ctx context.Context, req provider.ConfigureRequ
 		return
 	}
 
-	client := &vapi.APIClient{
-		BaseURL:    data.URL,
-		Token:      data.Token,
-		HTTPClient: &http.Client{},
+	cfg := providerdata.Config{
+		URL:   data.URL,
+		Token: data.Token,
 	}
 
-	resp.DataSourceData = client
-	resp.ResourceData = client
+	resp.DataSourceData = cfg
+	resp.ResourceData = cfg
 }
 
-func (p *VAPIProvider) Resources(ctx context.Context) []func() resource.Resource {
-	return []func() resource.Resource{
-		NewVAPIAssistantResource,
-		NewVAPIFileResource,
-		NewVAPIPhoneNumberResource,
-		NewVAPIToolFunctionResource,
-		NewVAPIToolQueryFunctionResource,
-		NewVAPISIPTrunkResource,
-		NewVAPISIPTrunkPhoneNumberResource,
-	}
+// Resources registers the v1 resource set.
+func (p *VAPIProvider) Resources(_ context.Context) []func() resource.Resource {
+	return vapiv1.Resources()
 }
 
-func (p *VAPIProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
+// DataSources registers no data sources.
+func (p *VAPIProvider) DataSources(_ context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{}
 }
 
-func (p *VAPIProvider) Functions(ctx context.Context) []func() function.Function {
+// Functions registers no provider functions.
+func (p *VAPIProvider) Functions(_ context.Context) []func() function.Function {
 	return []func() function.Function{}
 }
 
+// New returns the provider factory for the given version.
 func New(version string) func() provider.Provider {
 	return func() provider.Provider {
 		return &VAPIProvider{

@@ -8,14 +8,15 @@ import (
 	frameworkProvider "github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-
 	"github.com/hashicorp/terraform-plugin-go/tftypes"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
-	"github.com/kirillve/terraform-provider-vapi/internal/vapi"
+	"github.com/kirillve/terraform-provider-vapi/internal/providerdata"
 )
 
 func TestProviderMetadataSchemaAndConfigure(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	providerFactory := New("1.2.3")
 	prov, ok := providerFactory().(*VAPIProvider)
@@ -38,7 +39,7 @@ func TestProviderMetadataSchemaAndConfigure(t *testing.T) {
 		t.Fatalf("expected provider schema to define 2 attributes")
 	}
 
-	configValue := buildProviderConfig(t, ctx)
+	configValue := buildProviderConfig(ctx, t)
 
 	confResp := &frameworkProvider.ConfigureResponse{}
 	prov.Configure(ctx, frameworkProvider.ConfigureRequest{
@@ -52,12 +53,9 @@ func TestProviderMetadataSchemaAndConfigure(t *testing.T) {
 		t.Fatalf("unexpected configure diagnostics: %v", confResp.Diagnostics)
 	}
 
-	if _, ok := confResp.ResourceData.(*vapi.APIClient); !ok {
-		t.Fatalf("expected resource data to be *vapi.APIClient")
-	}
-	if _, ok := confResp.DataSourceData.(*vapi.APIClient); !ok {
-		t.Fatalf("expected data source data to be *vapi.APIClient")
-	}
+	want := providerdata.Config{URL: "https://api.example.com", Token: "secret"}
+	assert.Equal(t, want, confResp.ResourceData, "resource data must be a providerdata.Config value")
+	assert.Equal(t, want, confResp.DataSourceData, "data source data must be a providerdata.Config value")
 
 	if len(prov.Resources(ctx)) == 0 {
 		t.Fatalf("expected resources to be registered")
@@ -70,7 +68,52 @@ func TestProviderMetadataSchemaAndConfigure(t *testing.T) {
 	}
 }
 
-func buildProviderConfig(t *testing.T, ctx context.Context) tftypes.Value {
+func TestProviderConfigure_WhenURLMissingOrTokenMissing_KeepsTodaysDiagnostics(t *testing.T) {
+	t.Parallel()
+
+	tests := map[string]struct {
+		url, token any
+		wantPath   string
+	}{
+		"url null":   {url: nil, token: "secret", wantPath: "Path: url\n"},
+		"token null": {url: "https://api.example.com", token: nil, wantPath: "Path: token\n"},
+	}
+
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+
+			ctx := t.Context()
+			prov := &VAPIProvider{version: "test"}
+
+			var schemaResp frameworkProvider.SchemaResponse
+			prov.Schema(ctx, frameworkProvider.SchemaRequest{}, &schemaResp)
+
+			raw := tftypes.NewValue(
+				tftypes.Object{AttributeTypes: map[string]tftypes.Type{"url": tftypes.String, "token": tftypes.String}},
+				map[string]tftypes.Value{
+					"url":   tftypes.NewValue(tftypes.String, tc.url),
+					"token": tftypes.NewValue(tftypes.String, tc.token),
+				},
+			)
+
+			resp := &frameworkProvider.ConfigureResponse{}
+			prov.Configure(ctx, frameworkProvider.ConfigureRequest{Config: tfsdk.Config{Raw: raw, Schema: schemaResp.Schema}}, resp)
+
+			require.Equal(t, 1, resp.Diagnostics.ErrorsCount())
+			diagnostic := resp.Diagnostics.Errors()[0]
+			assert.Equal(t, "Value Conversion Error", diagnostic.Summary())
+			assert.Contains(t, diagnostic.Detail(), tc.wantPath)
+			assert.Contains(t, diagnostic.Detail(), "Target Type: string")
+			assert.Nil(t, resp.ResourceData)
+			assert.Nil(t, resp.DataSourceData)
+		})
+	}
+}
+
+func buildProviderConfig(ctx context.Context, t *testing.T) tftypes.Value {
+	t.Helper()
+
 	obj, diags := types.ObjectValue(map[string]attr.Type{
 		"url":   types.StringType,
 		"token": types.StringType,

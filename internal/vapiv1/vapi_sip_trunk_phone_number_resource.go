@@ -1,4 +1,4 @@
-package provider
+package vapiv1
 
 import (
 	"context"
@@ -96,20 +96,7 @@ func (r *VAPISIPTrunkPhoneNumberResource) Schema(ctx context.Context, req resour
 
 // Configure binds the API client to the resource.
 func (r *VAPISIPTrunkPhoneNumberResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	client, ok := req.ProviderData.(*vapi.APIClient)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *vapi.APIClient, got: %T", req.ProviderData),
-		)
-		return
-	}
-
-	r.client = client
+	r.client = configureClient(req, resp)
 }
 
 // Create creates the SIP trunk phone number.
