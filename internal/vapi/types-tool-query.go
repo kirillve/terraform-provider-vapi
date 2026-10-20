@@ -7,6 +7,7 @@ type ToolQueryFunctionRequest struct {
 	Type           string            `json:"type,omitempty"`
 }
 
+// ToolQueryFunctionResponse struct.
 type ToolQueryFunctionResponse struct {
 	ID             string            `json:"id"`
 	CreatedAt      string            `json:"createdAt"`
@@ -17,6 +18,7 @@ type ToolQueryFunctionResponse struct {
 	KnowledgeBases []TQKnowledgeBase `json:"knowledgeBases"`
 }
 
+// TQKnowledgeBase is one knowledge base entry of a query tool.
 type TQKnowledgeBase struct {
 	Provider    string   `json:"provider"`
 	Name        string   `json:"name"`
