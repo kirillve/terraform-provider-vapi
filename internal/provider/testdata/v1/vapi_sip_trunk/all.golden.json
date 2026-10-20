@@ -442,35 +442,8 @@
         "content_type": "application/json"
       }
     ],
-    "new_state": {
-      "gateways": [
-        {
-          "ip": "203.0.113.10"
-        }
-      ],
-      "id": "trunk-1",
-      "name": "trunk-main",
-      "outbound_authentication_plan": {
-        "auth_password": "pass1",
-        "auth_username": "user1",
-        "sip_register_plan": {
-          "domain": "sip.example.invalid",
-          "realm": "example.invalid",
-          "username": "user1"
-        }
-      },
-      "outbound_leading_plus_enabled": true,
-      "sip_diversion_header": "sip:+15550100001@sip.example.invalid",
-      "sip_provider": "byo-sip-trunk",
-      "tech_prefix": "9"
-    },
-    "diagnostics": [
-      {
-        "severity": "error",
-        "summary": "Delete Failed",
-        "detail": "Status: 404, Error: HTTP 404: {\"message\":\"not found\"}"
-      }
-    ]
+    "new_state": null,
+    "diagnostics": []
   },
   "delete_empty_id": {
     "requests": [],

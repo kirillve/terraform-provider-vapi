@@ -209,7 +209,7 @@ func (r *VAPISIPTrunkResource) Update(ctx context.Context, req resource.UpdateRe
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
-// Delete removes the SIP trunk.
+// Delete removes the SIP trunk. A trunk that no longer exists (HTTP 404) counts as deleted.
 func (r *VAPISIPTrunkResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var data VAPISIPTrunkResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
@@ -223,7 +223,7 @@ func (r *VAPISIPTrunkResource) Delete(ctx context.Context, req resource.DeleteRe
 		return
 	}
 
-	if err := r.client.Do(http.MethodDelete, "credential/"+id, nil, nil); err != nil {
+	if err := r.client.Do(http.MethodDelete, "credential/"+id, nil, nil); err != nil && vapi.StatusCode(err) != http.StatusNotFound {
 		resp.Diagnostics.AddError("Delete Failed", fmt.Sprintf("Status: %d, Error: %v", vapi.StatusCode(err), err))
 	}
 }

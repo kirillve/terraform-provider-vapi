@@ -256,7 +256,7 @@ func (r *VAPIToolQueryFunctionResource) Update(ctx context.Context, req resource
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-// Delete removes the query tool.
+// Delete removes the query tool. A tool that no longer exists (HTTP 404) counts as deleted.
 func (r *VAPIToolQueryFunctionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var data VAPIToolQueryFunctionResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
@@ -269,7 +269,7 @@ func (r *VAPIToolQueryFunctionResource) Delete(ctx context.Context, req resource
 		return
 	}
 
-	if err := r.client.Do(http.MethodDelete, "tool/"+id, nil, nil); err != nil {
+	if err := r.client.Do(http.MethodDelete, "tool/"+id, nil, nil); err != nil && vapi.StatusCode(err) != http.StatusNotFound {
 		resp.Diagnostics.AddError("API Error", fmt.Sprintf("Error deleting resource: %v", err))
 	}
 }
