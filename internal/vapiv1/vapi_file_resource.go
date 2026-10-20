@@ -122,14 +122,14 @@ func (r *VAPIFileResource) Schema(_ context.Context, _ resource.SchemaRequest, r
 				MarkdownDescription: "The OrgId of the file.",
 				Computed:            true,
 				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplace(),
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
 			"id": schema.StringAttribute{
 				Computed:            true,
 				MarkdownDescription: "The ID of the file.",
 				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplace(),
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
 		},

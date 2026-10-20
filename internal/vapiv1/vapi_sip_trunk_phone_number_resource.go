@@ -56,7 +56,7 @@ func (r *VAPISIPTrunkPhoneNumberResource) Schema(_ context.Context, _ resource.S
 				MarkdownDescription: "The ID of the phone number.",
 				Computed:            true,
 				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplace(),
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
 			"org_id": schema.StringAttribute{

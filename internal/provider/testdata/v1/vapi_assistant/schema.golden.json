@@ -1085,6 +1085,10 @@
       "type": "string"
     }
   },
-  "fingerprints": {},
+  "fingerprints": {
+    "id": [
+      "plan_modifier:Once set, the value of this attribute in state will not change."
+    ]
+  },
   "schema_version": 0
 }

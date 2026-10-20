@@ -558,7 +558,7 @@
     "requests": [],
     "planned_state": {
       "description": "Search the updated knowledge bases",
-      "id": "<unknown>",
+      "id": "tool-1",
       "knowledge_bases": [
         {
           "description": "first base updated",
@@ -581,7 +581,7 @@
         }
       ],
       "name": "kb-search",
-      "org_id": "<unknown>"
+      "org_id": "org-1"
     },
     "new_state": null,
     "diagnostics": []
@@ -847,7 +847,7 @@
     ],
     "planned_state": {
       "description": "Search the updated knowledge bases",
-      "id": "<unknown>",
+      "id": "tool-1",
       "knowledge_bases": [
         {
           "description": "first base updated",
@@ -870,14 +870,14 @@
         }
       ],
       "name": "kb-search",
-      "org_id": "<unknown>"
+      "org_id": "org-1"
     },
     "plan_apply_diff": [
       "description"
     ],
     "new_state": {
       "description": "Search the updated knowledge bases (server)",
-      "id": "<unknown>",
+      "id": "tool-1",
       "knowledge_bases": [
         {
           "description": "first base updated",
@@ -900,7 +900,7 @@
         }
       ],
       "name": "kb-search",
-      "org_id": "<unknown>"
+      "org_id": "org-1"
     },
     "diagnostics": []
   },
@@ -916,7 +916,7 @@
     ],
     "planned_state": {
       "description": "Search the updated knowledge bases",
-      "id": "<unknown>",
+      "id": "tool-1",
       "knowledge_bases": [
         {
           "description": "first base updated",
@@ -939,7 +939,7 @@
         }
       ],
       "name": "kb-search",
-      "org_id": "<unknown>"
+      "org_id": "org-1"
     },
     "new_state": {
       "description": "Search the knowledge bases",
@@ -980,7 +980,7 @@
     "requests": [],
     "planned_state": {
       "description": "Search the updated knowledge bases",
-      "id": "<unknown>",
+      "id": "",
       "knowledge_bases": [
         {
           "description": "first base updated",
@@ -1003,7 +1003,7 @@
         }
       ],
       "name": "kb-search",
-      "org_id": "<unknown>"
+      "org_id": "org-1"
     },
     "new_state": {
       "description": "Search the knowledge bases",
@@ -1052,7 +1052,7 @@
     ],
     "planned_state": {
       "description": "Search the updated knowledge bases",
-      "id": "<unknown>",
+      "id": "tool-1",
       "knowledge_bases": [
         {
           "description": "first base updated",
@@ -1075,7 +1075,7 @@
         }
       ],
       "name": "kb-search",
-      "org_id": "<unknown>"
+      "org_id": "org-1"
     },
     "new_state": {
       "description": "Search the knowledge bases",
@@ -1124,7 +1124,7 @@
     ],
     "planned_state": {
       "description": "Search the updated knowledge bases",
-      "id": "<unknown>",
+      "id": "tool-1",
       "knowledge_bases": [
         {
           "description": "first base updated",
@@ -1147,7 +1147,7 @@
         }
       ],
       "name": "kb-search",
-      "org_id": "<unknown>"
+      "org_id": "org-1"
     },
     "new_state": {
       "description": "Search the knowledge bases",

@@ -359,10 +359,10 @@
       "content": "updated notes\n",
       "created_at": "<unknown>",
       "filename": "notes.txt",
-      "id": "<unknown>",
+      "id": "file-1",
       "mimetype": "<unknown>",
       "name": "<unknown>",
-      "org_id": "<unknown>",
+      "org_id": "org-1",
       "original_name": "<unknown>",
       "path": "<unknown>",
       "purpose": "<unknown>",
@@ -371,9 +371,7 @@
       "url": "<unknown>"
     },
     "requires_replace": [
-      "content",
-      "id",
-      "org_id"
+      "content"
     ],
     "new_state": null,
     "diagnostics": []

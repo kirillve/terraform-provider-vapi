@@ -5,6 +5,9 @@ CHANGES:
 - destroying a resource that is already missing in VAPI (HTTP 404 on delete) now succeeds, for all seven resources
 - the provider reports the version of the release it was built from instead of a fixed 0.11.0, and `go install` of a tagged release reports that tag; a build without release information reports dev
 - updating a `vapi_file` whose previous file is already missing in VAPI (HTTP 404 on the delete that precedes the upload) now uploads the new content instead of failing; any other delete failure still fails the update
+- changing an argument of a `vapi_sip_trunk_phone_number` now plans an in-place update; before, the computed `id` forced a replacement of the phone number
+- `vapi_file` no longer plans a replacement because of its computed `id` and `org_id`; changing `content` or `filename` still replaces the file
+- updating a `vapi_tool_query_function` no longer fails with an unknown `id` and `org_id` after apply; the plans of `vapi_assistant` and `vapi_sip_trunk` keep the existing `id` instead of showing it as known after apply
 
 ## v0.14.0
 

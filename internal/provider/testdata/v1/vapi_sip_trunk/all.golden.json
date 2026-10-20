@@ -694,7 +694,7 @@
           "ip": "203.0.113.10"
         }
       ],
-      "id": "<unknown>",
+      "id": "trunk-1",
       "name": "trunk-backup",
       "outbound_authentication_plan": {
         "auth_password": "pass1",
@@ -956,7 +956,7 @@
           "ip": "203.0.113.10"
         }
       ],
-      "id": "<unknown>",
+      "id": "trunk-1",
       "name": "trunk-backup",
       "outbound_authentication_plan": {
         "auth_password": "pass1",
@@ -1012,7 +1012,7 @@
           "ip": "203.0.113.10"
         }
       ],
-      "id": "<unknown>",
+      "id": "trunk-1",
       "name": "trunk-backup",
       "outbound_authentication_plan": {
         "auth_password": "pass1",
@@ -1066,7 +1066,7 @@
           "ip": "203.0.113.10"
         }
       ],
-      "id": "<unknown>",
+      "id": "",
       "name": "trunk-backup",
       "outbound_authentication_plan": {
         "auth_password": "pass1",
@@ -1128,7 +1128,7 @@
           "ip": "203.0.113.10"
         }
       ],
-      "id": "<unknown>",
+      "id": "trunk-1",
       "name": "trunk-backup",
       "outbound_authentication_plan": {
         "auth_password": "pass1",
@@ -1190,7 +1190,7 @@
           "ip": "203.0.113.10"
         }
       ],
-      "id": "<unknown>",
+      "id": "trunk-1",
       "name": "trunk-backup",
       "outbound_authentication_plan": {
         "auth_password": "pass1",

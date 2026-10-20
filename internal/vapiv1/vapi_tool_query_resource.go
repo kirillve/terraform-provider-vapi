@@ -61,10 +61,16 @@ func (r *VAPIToolQueryFunctionResource) Schema(_ context.Context, _ resource.Sch
 			"id": schema.StringAttribute{
 				Computed:            true,
 				MarkdownDescription: "ID of the resource.",
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"org_id": schema.StringAttribute{
 				Computed:            true,
 				MarkdownDescription: "Organization ID.",
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"name": schema.StringAttribute{
 				Required:            true,
