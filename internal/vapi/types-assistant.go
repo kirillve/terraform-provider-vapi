@@ -74,7 +74,7 @@ type Assistant struct {
 	AnalysisPlan                 *AnalysisPlan      `json:"analysisPlan,omitempty"`
 	MessagePlan                  *MessagePlan       `json:"messagePlan,omitempty"`
 	StartSpeakingPlan            *StartSpeakingPlan `json:"startSpeakingPlan,omitempty"`
-	StopSpeakingPlan             *StopSpeakingPlan  `json:"StopSpeakingPlan,omitempty"`
+	StopSpeakingPlan             *StopSpeakingPlan  `json:"stopSpeakingPlan,omitempty"`
 	Server                       *Server            `json:"server,omitempty"`
 	ArtifactPlan                 *ArtifactPlan      `json:"artifactPlan,omitempty"`
 }
