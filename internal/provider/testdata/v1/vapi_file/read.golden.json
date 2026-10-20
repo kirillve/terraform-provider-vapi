@@ -11,6 +11,40 @@
     "new_state": null,
     "diagnostics": []
   },
+  "delete_403": {
+    "requests": [
+      {
+        "method": "DELETE",
+        "path": "/file/file-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "bucket": "uploads",
+      "bytes": 12,
+      "content": "hello world\n",
+      "created_at": "2026-01-01T00:00:00Z",
+      "filename": "notes.txt",
+      "id": "file-1",
+      "mimetype": "text/plain",
+      "name": "notes.txt",
+      "org_id": "org-1",
+      "original_name": "notes.txt",
+      "path": "files/file-1/notes.txt",
+      "purpose": "knowledge_base",
+      "status": "ready",
+      "updated_at": "2026-01-01T00:00:00Z",
+      "url": "/files/file-1/notes.txt"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Client Error",
+        "detail": "Unable to delete file: HTTP 403: {\"message\":\"forbidden\"}"
+      }
+    ]
+  },
   "delete_404": {
     "requests": [
       {
@@ -22,6 +56,40 @@
     ],
     "new_state": null,
     "diagnostics": []
+  },
+  "delete_500": {
+    "requests": [
+      {
+        "method": "DELETE",
+        "path": "/file/file-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "bucket": "uploads",
+      "bytes": 12,
+      "content": "hello world\n",
+      "created_at": "2026-01-01T00:00:00Z",
+      "filename": "notes.txt",
+      "id": "file-1",
+      "mimetype": "text/plain",
+      "name": "notes.txt",
+      "org_id": "org-1",
+      "original_name": "notes.txt",
+      "path": "files/file-1/notes.txt",
+      "purpose": "knowledge_base",
+      "status": "ready",
+      "updated_at": "2026-01-01T00:00:00Z",
+      "url": "/files/file-1/notes.txt"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Client Error",
+        "detail": "Unable to delete file: HTTP 500: {\"message\":\"server error\"}"
+      }
+    ]
   },
   "delete_empty_id": {
     "requests": [],
@@ -467,6 +535,137 @@
         "detail": "Unable to delete file: HTTP 500: {\"message\":\"internal error\"}"
       }
     ]
+  },
+  "update_delete_403": {
+    "requests": [
+      {
+        "method": "DELETE",
+        "path": "/file/file-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "planned_state": {
+      "bucket": "uploads",
+      "bytes": 12,
+      "content": "hello world\n",
+      "created_at": "2026-01-01T00:00:00Z",
+      "filename": "notes.txt",
+      "id": "file-1",
+      "mimetype": "text/plain",
+      "name": "notes.txt",
+      "org_id": "org-1",
+      "original_name": "notes.txt",
+      "path": "files/file-1/notes.txt",
+      "purpose": "knowledge_base",
+      "status": "ready",
+      "updated_at": "2026-01-01T00:00:00Z",
+      "url": "/files/file-1/notes.txt"
+    },
+    "new_state": {
+      "bucket": "uploads",
+      "bytes": 12,
+      "content": "hello world\n",
+      "created_at": "2026-01-01T00:00:00Z",
+      "filename": "notes.txt",
+      "id": "file-1",
+      "mimetype": "text/plain",
+      "name": "notes.txt",
+      "org_id": "org-1",
+      "original_name": "notes.txt",
+      "path": "files/file-1/notes.txt",
+      "purpose": "knowledge_base",
+      "status": "ready",
+      "updated_at": "2026-01-01T00:00:00Z",
+      "url": "/files/file-1/notes.txt"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Client Error",
+        "detail": "Unable to delete file: HTTP 403: {\"message\":\"forbidden\"}"
+      }
+    ],
+    "unconsumed": [
+      {
+        "method": "POST",
+        "path": "/file",
+        "status": 200,
+        "body": "{\"id\":\"file-2\",\"orgId\":\"org-1\",\"name\":\"notes.txt\",\"originalName\":\"notes.txt\",\"bytes\":12,\"mimetype\":\"text/plain\",\"path\":\"files/file-2/notes.txt\",\"url\":\"/files/file-2/notes.txt\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-02-01T00:00:00Z\",\"status\":\"ready\",\"bucket\":\"uploads\",\"purpose\":\"knowledge_base\"}"
+      }
+    ]
+  },
+  "update_delete_404": {
+    "requests": [
+      {
+        "method": "DELETE",
+        "path": "/file/file-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      },
+      {
+        "method": "POST",
+        "path": "/file",
+        "authorization": "Bearer test-token",
+        "content_type": "multipart/form-data; boundary={{boundary}}",
+        "multipart": [
+          {
+            "header": {
+              "Content-Disposition": [
+                "form-data; name=\"file\"; filename=\"notes.txt\""
+              ],
+              "Content-Type": [
+                "text/plain; charset=utf-8"
+              ]
+            },
+            "name": "file",
+            "filename": "notes.txt",
+            "content": "hello world\n"
+          }
+        ]
+      }
+    ],
+    "planned_state": {
+      "bucket": "uploads",
+      "bytes": 12,
+      "content": "hello world\n",
+      "created_at": "2026-01-01T00:00:00Z",
+      "filename": "notes.txt",
+      "id": "file-1",
+      "mimetype": "text/plain",
+      "name": "notes.txt",
+      "org_id": "org-1",
+      "original_name": "notes.txt",
+      "path": "files/file-1/notes.txt",
+      "purpose": "knowledge_base",
+      "status": "ready",
+      "updated_at": "2026-01-01T00:00:00Z",
+      "url": "/files/file-1/notes.txt"
+    },
+    "plan_apply_diff": [
+      "id",
+      "path",
+      "updated_at",
+      "url"
+    ],
+    "new_state": {
+      "bucket": "uploads",
+      "bytes": 12,
+      "content": "hello world\n",
+      "created_at": "2026-01-01T00:00:00Z",
+      "filename": "notes.txt",
+      "id": "file-2",
+      "mimetype": "text/plain",
+      "name": "notes.txt",
+      "org_id": "org-1",
+      "original_name": "notes.txt",
+      "path": "files/file-2/notes.txt",
+      "purpose": "knowledge_base",
+      "status": "ready",
+      "updated_at": "2026-02-01T00:00:00Z",
+      "url": "/files/file-2/notes.txt"
+    },
+    "diagnostics": []
   },
   "update_empty_id": {
     "requests": [

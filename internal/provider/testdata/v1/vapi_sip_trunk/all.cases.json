@@ -234,5 +234,147 @@
     "api": [
       {"method": "POST", "path": "/credential", "status": 200, "body": "{\"id\":\"trunk-1\",\"orgId\":\"org-1\",\"provider\":\"byo-sip-trunk\",\"name\":\"trunk-main\",\"gateways\":[{\"ip\":\"203.0.113.10\"}],\"outboundAuthenticationPlan\":{\"authUsername\":\"user1\",\"authPassword\":\"pass1\",\"sipRegisterPlan\":{\"domain\":\"sip.example.invalid\",\"username\":\"user1\",\"realm\":\"example.invalid\"}},\"outboundLeadingPlusEnabled\":false,\"techPrefix\":\"9\",\"sipDiversionHeader\":\"sip:+15550100001@sip.example.invalid\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-01-01T00:00:00Z\"}"}
     ]
+  },
+  {
+    "name": "delete_500",
+    "op": "delete",
+    "prior_state": {"id":"trunk-1","sip_provider":"byo-sip-trunk","name":"trunk-main","gateways":[{"ip":"203.0.113.10"}],"outbound_authentication_plan":{"auth_username":"user1","auth_password":"pass1","sip_register_plan":{"domain":"sip.example.invalid","username":"user1","realm":"example.invalid"}},"outbound_leading_plus_enabled":true,"tech_prefix":"9","sip_diversion_header":"sip:+15550100001@sip.example.invalid"},
+    "api": [
+      {"method":"DELETE","path":"/credential/trunk-1","status":500,"body":"{\"message\":\"server error\"}"}
+    ]
+  },
+  {
+    "name": "delete_403",
+    "op": "delete",
+    "prior_state": {"id":"trunk-1","sip_provider":"byo-sip-trunk","name":"trunk-main","gateways":[{"ip":"203.0.113.10"}],"outbound_authentication_plan":{"auth_username":"user1","auth_password":"pass1","sip_register_plan":{"domain":"sip.example.invalid","username":"user1","realm":"example.invalid"}},"outbound_leading_plus_enabled":true,"tech_prefix":"9","sip_diversion_header":"sip:+15550100001@sip.example.invalid"},
+    "api": [
+      {"method":"DELETE","path":"/credential/trunk-1","status":403,"body":"{\"message\":\"forbidden\"}"}
+    ]
+  },
+  {
+    "name": "create_optional_strings_omitted",
+    "op": "create",
+    "config": {
+      "sip_provider": "byo-sip-trunk",
+      "name": "trunk-main",
+      "gateways": [
+        {
+          "ip": "203.0.113.10"
+        }
+      ],
+      "outbound_leading_plus_enabled": false
+    },
+    "api": [
+      {
+        "method": "POST",
+        "path": "/credential",
+        "status": 200,
+        "body": "{\"id\":\"trunk-1\",\"orgId\":\"org-1\",\"provider\":\"byo-sip-trunk\",\"name\":\"trunk-main\",\"gateways\":[{\"ip\":\"203.0.113.10\"}],\"outboundLeadingPlusEnabled\":false,\"techPrefix\":\"\",\"sipDiversionHeader\":\"\"}"
+      }
+    ]
+  },
+  {
+    "name": "create_unset_explicit_zeros",
+    "op": "create",
+    "config": {
+      "sip_provider": "byo-sip-trunk",
+      "name": "trunk-main",
+      "gateways": [
+        {
+          "ip": "203.0.113.10"
+        }
+      ],
+      "outbound_leading_plus_enabled": false
+    },
+    "api": [
+      {
+        "method": "POST",
+        "path": "/credential",
+        "status": 200,
+        "body": "{\"id\":\"trunk-1\",\"orgId\":\"org-1\",\"provider\":\"byo-sip-trunk\",\"name\":\"trunk-main\",\"gateways\":[{\"ip\":\"203.0.113.10\"}],\"outboundLeadingPlusEnabled\":false,\"techPrefix\":\"\",\"sipDiversionHeader\":\"\"}"
+      }
+    ]
+  },
+  {
+    "name": "create_unset_empty_blocks",
+    "op": "create",
+    "config": {
+      "sip_provider": "byo-sip-trunk",
+      "name": "trunk-main",
+      "gateways": [
+        {
+          "ip": "203.0.113.10"
+        }
+      ],
+      "outbound_leading_plus_enabled": false
+    },
+    "api": [
+      {
+        "method": "POST",
+        "path": "/credential",
+        "status": 200,
+        "body": "{\"id\":\"trunk-1\",\"orgId\":\"org-1\",\"provider\":\"byo-sip-trunk\",\"name\":\"trunk-main\",\"gateways\":[{\"ip\":\"203.0.113.10\"}],\"outboundLeadingPlusEnabled\":false,\"techPrefix\":\"\",\"sipDiversionHeader\":\"\",\"outboundAuthenticationPlan\":{}}"
+      }
+    ]
+  },
+  {
+    "name": "read_unset_empty_blocks",
+    "op": "read",
+    "api": [
+      {
+        "method": "GET",
+        "path": "/credential/trunk-1",
+        "status": 200,
+        "body": "{\"id\":\"trunk-1\",\"orgId\":\"org-1\",\"provider\":\"byo-sip-trunk\",\"name\":\"trunk-main\",\"gateways\":[{\"ip\":\"203.0.113.10\"}],\"outboundLeadingPlusEnabled\":false,\"techPrefix\":\"\",\"sipDiversionHeader\":\"\",\"outboundAuthenticationPlan\":{\"authUsername\":\"user1\",\"authPassword\":\"pass1\",\"sipRegisterPlan\":{}}}"
+      }
+    ],
+    "prior_state": {
+      "sip_provider": "byo-sip-trunk",
+      "name": "trunk-main",
+      "gateways": [
+        {
+          "ip": "203.0.113.10"
+        }
+      ],
+      "outbound_leading_plus_enabled": false,
+      "id": "trunk-1",
+      "outbound_authentication_plan": {
+        "auth_username": "user1",
+        "auth_password": "pass1"
+      }
+    }
+  },
+  {
+    "name": "update_unset_empty_blocks",
+    "op": "update",
+    "config": {
+      "sip_provider": "byo-sip-trunk",
+      "name": "trunk-main",
+      "gateways": [
+        {
+          "ip": "203.0.113.10"
+        }
+      ],
+      "outbound_leading_plus_enabled": false
+    },
+    "api": [
+      {
+        "method": "PATCH",
+        "path": "/credential/trunk-1",
+        "status": 200,
+        "body": "{\"id\":\"trunk-1\",\"orgId\":\"org-1\",\"provider\":\"byo-sip-trunk\",\"name\":\"trunk-main\",\"gateways\":[{\"ip\":\"203.0.113.10\"}],\"outboundLeadingPlusEnabled\":false,\"techPrefix\":\"\",\"sipDiversionHeader\":\"\",\"outboundAuthenticationPlan\":{\"sipRegisterPlan\":{}}}"
+      }
+    ],
+    "prior_state": {
+      "sip_provider": "byo-sip-trunk",
+      "name": "trunk-main",
+      "gateways": [
+        {
+          "ip": "203.0.113.10"
+        }
+      ],
+      "outbound_leading_plus_enabled": false,
+      "id": "trunk-1"
+    }
   }
 ]

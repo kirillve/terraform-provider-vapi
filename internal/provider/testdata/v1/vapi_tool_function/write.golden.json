@@ -370,6 +370,50 @@
       }
     ]
   },
+  "create_parameters_api_null": {
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/tool",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"server\":null,\"function\":{\"description\":\"Look up.\",\"name\":\"lookup\"},\"type\":\"dtmf\",\"async\":false}\n"
+      }
+    ],
+    "planned_state": {
+      "async": false,
+      "created_at": "<unknown>",
+      "description": "Look up.",
+      "destinations": null,
+      "id": "<unknown>",
+      "name": "lookup",
+      "org_id": "<unknown>",
+      "parameters": null,
+      "parameters_json": null,
+      "server_secret": null,
+      "server_timeout_seconds": null,
+      "server_url": null,
+      "type": "dtmf",
+      "updated_at": "<unknown>"
+    },
+    "new_state": {
+      "async": false,
+      "created_at": "2026-01-01T00:00:00Z",
+      "description": "Look up.",
+      "destinations": null,
+      "id": "tool-3",
+      "name": "lookup",
+      "org_id": "org-1",
+      "parameters": null,
+      "parameters_json": null,
+      "server_secret": null,
+      "server_timeout_seconds": null,
+      "server_url": null,
+      "type": "dtmf",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    "diagnostics": []
+  },
   "create_params_nested": {
     "requests": [
       {
@@ -409,6 +453,72 @@
       "server_secret": "secret-1",
       "server_timeout_seconds": null,
       "server_url": "https://tools.example.invalid/orders",
+      "type": "function",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    "diagnostics": []
+  },
+  "create_property_description_omitted": {
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/tool",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"server\":{\"timeoutSeconds\":20},\"function\":{\"description\":\"Look up.\",\"name\":\"lookup\",\"parameters\":{\"type\":\"object\",\"properties\":{\"q\":{\"type\":\"string\",\"description\":\"\"}}}},\"type\":\"function\",\"async\":false}\n"
+      }
+    ],
+    "planned_state": {
+      "async": false,
+      "created_at": "<unknown>",
+      "description": "Look up.",
+      "destinations": null,
+      "id": "<unknown>",
+      "name": "lookup",
+      "org_id": "<unknown>",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "q": {
+            "description": null,
+            "enum": null,
+            "type": "string"
+          }
+        },
+        "required": [],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": null,
+      "server_timeout_seconds": null,
+      "server_url": null,
+      "type": "function",
+      "updated_at": "<unknown>"
+    },
+    "new_state": {
+      "async": false,
+      "created_at": "2026-01-01T00:00:00Z",
+      "description": "Look up.",
+      "destinations": null,
+      "id": "tool-3",
+      "name": "lookup",
+      "org_id": "org-1",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "q": {
+            "description": null,
+            "enum": null,
+            "type": "string"
+          }
+        },
+        "required": [],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": null,
+      "server_timeout_seconds": null,
+      "server_url": null,
       "type": "function",
       "updated_at": "2026-01-01T00:00:00Z"
     },
@@ -615,6 +725,144 @@
         "detail": "Unable to create tool function: request failed: Post \"{{api}}/tool\": EOF"
       }
     ]
+  },
+  "create_unset_empty_blocks": {
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/tool",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"server\":null,\"function\":{\"description\":\"Look up.\",\"name\":\"lookup\"},\"type\":\"dtmf\",\"async\":false}\n"
+      }
+    ],
+    "planned_state": {
+      "async": false,
+      "created_at": "<unknown>",
+      "description": "Look up.",
+      "destinations": null,
+      "id": "<unknown>",
+      "name": "lookup",
+      "org_id": "<unknown>",
+      "parameters": null,
+      "parameters_json": null,
+      "server_secret": null,
+      "server_timeout_seconds": null,
+      "server_url": null,
+      "type": "dtmf",
+      "updated_at": "<unknown>"
+    },
+    "new_state": {
+      "async": false,
+      "created_at": "2026-01-01T00:00:00Z",
+      "description": "Look up.",
+      "destinations": null,
+      "id": "tool-3",
+      "name": "lookup",
+      "org_id": "org-1",
+      "parameters": null,
+      "parameters_json": null,
+      "server_secret": null,
+      "server_timeout_seconds": null,
+      "server_url": null,
+      "type": "dtmf",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    "diagnostics": []
+  },
+  "create_unset_explicit_zeros": {
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/tool",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"server\":{\"timeoutSeconds\":20},\"function\":{\"description\":\"Look up.\",\"name\":\"lookup\",\"parameters\":{\"type\":\"object\",\"properties\":{\"explicit\":{\"type\":\"string\",\"description\":\"\"},\"q\":{\"type\":\"string\",\"description\":\"\"}}}},\"type\":\"function\",\"async\":false}\n"
+      }
+    ],
+    "planned_state": {
+      "async": false,
+      "created_at": "<unknown>",
+      "description": "Look up.",
+      "destinations": [
+        {
+          "description": "Billing",
+          "extension": null,
+          "message": "Transfer.",
+          "number": "+15550100004",
+          "number_e164_check_enabled": null,
+          "type": "number"
+        }
+      ],
+      "id": "<unknown>",
+      "name": "lookup",
+      "org_id": "<unknown>",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "explicit": {
+            "description": "",
+            "enum": [],
+            "type": "string"
+          },
+          "q": {
+            "description": null,
+            "enum": null,
+            "type": "string"
+          }
+        },
+        "required": [],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": null,
+      "server_timeout_seconds": null,
+      "server_url": null,
+      "type": "function",
+      "updated_at": "<unknown>"
+    },
+    "new_state": {
+      "async": false,
+      "created_at": "2026-01-01T00:00:00Z",
+      "description": "Look up.",
+      "destinations": [
+        {
+          "description": "Billing",
+          "extension": null,
+          "message": "Transfer.",
+          "number": "+15550100004",
+          "number_e164_check_enabled": null,
+          "type": "number"
+        }
+      ],
+      "id": "tool-3",
+      "name": "lookup",
+      "org_id": "org-1",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "explicit": {
+            "description": "",
+            "enum": [],
+            "type": "string"
+          },
+          "q": {
+            "description": null,
+            "enum": null,
+            "type": "string"
+          }
+        },
+        "required": [],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": null,
+      "server_timeout_seconds": null,
+      "server_url": null,
+      "type": "function",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    "diagnostics": []
   },
   "plan_create": {
     "requests": [],

@@ -332,6 +332,46 @@
       }
     ]
   },
+  "create_optional_strings_omitted": {
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/credential",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"provider\":\"byo-sip-trunk\",\"name\":\"trunk-main\",\"gateways\":[{\"ip\":\"203.0.113.10\"}],\"outboundLeadingPlusEnabled\":false}\n"
+      }
+    ],
+    "planned_state": {
+      "gateways": [
+        {
+          "ip": "203.0.113.10"
+        }
+      ],
+      "id": "<unknown>",
+      "name": "trunk-main",
+      "outbound_authentication_plan": null,
+      "outbound_leading_plus_enabled": false,
+      "sip_diversion_header": null,
+      "sip_provider": "byo-sip-trunk",
+      "tech_prefix": null
+    },
+    "new_state": {
+      "gateways": [
+        {
+          "ip": "203.0.113.10"
+        }
+      ],
+      "id": "trunk-1",
+      "name": "trunk-main",
+      "outbound_authentication_plan": null,
+      "outbound_leading_plus_enabled": false,
+      "sip_diversion_header": null,
+      "sip_provider": "byo-sip-trunk",
+      "tech_prefix": null
+    },
+    "diagnostics": []
+  },
   "create_register_nil": {
     "requests": [
       {
@@ -421,6 +461,86 @@
       }
     ]
   },
+  "create_unset_empty_blocks": {
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/credential",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"provider\":\"byo-sip-trunk\",\"name\":\"trunk-main\",\"gateways\":[{\"ip\":\"203.0.113.10\"}],\"outboundLeadingPlusEnabled\":false}\n"
+      }
+    ],
+    "planned_state": {
+      "gateways": [
+        {
+          "ip": "203.0.113.10"
+        }
+      ],
+      "id": "<unknown>",
+      "name": "trunk-main",
+      "outbound_authentication_plan": null,
+      "outbound_leading_plus_enabled": false,
+      "sip_diversion_header": null,
+      "sip_provider": "byo-sip-trunk",
+      "tech_prefix": null
+    },
+    "new_state": {
+      "gateways": [
+        {
+          "ip": "203.0.113.10"
+        }
+      ],
+      "id": "trunk-1",
+      "name": "trunk-main",
+      "outbound_authentication_plan": null,
+      "outbound_leading_plus_enabled": false,
+      "sip_diversion_header": null,
+      "sip_provider": "byo-sip-trunk",
+      "tech_prefix": null
+    },
+    "diagnostics": []
+  },
+  "create_unset_explicit_zeros": {
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/credential",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"provider\":\"byo-sip-trunk\",\"name\":\"trunk-main\",\"gateways\":[{\"ip\":\"203.0.113.10\"}],\"outboundLeadingPlusEnabled\":false}\n"
+      }
+    ],
+    "planned_state": {
+      "gateways": [
+        {
+          "ip": "203.0.113.10"
+        }
+      ],
+      "id": "<unknown>",
+      "name": "trunk-main",
+      "outbound_authentication_plan": null,
+      "outbound_leading_plus_enabled": false,
+      "sip_diversion_header": null,
+      "sip_provider": "byo-sip-trunk",
+      "tech_prefix": null
+    },
+    "new_state": {
+      "gateways": [
+        {
+          "ip": "203.0.113.10"
+        }
+      ],
+      "id": "trunk-1",
+      "name": "trunk-main",
+      "outbound_authentication_plan": null,
+      "outbound_leading_plus_enabled": false,
+      "sip_diversion_header": null,
+      "sip_provider": "byo-sip-trunk",
+      "tech_prefix": null
+    },
+    "diagnostics": []
+  },
   "delete": {
     "requests": [
       {
@@ -433,6 +553,45 @@
     "new_state": null,
     "diagnostics": []
   },
+  "delete_403": {
+    "requests": [
+      {
+        "method": "DELETE",
+        "path": "/credential/trunk-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "gateways": [
+        {
+          "ip": "203.0.113.10"
+        }
+      ],
+      "id": "trunk-1",
+      "name": "trunk-main",
+      "outbound_authentication_plan": {
+        "auth_password": "pass1",
+        "auth_username": "user1",
+        "sip_register_plan": {
+          "domain": "sip.example.invalid",
+          "realm": "example.invalid",
+          "username": "user1"
+        }
+      },
+      "outbound_leading_plus_enabled": true,
+      "sip_diversion_header": "sip:+15550100001@sip.example.invalid",
+      "sip_provider": "byo-sip-trunk",
+      "tech_prefix": "9"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Delete Failed",
+        "detail": "Status: 403, Error: HTTP 403: {\"message\":\"forbidden\"}"
+      }
+    ]
+  },
   "delete_404": {
     "requests": [
       {
@@ -444,6 +603,45 @@
     ],
     "new_state": null,
     "diagnostics": []
+  },
+  "delete_500": {
+    "requests": [
+      {
+        "method": "DELETE",
+        "path": "/credential/trunk-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "gateways": [
+        {
+          "ip": "203.0.113.10"
+        }
+      ],
+      "id": "trunk-1",
+      "name": "trunk-main",
+      "outbound_authentication_plan": {
+        "auth_password": "pass1",
+        "auth_username": "user1",
+        "sip_register_plan": {
+          "domain": "sip.example.invalid",
+          "realm": "example.invalid",
+          "username": "user1"
+        }
+      },
+      "outbound_leading_plus_enabled": true,
+      "sip_diversion_header": "sip:+15550100001@sip.example.invalid",
+      "sip_provider": "byo-sip-trunk",
+      "tech_prefix": "9"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Delete Failed",
+        "detail": "Status: 500, Error: HTTP 500: {\"message\":\"server error\"}"
+      }
+    ]
   },
   "delete_empty_id": {
     "requests": [],
@@ -616,7 +814,7 @@
           "ip": "203.0.113.10"
         }
       ],
-      "id": "<unknown>",
+      "id": "trunk-1",
       "name": "trunk-backup",
       "outbound_authentication_plan": {
         "auth_password": "pass1",
@@ -862,6 +1060,35 @@
       }
     ]
   },
+  "read_unset_empty_blocks": {
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/credential/trunk-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "gateways": [
+        {
+          "ip": "203.0.113.10"
+        }
+      ],
+      "id": "trunk-1",
+      "name": "trunk-main",
+      "outbound_authentication_plan": {
+        "auth_password": "pass1",
+        "auth_username": "user1",
+        "sip_register_plan": null
+      },
+      "outbound_leading_plus_enabled": false,
+      "sip_diversion_header": null,
+      "sip_provider": "byo-sip-trunk",
+      "tech_prefix": null
+    },
+    "diagnostics": []
+  },
   "update": {
     "requests": [
       {
@@ -878,7 +1105,7 @@
           "ip": "203.0.113.10"
         }
       ],
-      "id": "<unknown>",
+      "id": "trunk-1",
       "name": "trunk-backup",
       "outbound_authentication_plan": {
         "auth_password": "pass1",
@@ -934,7 +1161,7 @@
           "ip": "203.0.113.10"
         }
       ],
-      "id": "<unknown>",
+      "id": "trunk-1",
       "name": "trunk-backup",
       "outbound_authentication_plan": {
         "auth_password": "pass1",
@@ -988,7 +1215,7 @@
           "ip": "203.0.113.10"
         }
       ],
-      "id": "<unknown>",
+      "id": "",
       "name": "trunk-backup",
       "outbound_authentication_plan": {
         "auth_password": "pass1",
@@ -1050,7 +1277,7 @@
           "ip": "203.0.113.10"
         }
       ],
-      "id": "<unknown>",
+      "id": "trunk-1",
       "name": "trunk-backup",
       "outbound_authentication_plan": {
         "auth_password": "pass1",
@@ -1112,7 +1339,7 @@
           "ip": "203.0.113.10"
         }
       ],
-      "id": "<unknown>",
+      "id": "trunk-1",
       "name": "trunk-backup",
       "outbound_authentication_plan": {
         "auth_password": "pass1",
@@ -1157,5 +1384,45 @@
         "detail": "Status: 0, Error: request failed: Patch \"{{api}}/credential/trunk-1\": EOF"
       }
     ]
+  },
+  "update_unset_empty_blocks": {
+    "requests": [
+      {
+        "method": "PATCH",
+        "path": "/credential/trunk-1",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json",
+        "body": "{\"provider\":\"byo-sip-trunk\",\"name\":\"trunk-main\",\"gateways\":[{\"ip\":\"203.0.113.10\"}],\"outboundLeadingPlusEnabled\":false}\n"
+      }
+    ],
+    "planned_state": {
+      "gateways": [
+        {
+          "ip": "203.0.113.10"
+        }
+      ],
+      "id": "trunk-1",
+      "name": "trunk-main",
+      "outbound_authentication_plan": null,
+      "outbound_leading_plus_enabled": false,
+      "sip_diversion_header": null,
+      "sip_provider": "byo-sip-trunk",
+      "tech_prefix": null
+    },
+    "new_state": {
+      "gateways": [
+        {
+          "ip": "203.0.113.10"
+        }
+      ],
+      "id": "trunk-1",
+      "name": "trunk-main",
+      "outbound_authentication_plan": null,
+      "outbound_leading_plus_enabled": false,
+      "sip_diversion_header": null,
+      "sip_provider": "byo-sip-trunk",
+      "tech_prefix": null
+    },
+    "diagnostics": []
   }
 }

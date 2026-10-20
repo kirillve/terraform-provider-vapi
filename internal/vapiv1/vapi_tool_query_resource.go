@@ -61,10 +61,16 @@ func (r *VAPIToolQueryFunctionResource) Schema(_ context.Context, _ resource.Sch
 			"id": schema.StringAttribute{
 				Computed:            true,
 				MarkdownDescription: "ID of the resource.",
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"org_id": schema.StringAttribute{
 				Computed:            true,
 				MarkdownDescription: "Organization ID.",
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"name": schema.StringAttribute{
 				Required:            true,
@@ -183,7 +189,7 @@ func (r *VAPIToolQueryFunctionResource) Read(ctx context.Context, req resource.R
 	data.OrgID = types.StringValue(res.OrgID)
 
 	var kbElements []attr.Value
-	for _, kb := range res.KnowledgeBases {
+	for i, kb := range res.KnowledgeBases {
 		fileIDVals := make([]attr.Value, len(kb.FileIDs))
 		for i, fid := range kb.FileIDs {
 			fileIDVals[i] = types.StringValue(fid)
@@ -202,7 +208,7 @@ func (r *VAPIToolQueryFunctionResource) Read(ctx context.Context, req resource.R
 				"provider":    types.StringValue(kb.Provider),
 				"name":        types.StringValue(kb.Name),
 				"model":       types.StringValue(kb.Model),
-				"description": types.StringValue(kb.Description),
+				"description": optionalString(priorKnowledgeBaseDescription(data.KnowledgeBases, i), kb.Description),
 				"file_ids":    fileIDList,
 			},
 		)
@@ -338,7 +344,24 @@ func (m *VAPIToolQueryFunctionResourceModel) expand(ctx context.Context) (vapi.T
 	}, diags
 }
 
+// priorKnowledgeBaseDescription returns the description of the i-th knowledge base of the prior list, or null when there is none.
+func priorKnowledgeBaseDescription(prior types.List, i int) types.String {
+	elements := prior.Elements()
+	if i >= len(elements) {
+		return types.StringNull()
+	}
+	object, ok := elements[i].(types.Object)
+	if !ok {
+		return types.StringNull()
+	}
+	description, ok := object.Attributes()["description"].(types.String)
+	if !ok {
+		return types.StringNull()
+	}
+	return description
+}
+
 // flattenDescription binds the response description to the model.
 func (m *VAPIToolQueryFunctionResourceModel) flattenDescription(in *vapi.ToolQueryFunctionResponse) {
-	m.Description = types.StringValue(in.Function.Description)
+	m.Description = optionalString(m.Description, in.Function.Description)
 }

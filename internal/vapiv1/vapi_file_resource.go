@@ -122,14 +122,14 @@ func (r *VAPIFileResource) Schema(_ context.Context, _ resource.SchemaRequest, r
 				MarkdownDescription: "The OrgId of the file.",
 				Computed:            true,
 				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplace(),
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
 			"id": schema.StringAttribute{
 				Computed:            true,
 				MarkdownDescription: "The ID of the file.",
 				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplace(),
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
 		},
@@ -207,7 +207,8 @@ func (r *VAPIFileResource) Read(ctx context.Context, req resource.ReadRequest, r
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-// Update deletes the old file, resets the computed attributes and uploads the new content.
+// Update deletes the old file, resets the computed attributes and uploads the new content. An old file that no longer
+// exists (HTTP 404) counts as deleted and the upload continues.
 func (r *VAPIFileResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data VAPIFileResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
@@ -216,7 +217,7 @@ func (r *VAPIFileResource) Update(ctx context.Context, req resource.UpdateReques
 	}
 
 	if id := data.ID.ValueString(); id != "" {
-		if err := r.client.Do(http.MethodDelete, "file/"+id, nil, nil); err != nil {
+		if err := r.client.Do(http.MethodDelete, "file/"+id, nil, nil); err != nil && vapi.StatusCode(err) != http.StatusNotFound {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete file: %s", err))
 			return
 		}

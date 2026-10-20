@@ -1,6 +1,7 @@
 package vapiv1
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -430,9 +431,8 @@ func (m *VAPIToolFunctionResourceModel) expand() vapi.ToolFunctionRequest {
 	}
 }
 
-// flatten binds the API response to the model. ctx is the caller's context for the enum list
-// conversion, which keeps an absent enum as a null list.
-func (m *VAPIToolFunctionResourceModel) flatten(ctx context.Context, in *vapi.ToolFunctionResponse) {
+// flatten binds the API response to the model, preserving unset optional values.
+func (m *VAPIToolFunctionResourceModel) flatten(_ context.Context, in *vapi.ToolFunctionResponse) {
 	m.ID = types.StringValue(in.ID)
 	m.OrgID = types.StringValue(in.OrgID)
 	m.CreatedAt = types.StringValue(in.CreatedAt)
@@ -451,9 +451,18 @@ func (m *VAPIToolFunctionResourceModel) flatten(ctx context.Context, in *vapi.To
 	if !m.ServerTimeoutSeconds.IsNull() && !m.ServerTimeoutSeconds.IsUnknown() {
 		m.ServerTimeoutSeconds = types.Int64Value(in.Server.TimeoutSeconds)
 	}
+	m.flattenParameters(in)
+}
+
+// flattenParameters preserves the selected representation and leaves an unset empty block null.
+func (m *VAPIToolFunctionResourceModel) flattenParameters(in *vapi.ToolFunctionResponse) {
 	raw := in.Function.Parameters.Raw
 	jsonMode := !m.ParametersJSON.IsNull()
 	importing := m.Parameters == nil && !jsonMode
+	// Explicit JSON null also leaves both unset parameter representations null.
+	if importing && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
+		return
+	}
 	// Responses constructed in Go may have no raw capture. Their typed fields
 	// represent only flat parameters, so import them into the legacy model.
 	if jsonMode || (importing && len(raw) > 0 && !flatToolParameters(raw)) {
@@ -462,6 +471,14 @@ func (m *VAPIToolFunctionResourceModel) flatten(ctx context.Context, in *vapi.To
 		return
 	}
 	m.ParametersJSON = jsontypes.NewNormalizedNull()
+	parameters := in.Function.Parameters
+	if m.Parameters == nil && parameters.Type == "" && len(parameters.Properties) == 0 && len(parameters.Required) == 0 {
+		return
+	}
+	priorProperties := map[string]Property(nil)
+	if m.Parameters != nil {
+		priorProperties = m.Parameters.Properties
+	}
 	m.Parameters = &Parameters{
 		Type:       types.StringValue(in.Function.Parameters.Type),
 		Async:      types.BoolValue(in.Function.Async),
@@ -470,15 +487,10 @@ func (m *VAPIToolFunctionResourceModel) flatten(ctx context.Context, in *vapi.To
 	}
 
 	for key, prop := range in.Function.Parameters.Properties {
-		enumList, diag := types.ListValueFrom(ctx, types.StringType, prop.Enum)
-		if diag.HasError() {
-			continue
-		}
-
 		m.Parameters.Properties[key] = Property{
 			Type:        types.StringValue(prop.Type),
-			Description: types.StringValue(prop.Description),
-			Enum:        enumList,
+			Description: optionalString(priorProperties[key].Description, prop.Description),
+			Enum:        optionalStringList(priorProperties[key].Enum, prop.Enum),
 		}
 	}
 }

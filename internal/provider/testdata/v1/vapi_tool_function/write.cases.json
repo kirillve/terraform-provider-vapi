@@ -158,5 +158,110 @@
     "api": [
       {"method":"POST","path":"/tool","status":200,"body":"{\"id\":\"tool-2\",\"orgId\":\"org-1\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-01-01T00:00:00Z\",\"type\":\"function\",\"async\":false,\"function\":{\"name\":\"lookup_order\",\"async\":false,\"description\":\"Look up an order by id.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\",\"description\":\"Order identifier\"}},\"required\":[\"order_id\"]}},\"server\":{\"url\":\"https://tools.example.invalid/orders\",\"timeoutSeconds\":45}}"}
     ]
+  },
+  {
+    "name": "create_property_description_omitted",
+    "op": "create",
+    "config": {
+      "name": "lookup",
+      "description": "Look up.",
+      "async": false,
+      "type": "function",
+      "parameters": {
+        "type": "object",
+        "async": false,
+        "required": [],
+        "properties": {
+          "q": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "api": [
+      {
+        "method": "POST",
+        "path": "/tool",
+        "status": 200,
+        "body": "{\"id\":\"tool-3\",\"orgId\":\"org-1\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-01-01T00:00:00Z\",\"type\":\"function\",\"async\":false,\"function\":{\"name\":\"lookup\",\"async\":false,\"description\":\"Look up.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"q\":{\"type\":\"string\",\"description\":\"\"}},\"required\":[]}},\"server\":{\"timeoutSeconds\":20}}"
+      }
+    ]
+  },
+  {
+    "name": "create_unset_explicit_zeros",
+    "op": "create",
+    "config": {
+      "name": "lookup",
+      "description": "Look up.",
+      "async": false,
+      "type": "function",
+      "parameters": {
+        "type": "object",
+        "async": false,
+        "required": [],
+        "properties": {
+          "q": {
+            "type": "string"
+          },
+          "explicit": {
+            "type": "string",
+            "description": "",
+            "enum": []
+          }
+        }
+      },
+      "destinations": [
+        {
+          "type": "number",
+          "number": "+15550100004",
+          "message": "Transfer.",
+          "description": "Billing"
+        }
+      ]
+    },
+    "api": [
+      {
+        "method": "POST",
+        "path": "/tool",
+        "status": 200,
+        "body": "{\"id\":\"tool-3\",\"orgId\":\"org-1\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-01-01T00:00:00Z\",\"type\":\"function\",\"async\":false,\"function\":{\"name\":\"lookup\",\"async\":false,\"description\":\"Look up.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"q\":{\"type\":\"string\",\"description\":\"\",\"enum\":[]},\"explicit\":{\"type\":\"string\",\"description\":\"\",\"enum\":[]}},\"required\":[]}},\"server\":{\"url\":\"\",\"timeoutSeconds\":0,\"secret\":\"\"},\"destinations\":[{\"type\":\"number\",\"number\":\"+15550100004\",\"extension\":\"\",\"message\":\"Transfer.\",\"description\":\"Billing\",\"numberE164CheckEnabled\":false}]}"
+      }
+    ]
+  },
+  {
+    "name": "create_unset_empty_blocks",
+    "op": "create",
+    "config": {
+      "name": "lookup",
+      "description": "Look up.",
+      "async": false,
+      "type": "dtmf"
+    },
+    "api": [
+      {
+        "method": "POST",
+        "path": "/tool",
+        "status": 200,
+        "body": "{\"id\":\"tool-3\",\"orgId\":\"org-1\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-01-01T00:00:00Z\",\"type\":\"dtmf\",\"async\":false,\"function\":{\"name\":\"lookup\",\"async\":false,\"description\":\"Look up.\",\"parameters\":{}},\"server\":{},\"destinations\":[]}"
+      }
+    ]
+  },
+  {
+    "name": "create_parameters_api_null",
+    "op": "create",
+    "config": {
+      "name": "lookup",
+      "description": "Look up.",
+      "async": false,
+      "type": "dtmf"
+    },
+    "api": [
+      {
+        "method": "POST",
+        "path": "/tool",
+        "status": 200,
+        "body": "{\"id\":\"tool-3\",\"orgId\":\"org-1\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-01-01T00:00:00Z\",\"type\":\"dtmf\",\"async\":false,\"function\":{\"name\":\"lookup\",\"async\":false,\"description\":\"Look up.\",\"parameters\":null},\"server\":{},\"destinations\":[]}"
+      }
+    ]
   }
 ]

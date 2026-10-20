@@ -189,10 +189,10 @@
       "plan_modifier:If the value of this attribute changes, Terraform will destroy and recreate the resource."
     ],
     "id": [
-      "plan_modifier:If the value of this attribute changes, Terraform will destroy and recreate the resource."
+      "plan_modifier:Once set, the value of this attribute in state will not change."
     ],
     "org_id": [
-      "plan_modifier:If the value of this attribute changes, Terraform will destroy and recreate the resource."
+      "plan_modifier:Once set, the value of this attribute in state will not change."
     ]
   },
   "schema_version": 0

@@ -210,5 +210,84 @@
     "api": [
       {"method":"POST","path":"/tool","status":200,"body":"{\"id\":\"tool-1\",\"orgId\":\"org-1\",\"type\":\"query\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-01-01T00:00:00Z\",\"function\":{\"name\":\"kb-search\",\"description\":\"Search the knowledge bases\"},\"knowledgeBases\":[{\"provider\":\"google\",\"name\":\"kb-a\",\"model\":\"gemini-1.5-flash\",\"description\":\"first base\",\"fileIds\":[]}]}"}
     ]
+  },
+  {
+    "name": "delete_500",
+    "op": "delete",
+    "prior_state": {"id":"tool-1","org_id":"org-1","name":"kb-search","description":"Search the knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base","file_ids":["file-1","file-2"]},{"provider":"google","name":"kb-b","model":"gemini-1.5-flash","description":"second base","file_ids":["file-3"]}]},
+    "api": [
+      {"method":"DELETE","path":"/tool/tool-1","status":500,"body":"{\"message\":\"server error\"}"}
+    ]
+  },
+  {
+    "name": "delete_403",
+    "op": "delete",
+    "prior_state": {"id":"tool-1","org_id":"org-1","name":"kb-search","description":"Search the knowledge bases","knowledge_bases":[{"provider":"google","name":"kb-a","model":"gemini-1.5-flash","description":"first base","file_ids":["file-1","file-2"]},{"provider":"google","name":"kb-b","model":"gemini-1.5-flash","description":"second base","file_ids":["file-3"]}]},
+    "api": [
+      {"method":"DELETE","path":"/tool/tool-1","status":403,"body":"{\"message\":\"forbidden\"}"}
+    ]
+  },
+  {
+    "name": "read_description_omitted",
+    "op": "read",
+    "prior_state": {
+      "id": "tool-1",
+      "org_id": "org-1",
+      "name": "kb-search",
+      "knowledge_bases": [
+        {
+          "provider": "google",
+          "name": "kb-a",
+          "model": "gemini-1.5-flash",
+          "file_ids": [
+            "file-1"
+          ]
+        }
+      ]
+    },
+    "api": [
+      {
+        "method": "GET",
+        "path": "/tool/tool-1",
+        "status": 200,
+        "body": "{\"id\":\"tool-1\",\"orgId\":\"org-1\",\"type\":\"query\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-01-01T00:00:00Z\",\"function\":{\"name\":\"kb-search\",\"description\":\"\"},\"knowledgeBases\":[{\"provider\":\"google\",\"name\":\"kb-a\",\"model\":\"gemini-1.5-flash\",\"description\":\"\",\"fileIds\":[\"file-1\"]}]}"
+      }
+    ]
+  },
+  {
+    "name": "read_unset_explicit_zeros",
+    "op": "read",
+    "prior_state": {
+      "id": "tool-1",
+      "org_id": "org-1",
+      "name": "kb-search",
+      "knowledge_bases": [
+        {
+          "provider": "google",
+          "name": "kb-a",
+          "model": "gemini-1.5-flash",
+          "file_ids": [
+            "file-1"
+          ]
+        },
+        {
+          "provider": "google",
+          "name": "kb-b",
+          "model": "gemini-1.5-flash",
+          "file_ids": [
+            "file-1"
+          ],
+          "description": ""
+        }
+      ]
+    },
+    "api": [
+      {
+        "method": "GET",
+        "path": "/tool/tool-1",
+        "status": 200,
+        "body": "{\"id\":\"tool-1\",\"orgId\":\"org-1\",\"type\":\"query\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-01-01T00:00:00Z\",\"function\":{\"name\":\"kb-search\",\"description\":\"\"},\"knowledgeBases\":[{\"provider\":\"google\",\"name\":\"kb-a\",\"model\":\"gemini-1.5-flash\",\"description\":\"\",\"fileIds\":[\"file-1\"]},{\"provider\":\"google\",\"name\":\"kb-b\",\"model\":\"gemini-1.5-flash\",\"description\":\"\",\"fileIds\":[\"file-1\"]}]}"
+      }
+    ]
   }
 ]

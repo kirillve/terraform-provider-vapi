@@ -11,6 +11,52 @@
     "new_state": null,
     "diagnostics": []
   },
+  "delete_403": {
+    "requests": [
+      {
+        "method": "DELETE",
+        "path": "/tool/tool-2",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "async": false,
+      "created_at": "2026-01-01T00:00:00Z",
+      "description": "Look up an order by id.",
+      "destinations": null,
+      "id": "tool-2",
+      "name": "lookup_order",
+      "org_id": "org-1",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "order_id": {
+            "description": "Order identifier",
+            "enum": null,
+            "type": "string"
+          }
+        },
+        "required": [
+          "order_id"
+        ],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": "secret-1",
+      "server_timeout_seconds": null,
+      "server_url": "https://tools.example.invalid/orders",
+      "type": "function",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Client Error",
+        "detail": "Unable to delete file: HTTP 403: {\"message\":\"forbidden\"}"
+      }
+    ]
+  },
   "delete_404": {
     "requests": [
       {
@@ -22,6 +68,52 @@
     ],
     "new_state": null,
     "diagnostics": []
+  },
+  "delete_500": {
+    "requests": [
+      {
+        "method": "DELETE",
+        "path": "/tool/tool-2",
+        "authorization": "Bearer test-token",
+        "content_type": "application/json"
+      }
+    ],
+    "new_state": {
+      "async": false,
+      "created_at": "2026-01-01T00:00:00Z",
+      "description": "Look up an order by id.",
+      "destinations": null,
+      "id": "tool-2",
+      "name": "lookup_order",
+      "org_id": "org-1",
+      "parameters": {
+        "async": false,
+        "properties": {
+          "order_id": {
+            "description": "Order identifier",
+            "enum": null,
+            "type": "string"
+          }
+        },
+        "required": [
+          "order_id"
+        ],
+        "type": "object"
+      },
+      "parameters_json": null,
+      "server_secret": "secret-1",
+      "server_timeout_seconds": null,
+      "server_url": "https://tools.example.invalid/orders",
+      "type": "function",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Client Error",
+        "detail": "Unable to delete file: HTTP 500: {\"message\":\"server error\"}"
+      }
+    ]
   },
   "delete_empty_id": {
     "requests": [],

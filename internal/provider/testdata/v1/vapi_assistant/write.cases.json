@@ -107,5 +107,38 @@
     "config": {"name":"support-bot-v2","first_message":"Hello again"},
     "prior_state": {"id":"","org_id":"org-1","name":"support-bot"},
     "api": []
+  },
+  {
+    "name": "create_minimal_zero_values",
+    "op": "create",
+    "config": {"name":"support-bot"},
+    "api": [
+      {"method":"POST","path":"/assistant","status":200,"body":"{\"id\":\"asst-1\",\"orgId\":\"org-1\",\"name\":\"support-bot\",\"firstMessageMode\":\"\",\"hipaaEnabled\":false,\"backgroundSound\":\"\",\"backgroundDenoisingEnabled\":false,\"modelOutputInMessagesEnabled\":false,\"forwardingPhoneNumber\":\"\",\"endCallFunctionEnabled\":false,\"recordingEnabled\":false,\"firstMessage\":\"\",\"voicemailMessage\":\"\",\"endCallPhrases\":[],\"maxDurationSeconds\":0,\"messagePlan\":{\"idleMessages\":[]},\"stopSpeakingPlan\":{},\"startSpeakingPlan\":{}}"}
+    ]
+  },
+  {
+    "name": "update_minimal_rename",
+    "op": "update",
+    "config": {"name":"support-bot-v2"},
+    "prior_state": {"id":"asst-1","org_id":"org-1","name":"support-bot"},
+    "api": [
+      {"method":"PATCH","path":"/assistant/asst-1","status":200,"body":"{\"id\":\"asst-1\",\"orgId\":\"org-1\",\"name\":\"support-bot-v2\",\"firstMessageMode\":\"\",\"hipaaEnabled\":false,\"backgroundSound\":\"\",\"backgroundDenoisingEnabled\":false,\"modelOutputInMessagesEnabled\":false,\"forwardingPhoneNumber\":\"\",\"endCallFunctionEnabled\":false,\"recordingEnabled\":false,\"firstMessage\":\"\",\"voicemailMessage\":\"\",\"endCallPhrases\":[],\"maxDurationSeconds\":0,\"messagePlan\":{\"idleMessages\":[]},\"stopSpeakingPlan\":{},\"startSpeakingPlan\":{}}"}
+    ]
+  },
+  {
+    "name": "create_minimal_explicit_zeros",
+    "op": "create",
+    "config": {"name":"support-bot"},
+    "api": [
+      {"method":"POST","path":"/assistant","status":200,"body":"{\"id\":\"asst-1\",\"orgId\":\"org-1\",\"name\":\"support-bot\",\"firstMessageMode\":\"\",\"hipaaEnabled\":false,\"backgroundSound\":\"\",\"backgroundDenoisingEnabled\":false,\"modelOutputInMessagesEnabled\":false,\"language\":\"\",\"forwardingPhoneNumber\":\"\",\"interruptionsEnabled\":false,\"endCallFunctionEnabled\":false,\"dialKeypadFunctionEnabled\":false,\"fillersEnabled\":false,\"silenceTimeoutSeconds\":0,\"responseDelaySeconds\":0,\"numWordsToInterruptAssistant\":0,\"liveTranscriptsEnabled\":false,\"keywords\":[],\"parentId\":\"\",\"recordingEnabled\":false,\"firstMessage\":\"\",\"voicemailMessage\":\"\",\"endCallMessage\":\"\",\"clientMessages\":[],\"serverMessages\":[],\"endCallPhrases\":[],\"maxDurationSeconds\":0}"}
+    ]
+  },
+  {
+    "name": "create_minimal_empty_blocks",
+    "op": "create",
+    "config": {"name":"support-bot"},
+    "api": [
+      {"method":"POST","path":"/assistant","status":200,"body":"{\"id\":\"asst-1\",\"orgId\":\"org-1\",\"name\":\"support-bot\",\"voice\":{},\"model\":{},\"transcriber\":{},\"analysisPlan\":{\"structuredDataSchema\":{}},\"messagePlan\":{},\"startSpeakingPlan\":{\"transcriptionEndpointingPlan\":{}},\"stopSpeakingPlan\":{},\"server\":{},\"artifactPlan\":{}}"}
+    ]
   }
 ]
