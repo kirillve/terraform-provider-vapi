@@ -667,137 +667,192 @@ func (r *VAPIAssistantResource) Delete(ctx context.Context, req resource.DeleteR
 }
 
 // flatten binds the API response to the model. An absent optional block clears the block in the
-// model.
+// model. An optional attribute that is not computed keeps the null the configuration left when the
+// API returns its zero value (see optionalString and the other optional helpers); computed
+// attributes and required attributes always take the API value.
 func (m *VAPIAssistantResourceModel) flatten(in *vapi.Assistant) {
-	// Basic fields
+	m.flattenBasic(in)
+	m.Voice = flattenVoice(m.Voice, in.Voice)
+	m.Model = flattenModel(m.Model, in.Model)
+	m.Transcriber = flattenTranscriber(m.Transcriber, in.Transcriber)
+	m.MessagePlan = flattenMessagePlan(m.MessagePlan, in.MessagePlan)
+	m.AnalysisPlan = flattenAnalysisPlan(m.AnalysisPlan, in.AnalysisPlan)
+	m.StartSpeakingPlan = flattenStartSpeakingPlan(m.StartSpeakingPlan, in.StartSpeakingPlan)
+	m.StopSpeakingPlan = flattenStopSpeakingPlan(m.StopSpeakingPlan, in.StopSpeakingPlan)
+}
+
+// flattenBasic binds the scalar and list attributes of the assistant.
+func (m *VAPIAssistantResourceModel) flattenBasic(in *vapi.Assistant) {
 	m.ID = types.StringValue(in.ID)
 	m.OrgID = types.StringValue(in.OrgID)
 	m.Name = types.StringValue(in.Name)
-	m.FirstMessageMode = types.StringValue(in.FirstMessageMode)
-	m.HipaaEnabled = types.BoolValue(in.HipaaEnabled)
-	m.BackgroundSound = types.StringValue(in.BackgroundSound)
-	m.BackgroundDenoising = types.BoolValue(in.BackgroundDenoising)
-	m.ModelOutputEnabled = types.BoolValue(in.ModelOutputEnabled)
+	m.FirstMessageMode = optionalString(m.FirstMessageMode, in.FirstMessageMode)
+	m.HipaaEnabled = optionalBool(m.HipaaEnabled, in.HipaaEnabled)
+	m.BackgroundSound = optionalString(m.BackgroundSound, in.BackgroundSound)
+	m.BackgroundDenoising = optionalBool(m.BackgroundDenoising, in.BackgroundDenoising)
+	m.ModelOutputEnabled = optionalBool(m.ModelOutputEnabled, in.ModelOutputEnabled)
+	m.ForwardingPhoneNumber = optionalString(m.ForwardingPhoneNumber, in.ForwardingPhoneNumber)
+	m.EndCallFunctionEnabled = optionalBool(m.EndCallFunctionEnabled, in.EndCallFunctionEnabled)
+	m.RecordingEnabled = optionalBool(m.RecordingEnabled, in.RecordingEnabled)
+	m.FirstMessage = optionalString(m.FirstMessage, in.FirstMessage)
+	m.VoicemailMessage = optionalString(m.VoicemailMessage, in.VoicemailMessage)
+	m.EndCallPhrases = optionalStringList(m.EndCallPhrases, in.EndCallPhrases)
+	m.MaxDurationSeconds = optionalInt64(m.MaxDurationSeconds, in.MaxDurationSeconds)
+	if in.SilenceTimeoutSeconds == nil {
+		m.SilenceTimeoutSeconds = types.Float64Null()
+	} else {
+		m.SilenceTimeoutSeconds = optionalFloat64(m.SilenceTimeoutSeconds, *in.SilenceTimeoutSeconds)
+	}
+	// computed attributes: the API value is always the state value
 	m.Language = types.StringValue(in.Language)
-	m.ForwardingPhoneNumber = types.StringValue(in.ForwardingPhoneNumber)
 	m.InterruptionsEnabled = types.BoolValue(in.InterruptionsEnabled)
-	m.EndCallFunctionEnabled = types.BoolValue(in.EndCallFunctionEnabled)
 	m.DialKeypadFunctionEnabled = types.BoolValue(in.DialKeypadFunctionEnabled)
 	m.FillersEnabled = types.BoolValue(in.FillersEnabled)
-	m.SilenceTimeoutSeconds = types.Float64PointerValue(in.SilenceTimeoutSeconds)
 	m.ResponseDelaySeconds = types.Float64PointerValue(in.ResponseDelaySeconds)
 	m.NumWordsToInterruptAssistant = types.Int64PointerValue(in.NumWordsToInterruptAssistant)
 	m.LiveTranscriptsEnabled = types.BoolPointerValue(in.LiveTranscriptsEnabled)
 	m.Keywords = ListValueFromStrings(in.Keywords)
+	m.ClientMessages = ListValueFromStrings(in.ClientMessages)
+	m.ServerMessages = ListValueFromStrings(in.ServerMessages)
 	m.ParentID = types.StringPointerValue(in.ParentID)
 	// phone_number_id is never part of the API response; an unknown planned value would stay unknown after apply
 	if m.PhoneNumberID.IsUnknown() {
 		m.PhoneNumberID = types.StringNull()
 	}
+}
 
-	// Handle optional Voice struct
-	if in.Voice != nil {
-		m.Voice = &VoiceResourceModel{
-			Model:           types.StringValue(in.Voice.Model),
-			Provider:        types.StringValue(in.Voice.Provider),
-			VoiceID:         types.StringValue(in.Voice.VoiceID),
-			Stability:       types.Float64Value(in.Voice.Stability),
-			SimilarityBoost: types.Float64Value(in.Voice.SimilarityBoost),
-		}
-	} else {
-		m.Voice = nil
+// flattenVoice binds the voice block; the stability values are optional.
+func flattenVoice(prior *VoiceResourceModel, in *vapi.Voice) *VoiceResourceModel {
+	if in == nil || (prior == nil && *in == (vapi.Voice{})) {
+		return nil
 	}
-
-	// Handle optional Model struct
-	if in.Model != nil {
-		m.Model = &ModelResourceModel{
-			Model:        types.StringValue(in.Model.Model),
-			SystemPrompt: types.StringValue(in.Model.SystemPrompt),
-			Provider:     types.StringValue(in.Model.Provider),
-			MaxTokens:    types.Int64Value(in.Model.MaxTokens),
-			Temperature:  types.Float64Value(in.Model.Temperature),
-			ToolIDs:      ListValueFromStrings(in.Model.ToolIDs),
-		}
-		if in.Model.KnowledgeBase != nil {
-			m.Model.KnowledgeBase = &KnowledgeBaseResourceModel{
-				TopK:     types.Int64Value(in.Model.KnowledgeBase.TopK),
-				FileIDs:  ListValueFromStrings(in.Model.KnowledgeBase.FileIDs),
-				Provider: types.StringValue(in.Model.KnowledgeBase.Provider),
-			}
-		}
-	} else {
-		m.Model = nil
+	if prior == nil {
+		prior = &VoiceResourceModel{}
 	}
-
-	m.RecordingEnabled = types.BoolValue(in.RecordingEnabled)
-	m.FirstMessage = types.StringValue(in.FirstMessage)
-	m.VoicemailMessage = types.StringValue(in.VoicemailMessage)
-	m.EndCallFunctionEnabled = types.BoolValue(in.EndCallFunctionEnabled)
-
-	// Handle optional Transcriber struct
-	if in.Transcriber != nil {
-		m.Transcriber = &TranscriberResourceModel{
-			Provider: types.StringValue(in.Transcriber.Provider),
-			Model:    types.StringValue(in.Transcriber.Model),
-			Language: types.StringValue(in.Transcriber.Language),
-		}
-	} else {
-		m.Transcriber = nil
+	return &VoiceResourceModel{
+		Model:           types.StringValue(in.Model),
+		Provider:        types.StringValue(in.Provider),
+		VoiceID:         types.StringValue(in.VoiceID),
+		Stability:       optionalFloat64(prior.Stability, in.Stability),
+		SimilarityBoost: optionalFloat64(prior.SimilarityBoost, in.SimilarityBoost),
 	}
+}
 
-	m.ClientMessages = ListValueFromStrings(in.ClientMessages)
-	m.ServerMessages = ListValueFromStrings(in.ServerMessages)
-	m.EndCallPhrases = ListValueFromStrings(in.EndCallPhrases)
-
-	m.MaxDurationSeconds = types.Int64Value(in.MaxDurationSeconds)
-
-	if in.MessagePlan != nil {
-		m.MessagePlan = &MessagePlanResourceModel{
-			IdleMessages: ListValueFromStrings(in.MessagePlan.IdleMessages),
-		}
-	} else {
-		m.MessagePlan = nil
+// flattenModel binds the model block. provider, max_tokens and tool_ids are computed.
+func flattenModel(prior *ModelResourceModel, in *vapi.Model) *ModelResourceModel {
+	if in == nil || (prior == nil && emptyModel(in)) {
+		return nil
 	}
-
-	// Handle optional AnalysisPlan struct
-	if in.AnalysisPlan != nil {
-		m.AnalysisPlan = &AnalysisPlanResourceModel{
-			SummaryPrompt:           types.StringValue(in.AnalysisPlan.SummaryPrompt),
-			StructuredDataPrompt:    types.StringValue(in.AnalysisPlan.StructuredDataPrompt),
-			StructuredDataSchema:    mapStructuredDataSchemaRequestToResourceModel(in.AnalysisPlan.StructuredDataSchema),
-			SuccessEvaluationPrompt: types.StringValue(in.AnalysisPlan.SuccessEvaluationPrompt),
-			SuccessEvaluationRubric: types.StringValue(in.AnalysisPlan.SuccessEvaluationRubric),
-		}
-	} else {
-		m.AnalysisPlan = nil
+	if prior == nil {
+		prior = &ModelResourceModel{}
 	}
-
-	// Handle optional StartSpeakingPlan struct
-	if in.StartSpeakingPlan != nil {
-		m.StartSpeakingPlan = &StartSpeakingPlanResourceModel{
-			WaitSeconds:             types.Float64Value(in.StartSpeakingPlan.WaitSeconds),
-			SmartEndpointingEnabled: types.BoolValue(in.StartSpeakingPlan.SmartEndpointingEnabled),
-		}
-		if in.StartSpeakingPlan.TranscriptionEndpointingPlan != nil {
-			m.StartSpeakingPlan.TranscriptionEndpointingPlan = &TranscriptionEndpointingPlanResourceModel{
-				OnPunctuationSeconds:   types.Float64Value(in.StartSpeakingPlan.TranscriptionEndpointingPlan.OnPunctuationSeconds),
-				OnNoPunctuationSeconds: types.Float64Value(in.StartSpeakingPlan.TranscriptionEndpointingPlan.OnNoPunctuationSeconds),
-				OnNumberSeconds:        types.Float64Value(in.StartSpeakingPlan.TranscriptionEndpointingPlan.OnNumberSeconds),
-			}
-		}
-	} else {
-		m.StartSpeakingPlan = nil
+	return &ModelResourceModel{
+		Model:         types.StringValue(in.Model),
+		SystemPrompt:  optionalString(prior.SystemPrompt, in.SystemPrompt),
+		Provider:      types.StringValue(in.Provider),
+		MaxTokens:     types.Int64Value(in.MaxTokens),
+		Temperature:   optionalFloat64(prior.Temperature, in.Temperature),
+		ToolIDs:       ListValueFromStrings(in.ToolIDs),
+		KnowledgeBase: flattenKnowledgeBase(prior.KnowledgeBase, in.KnowledgeBase),
 	}
+}
 
-	// Handle optional StopSpeakingPlan struct
-	if in.StopSpeakingPlan != nil {
-		m.StopSpeakingPlan = &StopSpeakingPlanResourceModel{
-			NumWords:       types.Float64Value(in.StopSpeakingPlan.NumWords),
-			VoiceSeconds:   types.Float64Value(in.StopSpeakingPlan.VoiceSeconds),
-			BackoffSeconds: types.Float64Value(in.StopSpeakingPlan.BackoffSeconds),
+// flattenKnowledgeBase binds the knowledge base block; an empty block the configuration did not ask for stays absent.
+func flattenKnowledgeBase(prior *KnowledgeBaseResourceModel, in *vapi.KnowledgeBase) *KnowledgeBaseResourceModel {
+	if in == nil || (prior == nil && in.TopK == 0 && in.Provider == "" && len(in.FileIDs) == 0) {
+		return nil
+	}
+	if prior == nil {
+		prior = &KnowledgeBaseResourceModel{}
+	}
+	return &KnowledgeBaseResourceModel{
+		TopK:     types.Int64Value(in.TopK),
+		FileIDs:  optionalStringList(prior.FileIDs, in.FileIDs),
+		Provider: types.StringValue(in.Provider),
+	}
+}
+
+// flattenTranscriber binds the transcriber block; model and language are optional.
+func flattenTranscriber(prior *TranscriberResourceModel, in *vapi.Transcriber) *TranscriberResourceModel {
+	if in == nil || (prior == nil && *in == (vapi.Transcriber{})) {
+		return nil
+	}
+	if prior == nil {
+		prior = &TranscriberResourceModel{}
+	}
+	return &TranscriberResourceModel{
+		Provider: types.StringValue(in.Provider),
+		Model:    optionalString(prior.Model, in.Model),
+		Language: optionalString(prior.Language, in.Language),
+	}
+}
+
+// flattenMessagePlan binds the message plan block; an empty block the configuration did not ask for stays absent.
+func flattenMessagePlan(prior *MessagePlanResourceModel, in *vapi.MessagePlan) *MessagePlanResourceModel {
+	if in == nil || (prior == nil && len(in.IdleMessages) == 0) {
+		return nil
+	}
+	if prior == nil {
+		prior = &MessagePlanResourceModel{}
+	}
+	return &MessagePlanResourceModel{IdleMessages: optionalStringList(prior.IdleMessages, in.IdleMessages)}
+}
+
+// flattenAnalysisPlan binds the analysis plan block; an empty block the configuration did not ask for stays absent.
+func flattenAnalysisPlan(prior *AnalysisPlanResourceModel, in *vapi.AnalysisPlan) *AnalysisPlanResourceModel {
+	if in == nil || (prior == nil && emptyAnalysisPlan(in)) {
+		return nil
+	}
+	if prior == nil {
+		prior = &AnalysisPlanResourceModel{}
+	}
+	return &AnalysisPlanResourceModel{
+		SummaryPrompt:           optionalString(prior.SummaryPrompt, in.SummaryPrompt),
+		StructuredDataPrompt:    optionalString(prior.StructuredDataPrompt, in.StructuredDataPrompt),
+		StructuredDataSchema:    flattenStructuredDataSchema(prior.StructuredDataSchema, in.StructuredDataSchema),
+		SuccessEvaluationPrompt: optionalString(prior.SuccessEvaluationPrompt, in.SuccessEvaluationPrompt),
+		SuccessEvaluationRubric: optionalString(prior.SuccessEvaluationRubric, in.SuccessEvaluationRubric),
+	}
+}
+
+// flattenStartSpeakingPlan binds the start speaking plan block; every attribute of it is optional.
+func flattenStartSpeakingPlan(prior *StartSpeakingPlanResourceModel, in *vapi.StartSpeakingPlan) *StartSpeakingPlanResourceModel {
+	if in == nil || (prior == nil && emptyStartSpeakingPlan(in)) {
+		return nil
+	}
+	if prior == nil {
+		prior = &StartSpeakingPlanResourceModel{}
+	}
+	out := &StartSpeakingPlanResourceModel{
+		WaitSeconds:             optionalFloat64(prior.WaitSeconds, in.WaitSeconds),
+		SmartEndpointingEnabled: optionalBool(prior.SmartEndpointingEnabled, in.SmartEndpointingEnabled),
+	}
+	if plan := in.TranscriptionEndpointingPlan; plan != nil && (prior.TranscriptionEndpointingPlan != nil || *plan != (vapi.TranscriptionEndpointingPlan{})) {
+		priorPlan := prior.TranscriptionEndpointingPlan
+		if priorPlan == nil {
+			priorPlan = &TranscriptionEndpointingPlanResourceModel{}
 		}
-	} else {
-		m.StopSpeakingPlan = nil
+		out.TranscriptionEndpointingPlan = &TranscriptionEndpointingPlanResourceModel{
+			OnPunctuationSeconds:   optionalFloat64(priorPlan.OnPunctuationSeconds, plan.OnPunctuationSeconds),
+			OnNoPunctuationSeconds: optionalFloat64(priorPlan.OnNoPunctuationSeconds, plan.OnNoPunctuationSeconds),
+			OnNumberSeconds:        optionalFloat64(priorPlan.OnNumberSeconds, plan.OnNumberSeconds),
+		}
+	}
+	return out
+}
+
+// flattenStopSpeakingPlan binds the stop speaking plan block; voice_seconds and backoff_seconds are computed.
+func flattenStopSpeakingPlan(prior *StopSpeakingPlanResourceModel, in *vapi.StopSpeakingPlan) *StopSpeakingPlanResourceModel {
+	if in == nil || (prior == nil && *in == (vapi.StopSpeakingPlan{})) {
+		return nil
+	}
+	if prior == nil {
+		prior = &StopSpeakingPlanResourceModel{}
+	}
+	return &StopSpeakingPlanResourceModel{
+		NumWords:       optionalFloat64(prior.NumWords, in.NumWords),
+		VoiceSeconds:   types.Float64Value(in.VoiceSeconds),
+		BackoffSeconds: types.Float64Value(in.BackoffSeconds),
 	}
 }
 
@@ -931,21 +986,46 @@ func createRequestObject(data *StructuredDataSchemaResourceModel) *vapi.Structur
 	}
 }
 
-func mapStructuredDataSchemaRequestToResourceModel(data *vapi.StructuredDataSchema) *StructuredDataSchemaResourceModel {
-	if data == nil {
+// emptyModel reports whether the API returned a model without any content, including an empty knowledge base.
+func emptyModel(in *vapi.Model) bool {
+	return in.Model == "" && in.SystemPrompt == "" && in.Provider == "" && in.MaxTokens == 0 && in.Temperature == 0 &&
+		len(in.ToolIDs) == 0 && len(in.Messages) == 0 &&
+		(in.KnowledgeBase == nil || (in.KnowledgeBase.TopK == 0 && in.KnowledgeBase.Provider == "" && len(in.KnowledgeBase.FileIDs) == 0))
+}
+
+// emptyAnalysisPlan reports whether the API returned an analysis plan without any content.
+func emptyAnalysisPlan(in *vapi.AnalysisPlan) bool {
+	return in.SummaryPrompt == "" && in.StructuredDataPrompt == "" && in.SuccessEvaluationPrompt == "" && in.SuccessEvaluationRubric == "" &&
+		(in.StructuredDataSchema == nil || (in.StructuredDataSchema.Type == "" && len(in.StructuredDataSchema.Properties) == 0))
+}
+
+// emptyStartSpeakingPlan reports whether the API returned a start speaking plan without any content.
+func emptyStartSpeakingPlan(in *vapi.StartSpeakingPlan) bool {
+	return in.WaitSeconds == 0 && !in.SmartEndpointingEnabled &&
+		(in.TranscriptionEndpointingPlan == nil || *in.TranscriptionEndpointingPlan == (vapi.TranscriptionEndpointingPlan{}))
+}
+
+// flattenStructuredDataSchema binds the structured data schema; an empty schema the configuration did not ask for stays absent.
+func flattenStructuredDataSchema(prior *StructuredDataSchemaResourceModel, in *vapi.StructuredDataSchema) *StructuredDataSchemaResourceModel {
+	if in == nil || (prior == nil && in.Type == "" && len(in.Properties) == 0) {
 		return nil
 	}
-
-	properties := make(map[string]PropertyResourceModel)
-	for key, prop := range data.Properties {
+	if prior == nil {
+		prior = &StructuredDataSchemaResourceModel{}
+	}
+	var properties map[string]PropertyResourceModel
+	if len(in.Properties) > 0 || prior.Properties != nil {
+		properties = make(map[string]PropertyResourceModel, len(in.Properties))
+	}
+	for key, prop := range in.Properties {
+		priorProp := prior.Properties[key]
 		properties[key] = PropertyResourceModel{
-			Type:        types.StringValue(prop.Type),
-			Description: types.StringValue(prop.Description),
+			Type:        optionalString(priorProp.Type, prop.Type),
+			Description: optionalString(priorProp.Description, prop.Description),
 		}
 	}
-
 	return &StructuredDataSchemaResourceModel{
-		Type:       types.StringValue(data.Type),
+		Type:       optionalString(prior.Type, in.Type),
 		Properties: properties,
 	}
 }

@@ -51,6 +51,12 @@ var requiredCasesByType = map[string][]string{
 		"create_artifact_default_mp3",
 		"create_unicode_false_zero",
 		"read_nil_nested_child",
+		"create_minimal_zero_values",
+		"create_minimal_explicit_zeros",
+		"create_minimal_empty_blocks",
+		"update_minimal_rename",
+		"read_minimal_zero_values",
+		"read_explicit_zero_kept",
 	},
 	"vapi_file": {
 		"import",
