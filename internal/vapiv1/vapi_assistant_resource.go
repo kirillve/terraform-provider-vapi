@@ -690,6 +690,10 @@ func (m *VAPIAssistantResourceModel) flatten(in *vapi.Assistant) {
 	m.LiveTranscriptsEnabled = types.BoolPointerValue(in.LiveTranscriptsEnabled)
 	m.Keywords = ListValueFromStrings(in.Keywords)
 	m.ParentID = types.StringPointerValue(in.ParentID)
+	// phone_number_id is never part of the API response; an unknown planned value would stay unknown after apply
+	if m.PhoneNumberID.IsUnknown() {
+		m.PhoneNumberID = types.StringNull()
+	}
 
 	// Handle optional Voice struct
 	if in.Voice != nil {

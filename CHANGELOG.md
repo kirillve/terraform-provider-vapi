@@ -8,6 +8,7 @@ CHANGES:
 - changing an argument of a `vapi_sip_trunk_phone_number` now plans an in-place update; before, the computed `id` forced a replacement of the phone number
 - `vapi_file` no longer plans a replacement because of its computed `id` and `org_id`; changing `content` or `filename` still replaces the file
 - updating a `vapi_tool_query_function` no longer fails with an unknown `id` and `org_id` after apply; the plans of `vapi_assistant` and `vapi_sip_trunk` keep the existing `id` instead of showing it as known after apply
+- creating or updating a `vapi_assistant` without `phone_number_id` no longer fails with an unknown value after apply; the attribute stays null until it is set
 
 ## v0.14.0
 

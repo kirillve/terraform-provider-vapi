@@ -125,7 +125,7 @@
       "num_words_to_interrupt_assistant": null,
       "org_id": "org-1",
       "parent_id": null,
-      "phone_number_id": "<unknown>",
+      "phone_number_id": null,
       "recording_enabled": false,
       "response_delay_seconds": null,
       "server_messages": [],
