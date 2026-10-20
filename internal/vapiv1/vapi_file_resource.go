@@ -3,7 +3,10 @@ package vapiv1
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"net/http"
+
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -17,14 +20,17 @@ import (
 var _ resource.Resource = &VAPIFileResource{}
 var _ resource.ResourceWithImportState = &VAPIFileResource{}
 
+// NewVAPIFileResource returns a new file resource.
 func NewVAPIFileResource() resource.Resource {
 	return &VAPIFileResource{}
 }
 
+// VAPIFileResource manages an uploaded file in VAPI.
 type VAPIFileResource struct {
 	client *vapi.APIClient
 }
 
+// VAPIFileResourceModel maps the schema data.
 type VAPIFileResourceModel struct {
 	Content      types.String `tfsdk:"content"`
 	Filename     types.String `tfsdk:"filename"`
@@ -36,18 +42,20 @@ type VAPIFileResourceModel struct {
 	URL          types.String `tfsdk:"url"`
 	CreatedAt    types.String `tfsdk:"created_at"`
 	UpdatedAt    types.String `tfsdk:"updated_at"`
-	Id           types.String `tfsdk:"id"`
+	ID           types.String `tfsdk:"id"`
 	OrgID        types.String `tfsdk:"org_id"`
 	Status       types.String `tfsdk:"status"`
 	Bucket       types.String `tfsdk:"bucket"`
 	Purpose      types.String `tfsdk:"purpose"`
 }
 
-func (r *VAPIFileResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+// Metadata sets the resource type name.
+func (r *VAPIFileResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_file"
 }
 
-func (r *VAPIFileResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+// Schema defines the resource schema.
+func (r *VAPIFileResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "Manages a file resource in the VAPI system.",
 
@@ -128,10 +136,12 @@ func (r *VAPIFileResource) Schema(ctx context.Context, req resource.SchemaReques
 	}
 }
 
-func (r *VAPIFileResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+// Configure binds the API client to the resource.
+func (r *VAPIFileResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	r.client = configureClient(req, resp)
 }
 
+// Create uploads the file.
 func (r *VAPIFileResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data VAPIFileResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
@@ -156,51 +166,42 @@ func (r *VAPIFileResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
-	bindVAPIFileResourceData(&data, &fileResponse)
+	data.flatten(&fileResponse)
 
 	tflog.Trace(ctx, "created a file resource")
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
+// Read fetches the current state from the API. A response that cannot be decoded is reported
+// as a warning and the partially decoded value is still bound.
 func (r *VAPIFileResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data VAPIFileResourceModel
-	// Retrieve the current state
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// Attempt to fetch the file details from the remote API
-	response, responseCode, err := r.client.GetFile(data.Id.ValueString())
-	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read file: %s", err))
-		return
-	}
-
-	// Check if the file was not found (404 or similar status code indicating missing resource)
-	if responseCode == 404 {
+	id := data.ID.ValueString()
+	if id == "" {
 		resp.State.RemoveResource(ctx)
 		return
 	}
 
-	// Handle successful responses (e.g., 200 OK)
 	var fileResponse vapi.FileResponse
-	if responseCode >= 200 && responseCode < 300 {
-		// Parse the response
-		if err := json.Unmarshal(response, &fileResponse); err != nil {
-			resp.Diagnostics.AddWarning("Parse Error", fmt.Sprintf("Unable to parse file response: %s", err))
+	if err := r.client.Do(http.MethodGet, "file/"+id, nil, &fileResponse); err != nil {
+		var decErr *vapi.DecodeError
+		if !errors.As(err, &decErr) {
+			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read file: %s", err))
+			return
 		}
-		// Bind the file response data to the resource model
-		bindVAPIFileResourceData(&data, &fileResponse)
-	} else {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to parse response [%d]: %s", responseCode, string(response)))
-		return
+		resp.Diagnostics.AddWarning("Parse Error", fmt.Sprintf("Unable to parse file response: %s", err))
 	}
 
-	// Update the state with the latest data
+	data.flatten(&fileResponse)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
+// Update deletes the old file, resets the computed attributes and uploads the new content.
 func (r *VAPIFileResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data VAPIFileResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
@@ -208,12 +209,13 @@ func (r *VAPIFileResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 
-	_, _, err := r.client.DeleteFile(data.Id.ValueString())
-	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete file: %s", err))
-		return
+	if id := data.ID.ValueString(); id != "" {
+		if err := r.client.Do(http.MethodDelete, "file/"+id, nil, nil); err != nil {
+			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete file: %s", err))
+			return
+		}
 	}
-	bindVAPIFileResourceData(&data, &vapi.FileResponse{})
+	data.flatten(&vapi.FileResponse{})
 
 	response, responseCode, err := r.client.UploadData("file", data.Filename.ValueString(), []byte(data.Content.ValueString()))
 	if err != nil {
@@ -231,11 +233,12 @@ func (r *VAPIFileResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 
-	bindVAPIFileResourceData(&data, &fileResponse)
+	data.flatten(&fileResponse)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
+// Delete removes the file.
 func (r *VAPIFileResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var data VAPIFileResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
@@ -243,31 +246,34 @@ func (r *VAPIFileResource) Delete(ctx context.Context, req resource.DeleteReques
 		return
 	}
 
-	_, _, err := r.client.DeleteFile(data.Id.ValueString())
-	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete file: %s", err))
-		return
+	if id := data.ID.ValueString(); id != "" {
+		if err := r.client.Do(http.MethodDelete, "file/"+id, nil, nil); err != nil {
+			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete file: %s", err))
+			return
+		}
 	}
 
 	tflog.Trace(ctx, "deleted a file resource")
 }
 
+// ImportState enables `terraform import`.
 func (r *VAPIFileResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }
 
-func bindVAPIFileResourceData(data *VAPIFileResourceModel, fileResponse *vapi.FileResponse) {
-	data.Id = types.StringValue(fileResponse.ID)
-	data.OrgID = types.StringValue(fileResponse.OrgID)
-	data.Name = types.StringValue(fileResponse.Name)
-	data.OriginalName = types.StringValue(fileResponse.OriginalName)
-	data.Bytes = types.Int64Value(fileResponse.Bytes)
-	data.Mimetype = types.StringValue(fileResponse.Mimetype)
-	data.Path = types.StringValue(fileResponse.Path)
-	data.URL = types.StringValue(fileResponse.URL)
-	data.CreatedAt = types.StringValue(fileResponse.CreatedAt)
-	data.UpdatedAt = types.StringValue(fileResponse.UpdatedAt)
-	data.Status = types.StringValue(fileResponse.Status)
-	data.Bucket = types.StringValue(fileResponse.Bucket)
-	data.Purpose = types.StringValue(fileResponse.Purpose)
+// flatten binds the API response to the model. An empty response resets the computed attributes.
+func (m *VAPIFileResourceModel) flatten(in *vapi.FileResponse) {
+	m.ID = types.StringValue(in.ID)
+	m.OrgID = types.StringValue(in.OrgID)
+	m.Name = types.StringValue(in.Name)
+	m.OriginalName = types.StringValue(in.OriginalName)
+	m.Bytes = types.Int64Value(in.Bytes)
+	m.Mimetype = types.StringValue(in.Mimetype)
+	m.Path = types.StringValue(in.Path)
+	m.URL = types.StringValue(in.URL)
+	m.CreatedAt = types.StringValue(in.CreatedAt)
+	m.UpdatedAt = types.StringValue(in.UpdatedAt)
+	m.Status = types.StringValue(in.Status)
+	m.Bucket = types.StringValue(in.Bucket)
+	m.Purpose = types.StringValue(in.Purpose)
 }
