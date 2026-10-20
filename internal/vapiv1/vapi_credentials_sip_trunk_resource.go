@@ -2,8 +2,9 @@ package vapiv1
 
 import (
 	"context"
-	"encoding/json"
+	"errors"
 	"fmt"
+	"net/http"
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -15,14 +16,17 @@ import (
 var _ resource.Resource = &VAPISIPTrunkResource{}
 var _ resource.ResourceWithImportState = &VAPISIPTrunkResource{}
 
+// NewVAPISIPTrunkResource returns a new SIP trunk resource.
 func NewVAPISIPTrunkResource() resource.Resource {
 	return &VAPISIPTrunkResource{}
 }
 
+// VAPISIPTrunkResource manages a SIP trunk credential.
 type VAPISIPTrunkResource struct {
 	client *vapi.APIClient
 }
 
+// VAPISIPTrunkResourceModel maps the schema data.
 type VAPISIPTrunkResourceModel struct {
 	ID                         types.String                     `tfsdk:"id"`
 	SIPProvider                types.String                     `tfsdk:"sip_provider"`
@@ -34,27 +38,32 @@ type VAPISIPTrunkResourceModel struct {
 	SIPDiversionHeader         types.String                     `tfsdk:"sip_diversion_header"`
 }
 
+// SIPGatewayModel is one SIP gateway of a trunk.
 type SIPGatewayModel struct {
 	IP types.String `tfsdk:"ip"`
 }
 
+// OutboundAuthenticationPlanModel holds the outbound authentication settings of a trunk.
 type OutboundAuthenticationPlanModel struct {
 	AuthUsername    types.String          `tfsdk:"auth_username"`
 	AuthPassword    types.String          `tfsdk:"auth_password"`
 	SIPRegisterPlan *SIPRegisterPlanModel `tfsdk:"sip_register_plan"`
 }
 
+// SIPRegisterPlanModel holds the SIP registration settings of an outbound authentication plan.
 type SIPRegisterPlanModel struct {
 	Domain   types.String `tfsdk:"domain"`
 	Username types.String `tfsdk:"username"`
 	Realm    types.String `tfsdk:"realm"`
 }
 
-func (r *VAPISIPTrunkResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+// Metadata sets the resource type name.
+func (r *VAPISIPTrunkResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_sip_trunk"
 }
 
-func (r *VAPISIPTrunkResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+// Schema defines the resource schema.
+func (r *VAPISIPTrunkResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "Manages a SIP trunk in the VAPI system.",
 		Attributes: map[string]schema.Attribute{
@@ -106,10 +115,12 @@ func (r *VAPISIPTrunkResource) Schema(ctx context.Context, req resource.SchemaRe
 	}
 }
 
-func (r *VAPISIPTrunkResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+// Configure binds the API client to the resource.
+func (r *VAPISIPTrunkResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	r.client = configureClient(req, resp)
 }
 
+// Create creates the SIP trunk.
 func (r *VAPISIPTrunkResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data VAPISIPTrunkResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
@@ -117,24 +128,22 @@ func (r *VAPISIPTrunkResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
-	trunkReq := buildSIPTrunkRequest(&data)
-
-	respBytes, status, err := r.client.CreateSIPTrunk(trunkReq)
-	if err != nil || status >= 400 {
-		resp.Diagnostics.AddError("Create Failed", fmt.Sprintf("Status: %d, Error: %v", status, err))
-		return
-	}
-
 	var created vapi.SIPTrunk
-	if err := json.Unmarshal(respBytes, &created); err != nil {
-		resp.Diagnostics.AddError("Unmarshal Error", err.Error())
+	if err := r.client.Do(http.MethodPost, "credential", data.expand(), &created); err != nil {
+		var decErr *vapi.DecodeError
+		if errors.As(err, &decErr) {
+			resp.Diagnostics.AddError("Unmarshal Error", err.Error())
+			return
+		}
+		resp.Diagnostics.AddError("Create Failed", fmt.Sprintf("Status: %d, Error: %v", vapi.StatusCode(err), err))
 		return
 	}
 
-	bindVAPISIPTrunkResourceData(&data, &created)
+	data.flatten(&created)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
+// Read fetches the current state from the API.
 func (r *VAPISIPTrunkResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data VAPISIPTrunkResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
@@ -142,26 +151,33 @@ func (r *VAPISIPTrunkResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 
-	respBytes, status, err := r.client.GetSIPTrunk(data.ID.ValueString())
-	if status == 404 {
+	id := data.ID.ValueString()
+	if id == "" {
 		resp.State.RemoveResource(ctx)
-		return
-	}
-	if err != nil || status >= 400 {
-		resp.Diagnostics.AddError("Read Failed", fmt.Sprintf("Status: %d, Error: %v", status, err))
 		return
 	}
 
 	var fetched vapi.SIPTrunk
-	if err := json.Unmarshal(respBytes, &fetched); err != nil {
-		resp.Diagnostics.AddWarning("Unmarshal Warning", err.Error())
+	err := r.client.Do(http.MethodGet, "credential/"+id, nil, &fetched)
+	if vapi.StatusCode(err) == http.StatusNotFound {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+	if err != nil {
+		var decErr *vapi.DecodeError
+		if errors.As(err, &decErr) {
+			resp.Diagnostics.AddWarning("Unmarshal Warning", err.Error())
+			return
+		}
+		resp.Diagnostics.AddError("Read Failed", fmt.Sprintf("Status: %d, Error: %v", vapi.StatusCode(err), err))
 		return
 	}
 
-	bindVAPISIPTrunkResourceData(&data, &fetched)
+	data.flatten(&fetched)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
+// Update updates the SIP trunk in place.
 func (r *VAPISIPTrunkResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var state VAPISIPTrunkResourceModel
 	var plan VAPISIPTrunkResourceModel
@@ -172,24 +188,28 @@ func (r *VAPISIPTrunkResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 
-	trunkReq := buildSIPTrunkRequest(&plan)
-
-	respBytes, status, err := r.client.UpdateSIPTrunk(state.ID.ValueString(), trunkReq)
-	if err != nil || status >= 400 {
-		resp.Diagnostics.AddError("Update Failed", fmt.Sprintf("Status: %d, Error: %v", status, err))
+	id := state.ID.ValueString()
+	if id == "" {
+		resp.Diagnostics.AddError("Update Failed", "Status: 404, Error: ID cannot be empty")
 		return
 	}
 
 	var updated vapi.SIPTrunk
-	if err := json.Unmarshal(respBytes, &updated); err != nil {
-		resp.Diagnostics.AddError("Unmarshal Error", err.Error())
+	if err := r.client.Do(http.MethodPatch, "credential/"+id, plan.expand(), &updated); err != nil {
+		var decErr *vapi.DecodeError
+		if errors.As(err, &decErr) {
+			resp.Diagnostics.AddError("Unmarshal Error", err.Error())
+			return
+		}
+		resp.Diagnostics.AddError("Update Failed", fmt.Sprintf("Status: %d, Error: %v", vapi.StatusCode(err), err))
 		return
 	}
 
-	bindVAPISIPTrunkResourceData(&plan, &updated)
+	plan.flatten(&updated)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
+// Delete removes the SIP trunk.
 func (r *VAPISIPTrunkResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var data VAPISIPTrunkResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
@@ -197,105 +217,76 @@ func (r *VAPISIPTrunkResource) Delete(ctx context.Context, req resource.DeleteRe
 		return
 	}
 
-	_, status, err := r.client.DeleteSIPTrunk(data.ID.ValueString())
-	if err != nil || status >= 400 {
-		resp.Diagnostics.AddError("Delete Failed", fmt.Sprintf("Status: %d, Error: %v", status, err))
+	id := data.ID.ValueString()
+	if id == "" {
+		resp.Diagnostics.AddError("Delete Failed", "Status: 404, Error: ID cannot be empty")
+		return
+	}
+
+	if err := r.client.Do(http.MethodDelete, "credential/"+id, nil, nil); err != nil {
+		resp.Diagnostics.AddError("Delete Failed", fmt.Sprintf("Status: %d, Error: %v", vapi.StatusCode(err), err))
 	}
 }
 
+// ImportState enables `terraform import`.
 func (r *VAPISIPTrunkResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }
 
-func buildSIPTrunkRequest(model *VAPISIPTrunkResourceModel) vapi.ImportSIPTrunkRequest {
-	return vapi.ImportSIPTrunkRequest{
-		Provider:                   model.SIPProvider.ValueString(),
-		Name:                       model.Name.ValueString(),
-		Gateways:                   convertGateways(model.Gateways),
-		OutboundAuthenticationPlan: convertAuthPlan(model.OutboundAuthenticationPlan),
-		OutboundLeadingPlusEnabled: model.OutboundLeadingPlusEnabled.ValueBool(),
-		TechPrefix:                 model.TechPrefix.ValueString(),
-		SIPDiversionHeader:         model.SIPDiversionHeader.ValueString(),
+// expand builds the API request from the planned model.
+func (m *VAPISIPTrunkResourceModel) expand() vapi.ImportSIPTrunkRequest {
+	out := vapi.ImportSIPTrunkRequest{
+		Provider:                   m.SIPProvider.ValueString(),
+		Name:                       m.Name.ValueString(),
+		OutboundLeadingPlusEnabled: m.OutboundLeadingPlusEnabled.ValueBool(),
+		TechPrefix:                 m.TechPrefix.ValueString(),
+		SIPDiversionHeader:         m.SIPDiversionHeader.ValueString(),
 	}
-}
-
-func bindVAPISIPTrunkResourceData(model *VAPISIPTrunkResourceModel, trunk *vapi.SIPTrunk) {
-	if trunk == nil {
-		return
+	for _, g := range m.Gateways {
+		out.Gateways = append(out.Gateways, vapi.SIPGateway{IP: g.IP.ValueString()})
 	}
-
-	model.ID = types.StringValue(trunk.ID)
-	model.SIPProvider = types.StringValue(trunk.Provider)
-	model.Name = types.StringValue(trunk.Name)
-	model.OutboundLeadingPlusEnabled = types.BoolValue(trunk.OutboundLeadingPlusEnabled)
-	model.TechPrefix = types.StringValue(trunk.TechPrefix)
-	model.SIPDiversionHeader = types.StringValue(trunk.SIPDiversionHeader)
-	model.Gateways = flattenSIPGateways(trunk.Gateways)
-	model.OutboundAuthenticationPlan = flattenOutboundAuthenticationPlan(trunk.OutboundAuthenticationPlan)
-}
-
-func flattenSIPGateways(gateways []vapi.SIPGateway) []SIPGatewayModel {
-	if len(gateways) == 0 {
-		return nil
-	}
-
-	result := make([]SIPGatewayModel, 0, len(gateways))
-	for _, g := range gateways {
-		result = append(result, SIPGatewayModel{
-			IP: types.StringValue(g.IP),
-		})
-	}
-	return result
-}
-
-func flattenOutboundAuthenticationPlan(plan *vapi.OutboundAuthenticationPlan) *OutboundAuthenticationPlanModel {
-	if plan == nil {
-		return nil
-	}
-
-	model := &OutboundAuthenticationPlanModel{
-		AuthUsername: types.StringValue(plan.AuthUsername),
-		AuthPassword: types.StringValue(plan.AuthPassword),
-	}
-	model.SIPRegisterPlan = flattenSIPRegisterPlan(plan.SIPRegisterPlan)
-	return model
-}
-
-func flattenSIPRegisterPlan(plan *vapi.SIPRegisterPlan) *SIPRegisterPlanModel {
-	if plan == nil {
-		return nil
-	}
-	return &SIPRegisterPlanModel{
-		Domain:   types.StringValue(plan.Domain),
-		Username: types.StringValue(plan.Username),
-		Realm:    types.StringValue(plan.Realm),
-	}
-}
-
-// Helpers.
-func convertGateways(models []SIPGatewayModel) []vapi.SIPGateway {
-	var out []vapi.SIPGateway
-	for _, m := range models {
-		out = append(out, vapi.SIPGateway{IP: m.IP.ValueString()})
+	if plan := m.OutboundAuthenticationPlan; plan != nil {
+		out.OutboundAuthenticationPlan = &vapi.OutboundAuthenticationPlan{
+			AuthUsername: plan.AuthUsername.ValueString(),
+			AuthPassword: plan.AuthPassword.ValueString(),
+		}
+		if reg := plan.SIPRegisterPlan; reg != nil {
+			out.OutboundAuthenticationPlan.SIPRegisterPlan = &vapi.SIPRegisterPlan{
+				Domain:   reg.Domain.ValueString(),
+				Username: reg.Username.ValueString(),
+				Realm:    reg.Realm.ValueString(),
+			}
+		}
 	}
 	return out
 }
 
-func convertAuthPlan(model *OutboundAuthenticationPlanModel) *vapi.OutboundAuthenticationPlan {
-	if model == nil {
-		return nil
+// flatten binds the API response to the model.
+func (m *VAPISIPTrunkResourceModel) flatten(in *vapi.SIPTrunk) {
+	m.ID = types.StringValue(in.ID)
+	m.SIPProvider = types.StringValue(in.Provider)
+	m.Name = types.StringValue(in.Name)
+	m.OutboundLeadingPlusEnabled = types.BoolValue(in.OutboundLeadingPlusEnabled)
+	m.TechPrefix = types.StringValue(in.TechPrefix)
+	m.SIPDiversionHeader = types.StringValue(in.SIPDiversionHeader)
+
+	m.Gateways = nil
+	for _, g := range in.Gateways {
+		m.Gateways = append(m.Gateways, SIPGatewayModel{IP: types.StringValue(g.IP)})
 	}
-	var reg *vapi.SIPRegisterPlan
-	if model.SIPRegisterPlan != nil {
-		reg = &vapi.SIPRegisterPlan{
-			Domain:   model.SIPRegisterPlan.Domain.ValueString(),
-			Username: model.SIPRegisterPlan.Username.ValueString(),
-			Realm:    model.SIPRegisterPlan.Realm.ValueString(),
+
+	m.OutboundAuthenticationPlan = nil
+	if plan := in.OutboundAuthenticationPlan; plan != nil {
+		m.OutboundAuthenticationPlan = &OutboundAuthenticationPlanModel{
+			AuthUsername: types.StringValue(plan.AuthUsername),
+			AuthPassword: types.StringValue(plan.AuthPassword),
 		}
-	}
-	return &vapi.OutboundAuthenticationPlan{
-		AuthUsername:    model.AuthUsername.ValueString(),
-		AuthPassword:    model.AuthPassword.ValueString(),
-		SIPRegisterPlan: reg,
+		if reg := plan.SIPRegisterPlan; reg != nil {
+			m.OutboundAuthenticationPlan.SIPRegisterPlan = &SIPRegisterPlanModel{
+				Domain:   types.StringValue(reg.Domain),
+				Username: types.StringValue(reg.Username),
+				Realm:    types.StringValue(reg.Realm),
+			}
+		}
 	}
 }

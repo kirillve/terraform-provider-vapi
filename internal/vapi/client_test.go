@@ -2,6 +2,8 @@ package vapi
 
 import (
 	"bytes"
+	"errors"
+	"fmt"
 	"io"
 	"mime"
 	"mime/multipart"
@@ -9,6 +11,10 @@ import (
 	"strings"
 	"sync"
 	"testing"
+	"testing/iotest"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestUploadData(t *testing.T) {
@@ -52,7 +58,7 @@ func TestUploadData(t *testing.T) {
 func TestSendRequestHandlesErrorStatus(t *testing.T) {
 	t.Parallel()
 
-	transport := roundTripFunc(func(req *http.Request) (*http.Response, error) {
+	transport := roundTripFunc(func(_ *http.Request) (*http.Response, error) {
 		return jsonResponse(http.StatusInternalServerError, "boom"), nil
 	})
 
@@ -68,6 +74,195 @@ func TestSendRequestHandlesErrorStatus(t *testing.T) {
 	}
 	if status != http.StatusInternalServerError {
 		t.Fatalf("unexpected status %d", status)
+	}
+}
+
+func newTestClient(transport http.RoundTripper) *APIClient {
+	return &APIClient{
+		BaseURL:    "https://api.example.com",
+		Token:      "token",
+		HTTPClient: &http.Client{Transport: transport},
+	}
+}
+
+func TestSendRequest_NonSuccessReturnsAPIErrorWithLegacyText(t *testing.T) {
+	t.Parallel()
+
+	client := newTestClient(roundTripFunc(func(_ *http.Request) (*http.Response, error) {
+		return jsonResponse(http.StatusInternalServerError, "boom"), nil
+	}))
+
+	body, status, err := client.SendRequest(http.MethodGet, "resource", nil)
+
+	var apiErr *APIError
+	require.ErrorAs(t, err, &apiErr)
+	assert.Equal(t, &APIError{StatusCode: http.StatusInternalServerError, Body: "boom"}, apiErr)
+	assert.Equal(t, "HTTP 500: boom", err.Error())
+	assert.Equal(t, http.StatusInternalServerError, status)
+	assert.Equal(t, "boom", string(body))
+}
+
+func TestSendRequest_ReadBodyErrorKeepsStatus(t *testing.T) {
+	t.Parallel()
+
+	client := newTestClient(roundTripFunc(func(_ *http.Request) (*http.Response, error) {
+		resp := jsonResponse(http.StatusOK, "")
+		resp.Body = io.NopCloser(io.MultiReader(strings.NewReader("{"), iotest.ErrReader(io.ErrUnexpectedEOF)))
+		return resp, nil
+	}))
+
+	body, status, err := client.SendRequest(http.MethodGet, "resource", nil)
+
+	var apiErr *APIError
+	require.ErrorAs(t, err, &apiErr)
+	assert.Equal(t, http.StatusOK, apiErr.StatusCode)
+	assert.Empty(t, apiErr.Body)
+	require.Error(t, apiErr.Err)
+	assert.True(t, strings.HasPrefix(err.Error(), "error reading response body: "), err.Error())
+	assert.Equal(t, apiErr.Err, errors.Unwrap(err))
+	require.ErrorIs(t, err, io.ErrUnexpectedEOF)
+	assert.Equal(t, http.StatusOK, status)
+	assert.Nil(t, body)
+}
+
+func TestAPIClientDo_DecodesSuccess(t *testing.T) {
+	t.Parallel()
+
+	var gotMethod, gotPath string
+	client := newTestClient(roundTripFunc(func(req *http.Request) (*http.Response, error) {
+		gotMethod, gotPath = req.Method, req.URL.Path
+		return jsonResponse(http.StatusCreated, `{"id":"abc","name":"n"}`), nil
+	}))
+
+	var out struct {
+		ID   string `json:"id"`
+		Name string `json:"name"`
+	}
+	err := client.Do(http.MethodPost, "credential", map[string]string{"k": "v"}, &out)
+
+	require.NoError(t, err)
+	assert.Equal(t, http.MethodPost, gotMethod)
+	assert.Equal(t, "/credential", gotPath)
+	assert.Equal(t, "abc", out.ID)
+	assert.Equal(t, "n", out.Name)
+}
+
+func TestAPIClientDo_NilInNilOut(t *testing.T) {
+	t.Parallel()
+
+	var gotBody []byte
+	client := newTestClient(roundTripFunc(func(req *http.Request) (*http.Response, error) {
+		var err error
+		gotBody, err = io.ReadAll(req.Body)
+		assert.NoError(t, err)
+		return jsonResponse(http.StatusNoContent, ""), nil
+	}))
+
+	err := client.Do(http.MethodDelete, "file/file-1", nil, nil)
+
+	require.NoError(t, err)
+	assert.Empty(t, gotBody)
+}
+
+func TestAPIClientDo_HeadersAndTrailingNewline(t *testing.T) {
+	t.Parallel()
+
+	var gotBody []byte
+	var gotHeader http.Header
+	client := newTestClient(roundTripFunc(func(req *http.Request) (*http.Response, error) {
+		var err error
+		gotBody, err = io.ReadAll(req.Body)
+		assert.NoError(t, err)
+		gotHeader = req.Header.Clone()
+		return jsonResponse(http.StatusOK, `{}`), nil
+	}))
+
+	err := client.Do(http.MethodPatch, "tool/t-1", struct {
+		Name string `json:"name"`
+	}{Name: "a<b"}, &struct{}{})
+
+	require.NoError(t, err)
+	assert.Equal(t, "{\"name\":\"a\\u003cb\"}\n", string(gotBody))
+	assert.Equal(t, "Bearer token", gotHeader.Get("Authorization"))
+	assert.Equal(t, "application/json", gotHeader.Get("Content-Type"))
+}
+
+func TestAPIClientDo_DecodeFailureReturnsDecodeErrorWithPartialValue(t *testing.T) {
+	t.Parallel()
+
+	client := newTestClient(roundTripFunc(func(_ *http.Request) (*http.Response, error) {
+		return jsonResponse(http.StatusOK, `{"id":"x","size":"not-a-number"}`), nil
+	}))
+
+	var out struct {
+		ID   string `json:"id"`
+		Size int    `json:"size"`
+	}
+	err := client.Do(http.MethodGet, "file/x", nil, &out)
+
+	var decErr *DecodeError
+	require.ErrorAs(t, err, &decErr)
+	assert.Equal(t, decErr.Err.Error(), err.Error())
+	assert.Equal(t, "x", out.ID)
+	assert.Zero(t, out.Size)
+	assert.Zero(t, StatusCode(err))
+}
+
+func TestAPIClientDo_TransportErrorText(t *testing.T) {
+	t.Parallel()
+
+	boom := errors.New("connection refused")
+	client := newTestClient(roundTripFunc(func(_ *http.Request) (*http.Response, error) {
+		return nil, boom
+	}))
+
+	err := client.Do(http.MethodGet, "assistant/a-1", nil, &struct{}{})
+
+	require.Error(t, err)
+	assert.True(t, strings.HasPrefix(err.Error(), "request failed: "), err.Error())
+	require.ErrorIs(t, err, boom)
+	var apiErr *APIError
+	assert.False(t, errors.As(err, &apiErr))
+}
+
+func TestUploadData_TransportErrorText(t *testing.T) {
+	t.Parallel()
+
+	boom := errors.New("connection refused")
+	client := newTestClient(roundTripFunc(func(_ *http.Request) (*http.Response, error) {
+		return nil, boom
+	}))
+
+	body, status, err := client.UploadData("file", "example.txt", []byte("content"))
+
+	require.Error(t, err)
+	assert.True(t, strings.HasPrefix(err.Error(), "error sending request: "), err.Error())
+	assert.NotErrorIs(t, err, boom)
+	assert.Nil(t, body)
+	assert.Zero(t, status)
+}
+
+func TestStatusCode(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name string
+		err  error
+		want int
+	}{
+		{name: "nil", err: nil, want: 0},
+		{name: "transport", err: fmt.Errorf("request failed: %w", errors.New("boom")), want: 0},
+		{name: "decode", err: &DecodeError{Err: errors.New("bad json")}, want: 0},
+		{name: "not_found", err: &APIError{StatusCode: http.StatusNotFound, Body: "gone"}, want: 404},
+		{name: "server_error", err: &APIError{StatusCode: http.StatusInternalServerError, Body: "boom"}, want: 500},
+		{name: "read_failure_keeps_200", err: &APIError{StatusCode: http.StatusOK, Err: io.ErrUnexpectedEOF}, want: 200},
+		{name: "wrapped", err: fmt.Errorf("x: %w", &APIError{StatusCode: http.StatusNotFound}), want: 404},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.want, StatusCode(tt.err))
+		})
 	}
 }
 
