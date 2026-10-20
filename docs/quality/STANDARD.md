@@ -8,7 +8,7 @@ green local run means a green gate. Every tool is pinned to an exact version in 
 | Gate | Tool (pinned in `GNUmakefile`) | Threshold |
 |---|---|---|
 | Formatting | `gofmt -s -l` | no unformatted files |
-| Static analysis | `go vet`, staticcheck | clean |
+| Static analysis | `go vet`, staticcheck, revive (golint successor, default rules) | clean |
 | Cyclomatic complexity | golangci-lint `gocyclo` | fail above 15 |
 | Cognitive complexity | golangci-lint `gocognit` | fail above 15 |
 | Unhandled errors | `errcheck` | clean |

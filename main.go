@@ -16,8 +16,8 @@ import (
 var (
 	// version and commit are set by the goreleaser configuration through
 	// -X main.version and -X main.commit; an unstamped build reports "dev".
-	version string = "dev"
-	commit  string = ""
+	version = "dev"
+	commit  string
 )
 
 // releaseVersion matches the module version of a tagged release, with an optional pre-release suffix and no
