@@ -1,9 +1,12 @@
-package provider
+package vapiv1
 
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"net/http"
+
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -21,14 +24,17 @@ var _ resource.Resource = &VAPIToolFunctionResource{}
 var _ resource.ResourceWithValidateConfig = &VAPIToolFunctionResource{}
 var _ resource.ResourceWithImportState = &VAPIToolFunctionResource{}
 
+// NewVAPIToolFunctionResource returns a new tool function resource.
 func NewVAPIToolFunctionResource() resource.Resource {
 	return &VAPIToolFunctionResource{}
 }
 
+// VAPIToolFunctionResource manages a function, DTMF or transfer-call tool in VAPI.
 type VAPIToolFunctionResource struct {
 	client *vapi.APIClient
 }
 
+// Destination is one transfer-call destination.
 type Destination struct {
 	Type                   types.String `tfsdk:"type"`
 	Number                 types.String `tfsdk:"number"`
@@ -38,6 +44,7 @@ type Destination struct {
 	NumberE164CheckEnabled types.Bool   `tfsdk:"number_e164_check_enabled"`
 }
 
+// VAPIToolFunctionResourceModel maps the schema data.
 type VAPIToolFunctionResourceModel struct {
 	ID                   types.String         `tfsdk:"id"`
 	OrgID                types.String         `tfsdk:"org_id"`
@@ -55,6 +62,7 @@ type VAPIToolFunctionResourceModel struct {
 	UpdatedAt            types.String         `tfsdk:"updated_at"`
 }
 
+// Parameters is the structured form of the function parameters schema.
 type Parameters struct {
 	Type       types.String        `tfsdk:"type"`
 	Async      types.Bool          `tfsdk:"async"`
@@ -62,17 +70,20 @@ type Parameters struct {
 	Required   types.List          `tfsdk:"required"`
 }
 
+// Property is one entry of the structured function parameters.
 type Property struct {
 	Type        types.String `tfsdk:"type"`
 	Description types.String `tfsdk:"description"`
 	Enum        types.List   `tfsdk:"enum"`
 }
 
-func (r *VAPIToolFunctionResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+// Metadata sets the resource type name.
+func (r *VAPIToolFunctionResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_tool_function"
 }
 
-func (r *VAPIToolFunctionResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+// Schema defines the resource schema.
+func (r *VAPIToolFunctionResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "Manages a function tool resource in the VAPI system. For function tools, set exactly one of parameters or parameters_json. Import selects parameters for flat schemas containing only type, properties, and required, with property type, description, and enum; other schemas use parameters_json.",
 		Attributes: map[string]schema.Attribute{
@@ -247,23 +258,12 @@ func (r *VAPIToolFunctionResource) Schema(ctx context.Context, req resource.Sche
 	}
 }
 
-func (r *VAPIToolFunctionResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	client, ok := req.ProviderData.(*vapi.APIClient)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *vapi.APIClient, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-
-	r.client = client
+// Configure binds the API client to the resource.
+func (r *VAPIToolFunctionResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+	r.client = configureClient(req, resp)
 }
 
+// Create creates the tool.
 func (r *VAPIToolFunctionResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data VAPIToolFunctionResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
@@ -271,69 +271,58 @@ func (r *VAPIToolFunctionResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
-	requestBody := buildToolFunctionRequest(&data)
-	response, responseCode, err := r.client.CreateToolFunction(requestBody)
-	if err != nil {
+	var functionResponse vapi.ToolFunctionResponse
+	if err := r.client.Do(http.MethodPost, "tool", data.expand(), &functionResponse); err != nil {
+		var decErr *vapi.DecodeError
+		if errors.As(err, &decErr) {
+			resp.Diagnostics.AddError("Parse Error", fmt.Sprintf("Unable to parse response: %s", err))
+			return
+		}
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create tool function: %s", err))
 		return
 	}
 
-	var functionResponse vapi.ToolFunctionResponse
-	if responseCode >= 200 && responseCode < 300 {
-		if err := json.Unmarshal(response, &functionResponse); err != nil {
-			resp.Diagnostics.AddError("Parse Error", fmt.Sprintf("Unable to parse response: %s", err))
-			return
-		}
-	} else {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to parse response [%d]: %s", responseCode, string(response)))
-		return
-	}
-
-	bindVAPIToolFunctionResourceData(&data, &functionResponse)
+	data.flatten(ctx, &functionResponse)
 
 	tflog.Trace(ctx, "created a tool function resource")
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
+// Read fetches the current state from the API.
 func (r *VAPIToolFunctionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data VAPIToolFunctionResourceModel
-	var functionResponse vapi.ToolFunctionResponse
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	response, responseCode, err := r.client.GetToolFunction(data.ID.ValueString())
-	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read tool function: %s", err))
-		return
-	}
-
-	if responseCode == 404 {
+	id := data.ID.ValueString()
+	if id == "" {
 		resp.State.RemoveResource(ctx)
 		return
 	}
 
-	if responseCode >= 200 && responseCode < 300 {
-		if err := json.Unmarshal(response, &functionResponse); err != nil {
+	var functionResponse vapi.ToolFunctionResponse
+	if err := r.client.Do(http.MethodGet, "tool/"+id, nil, &functionResponse); err != nil {
+		var decErr *vapi.DecodeError
+		if errors.As(err, &decErr) {
 			resp.Diagnostics.AddError("Parse Error", fmt.Sprintf("Unable to parse response: %s", err))
 			return
 		}
-	} else {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to parse response [%d]: %s", responseCode, string(response)))
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read tool function: %s", err))
 		return
 	}
 
-	bindVAPIToolFunctionResourceData(&data, &functionResponse)
+	data.flatten(ctx, &functionResponse)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
+// Update updates the tool in place.
 func (r *VAPIToolFunctionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var state VAPIToolFunctionResourceModel
 	var plan VAPIToolFunctionResourceModel
-	var functionResponse vapi.ToolFunctionResponse
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
@@ -341,29 +330,30 @@ func (r *VAPIToolFunctionResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 
-	requestBody := buildToolFunctionRequest(&plan)
-	response, responseCode, err := r.client.UpdateToolFunction(state.ID.ValueString(), requestBody)
-	if err != nil {
+	id := state.ID.ValueString()
+	if id == "" {
+		resp.Diagnostics.AddError("Client Error", "Unable to parse response [404]: ")
+		return
+	}
+
+	var functionResponse vapi.ToolFunctionResponse
+	if err := r.client.Do(http.MethodPatch, "tool/"+id, plan.expand(), &functionResponse); err != nil {
+		var decErr *vapi.DecodeError
+		if errors.As(err, &decErr) {
+			resp.Diagnostics.AddError("Parse Error", fmt.Sprintf("Unable to parse response: %s", err))
+			return
+		}
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update tool function: %s", err))
 		return
 	}
 
-	if responseCode >= 200 && responseCode < 300 {
-		if err := json.Unmarshal(response, &functionResponse); err != nil {
-			resp.Diagnostics.AddError("Parse Error", fmt.Sprintf("Unable to parse response: %s", err))
-			return
-		}
-	} else {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to parse response [%d]: %s", responseCode, string(response)))
-		return
-	}
-
-	bindVAPIToolFunctionResourceData(&plan, &functionResponse)
+	plan.flatten(ctx, &functionResponse)
 
 	tflog.Trace(ctx, "updated a tool function resource")
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
+// Delete removes the tool.
 func (r *VAPIToolFunctionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var data VAPIToolFunctionResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
@@ -371,33 +361,36 @@ func (r *VAPIToolFunctionResource) Delete(ctx context.Context, req resource.Dele
 		return
 	}
 
-	_, _, err := r.client.DeleteToolFunction(data.ID.ValueString())
-	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete file: %s", err))
-		return
+	if id := data.ID.ValueString(); id != "" {
+		if err := r.client.Do(http.MethodDelete, "tool/"+id, nil, nil); err != nil {
+			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete file: %s", err))
+			return
+		}
 	}
 
 	tflog.Trace(ctx, "deleted a file resource")
 }
 
+// ImportState enables `terraform import`.
 func (r *VAPIToolFunctionResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }
 
-func buildToolFunctionRequest(data *VAPIToolFunctionResourceModel) vapi.ToolFunctionRequest {
+// expand builds the API request from the planned model.
+func (m *VAPIToolFunctionResourceModel) expand() vapi.ToolFunctionRequest {
 	var parameters any
-	if !data.ParametersJSON.IsNull() && !data.ParametersJSON.IsUnknown() {
-		parameters = json.RawMessage(data.ParametersJSON.ValueString())
-	} else if data.Parameters != nil {
-		properties := make(map[string]vapi.Property, len(data.Parameters.Properties))
-		for key, prop := range data.Parameters.Properties {
+	if !m.ParametersJSON.IsNull() && !m.ParametersJSON.IsUnknown() {
+		parameters = json.RawMessage(m.ParametersJSON.ValueString())
+	} else if m.Parameters != nil {
+		properties := make(map[string]vapi.Property, len(m.Parameters.Properties))
+		for key, prop := range m.Parameters.Properties {
 			properties[key] = vapi.Property{Type: prop.Type.ValueString(), Description: prop.Description.ValueString(), Enum: ElementsAsString(prop.Enum)}
 		}
-		parameters = &vapi.FunctionParams{Type: data.Parameters.Type.ValueString(), Properties: properties, Required: ElementsAsString(data.Parameters.Required)}
+		parameters = &vapi.FunctionParams{Type: m.Parameters.Type.ValueString(), Properties: properties, Required: ElementsAsString(m.Parameters.Required)}
 	}
 	request := vapi.ToolFunctionRequest{
-		Type: data.Type.ValueString(), Async: data.Async.ValueBool(),
-		Function: vapi.Function{Name: data.Name.ValueString(), Description: data.Description.ValueString(), Async: data.Async.ValueBool(), Parameters: parameters},
+		Type: m.Type.ValueString(), Async: m.Async.ValueBool(),
+		Function: vapi.Function{Name: m.Name.ValueString(), Description: m.Description.ValueString(), Async: m.Async.ValueBool(), Parameters: parameters},
 	}
 
 	switch request.Type {
@@ -405,7 +398,7 @@ func buildToolFunctionRequest(data *VAPIToolFunctionResourceModel) vapi.ToolFunc
 		return request
 	case "transferCall":
 		var destinations []vapi.Destination
-		for _, dst := range data.Destinations {
+		for _, dst := range m.Destinations {
 			destinations = append(destinations, vapi.Destination{
 				Type:                   dst.Type.ValueString(),
 				Number:                 dst.Number.ValueString(),
@@ -420,62 +413,63 @@ func buildToolFunctionRequest(data *VAPIToolFunctionResourceModel) vapi.ToolFunc
 	default:
 		request.Type = "function"
 		request.Server = &vapi.Server{
-			URL:            data.ServerURL.ValueString(),
-			Secret:         data.ServerSecret.ValueString(),
+			URL:            m.ServerURL.ValueString(),
+			Secret:         m.ServerSecret.ValueString(),
 			TimeoutSeconds: 20,
 		}
-		if !data.ServerTimeoutSeconds.IsNull() && !data.ServerTimeoutSeconds.IsUnknown() {
-			request.Server.TimeoutSeconds = data.ServerTimeoutSeconds.ValueInt64()
+		if !m.ServerTimeoutSeconds.IsNull() && !m.ServerTimeoutSeconds.IsUnknown() {
+			request.Server.TimeoutSeconds = m.ServerTimeoutSeconds.ValueInt64()
 		}
 		return request
 	}
 }
 
-func bindVAPIToolFunctionResourceData(data *VAPIToolFunctionResourceModel, functionResponse *vapi.ToolFunctionResponse) {
-	data.ID = types.StringValue(functionResponse.ID)
-	data.OrgID = types.StringValue(functionResponse.OrgID)
-	data.CreatedAt = types.StringValue(functionResponse.CreatedAt)
-	data.UpdatedAt = types.StringValue(functionResponse.UpdatedAt)
-	data.Type = types.StringValue(functionResponse.Type)
-	data.Async = types.BoolValue(functionResponse.Async)
-	if len(functionResponse.Server.URL) > 0 {
-		data.ServerURL = types.StringValue(functionResponse.Server.URL)
+// flatten binds the API response to the model. ctx is the caller's context for the enum list
+// conversion, which keeps an absent enum as a null list.
+func (m *VAPIToolFunctionResourceModel) flatten(ctx context.Context, in *vapi.ToolFunctionResponse) {
+	m.ID = types.StringValue(in.ID)
+	m.OrgID = types.StringValue(in.OrgID)
+	m.CreatedAt = types.StringValue(in.CreatedAt)
+	m.UpdatedAt = types.StringValue(in.UpdatedAt)
+	m.Type = types.StringValue(in.Type)
+	m.Async = types.BoolValue(in.Async)
+	if len(in.Server.URL) > 0 {
+		m.ServerURL = types.StringValue(in.Server.URL)
 	}
 
-	data.Name = types.StringValue(functionResponse.Function.Name)
-	data.Description = types.StringValue(functionResponse.Function.Description)
-	data.Async = types.BoolValue(functionResponse.Function.Async)
+	m.Name = types.StringValue(in.Function.Name)
+	m.Description = types.StringValue(in.Function.Description)
+	m.Async = types.BoolValue(in.Function.Async)
 
 	// Null means the legacy implicit timeout; preserve it through refresh and import.
-	if !data.ServerTimeoutSeconds.IsNull() && !data.ServerTimeoutSeconds.IsUnknown() {
-		data.ServerTimeoutSeconds = types.Int64Value(functionResponse.Server.TimeoutSeconds)
+	if !m.ServerTimeoutSeconds.IsNull() && !m.ServerTimeoutSeconds.IsUnknown() {
+		m.ServerTimeoutSeconds = types.Int64Value(in.Server.TimeoutSeconds)
 	}
-	raw := functionResponse.Function.Parameters.Raw
-	jsonMode := !data.ParametersJSON.IsNull()
-	importing := data.Parameters == nil && !jsonMode
+	raw := in.Function.Parameters.Raw
+	jsonMode := !m.ParametersJSON.IsNull()
+	importing := m.Parameters == nil && !jsonMode
 	// Responses constructed in Go may have no raw capture. Their typed fields
 	// represent only flat parameters, so import them into the legacy model.
 	if jsonMode || (importing && len(raw) > 0 && !flatToolParameters(raw)) {
-		data.ParametersJSON = jsontypes.NewNormalizedValue(string(raw))
-		data.Parameters = nil
+		m.ParametersJSON = jsontypes.NewNormalizedValue(string(raw))
+		m.Parameters = nil
 		return
 	}
-	data.ParametersJSON = jsontypes.NewNormalizedNull()
-	data.Parameters = &Parameters{
-		Type:       types.StringValue(functionResponse.Function.Parameters.Type),
-		Async:      types.BoolValue(functionResponse.Function.Async),
-		Required:   ListValueFromStrings(functionResponse.Function.Parameters.Required),
+	m.ParametersJSON = jsontypes.NewNormalizedNull()
+	m.Parameters = &Parameters{
+		Type:       types.StringValue(in.Function.Parameters.Type),
+		Async:      types.BoolValue(in.Function.Async),
+		Required:   ListValueFromStrings(in.Function.Parameters.Required),
 		Properties: make(map[string]Property),
 	}
 
-	for key, prop := range functionResponse.Function.Parameters.Properties {
-		enumList, diag := types.ListValueFrom(context.Background(), types.StringType, prop.Enum)
+	for key, prop := range in.Function.Parameters.Properties {
+		enumList, diag := types.ListValueFrom(ctx, types.StringType, prop.Enum)
 		if diag.HasError() {
-			// Optionally log or handle diagnostics
 			continue
 		}
 
-		data.Parameters.Properties[key] = Property{
+		m.Parameters.Properties[key] = Property{
 			Type:        types.StringValue(prop.Type),
 			Description: types.StringValue(prop.Description),
 			Enum:        enumList,

@@ -79,10 +79,12 @@ type Assistant struct {
 	ArtifactPlan                 *ArtifactPlan      `json:"artifactPlan,omitempty"`
 }
 
+// ArtifactPlan struct.
 type ArtifactPlan struct {
 	RecordingFormat string `json:"recordingFormat,omitempty"`
 }
 
+// Server struct.
 type Server struct {
 	URL            string `json:"url,omitempty"`
 	Secret         string `json:"secret,omitempty"`

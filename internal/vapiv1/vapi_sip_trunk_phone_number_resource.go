@@ -1,9 +1,10 @@
-package provider
+package vapiv1
 
 import (
 	"context"
-	"encoding/json"
+	"errors"
 	"fmt"
+	"net/http"
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -42,12 +43,12 @@ type VAPISIPTrunkPhoneNumberResourceModel struct {
 }
 
 // Metadata sets the resource type name.
-func (r *VAPISIPTrunkPhoneNumberResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+func (r *VAPISIPTrunkPhoneNumberResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_sip_trunk_phone_number"
 }
 
 // Schema defines the resource schema.
-func (r *VAPISIPTrunkPhoneNumberResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *VAPISIPTrunkPhoneNumberResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "Manages a SIP Trunk (BYO) phone number resource in the VAPI system.",
 		Attributes: map[string]schema.Attribute{
@@ -95,21 +96,8 @@ func (r *VAPISIPTrunkPhoneNumberResource) Schema(ctx context.Context, req resour
 }
 
 // Configure binds the API client to the resource.
-func (r *VAPISIPTrunkPhoneNumberResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	client, ok := req.ProviderData.(*vapi.APIClient)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *vapi.APIClient, got: %T", req.ProviderData),
-		)
-		return
-	}
-
-	r.client = client
+func (r *VAPISIPTrunkPhoneNumberResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+	r.client = configureClient(req, resp)
 }
 
 // Create creates the SIP trunk phone number.
@@ -120,32 +108,18 @@ func (r *VAPISIPTrunkPhoneNumberResource) Create(ctx context.Context, req resour
 		return
 	}
 
-	requestData := vapi.ImportSIPTrunkPhoneNumberRequest{
-		Provider:               "byo-phone-number",
-		Name:                   data.Name.ValueString(),
-		Number:                 data.Number.ValueString(),
-		CredentialID:           data.CredentialID.ValueString(),
-		NumberE164CheckEnabled: data.NumberE164CheckEnabled.ValueBool(),
-	}
-
-	response, responseCode, err := r.client.ImportSIPTrunkPhoneNumber(requestData)
-	if err != nil {
+	var sipResp vapi.ImportSIPTrunkPhoneNumberResponse
+	if err := r.client.Do(http.MethodPost, "phone-number", data.expand(), &sipResp); err != nil {
+		var decErr *vapi.DecodeError
+		if errors.As(err, &decErr) {
+			resp.Diagnostics.AddError("Unmarshal Error", fmt.Sprintf("Failed to parse API response: %s", err))
+			return
+		}
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create SIP phone number: %s", err))
 		return
 	}
 
-	if responseCode < 200 || responseCode >= 300 {
-		resp.Diagnostics.AddError("API Error", fmt.Sprintf("Unexpected response code [%d]: %s", responseCode, string(response)))
-		return
-	}
-
-	var sipResp vapi.ImportSIPTrunkPhoneNumberResponse
-	if err := json.Unmarshal(response, &sipResp); err != nil {
-		resp.Diagnostics.AddError("Unmarshal Error", fmt.Sprintf("Failed to parse API response: %s", err))
-		return
-	}
-
-	bindSIPPhoneNumberResponse(&data, &sipResp)
+	data.flatten(&sipResp)
 	tflog.Trace(ctx, "created a SIP trunk phone number resource")
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -158,33 +132,28 @@ func (r *VAPISIPTrunkPhoneNumberResource) Read(ctx context.Context, req resource
 		return
 	}
 
-	response, responseCode, err := r.client.GetPhoneNumber(data.ID.ValueString())
-	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read SIP phone number: %s", err))
-		return
-	}
-
-	if responseCode == 404 {
+	id := data.ID.ValueString()
+	if id == "" {
 		resp.State.RemoveResource(ctx)
 		return
 	}
 
-	if responseCode < 200 || responseCode >= 300 {
-		resp.Diagnostics.AddError("API Error", fmt.Sprintf("Unexpected response code [%d]: %s", responseCode, string(response)))
-		return
-	}
-
 	var sipResp vapi.ImportSIPTrunkPhoneNumberResponse
-	if err := json.Unmarshal(response, &sipResp); err != nil {
-		resp.Diagnostics.AddError("Unmarshal Error", fmt.Sprintf("Failed to parse API response: %s", err))
+	if err := r.client.Do(http.MethodGet, "phone-number/"+id, nil, &sipResp); err != nil {
+		var decErr *vapi.DecodeError
+		if errors.As(err, &decErr) {
+			resp.Diagnostics.AddError("Unmarshal Error", fmt.Sprintf("Failed to parse API response: %s", err))
+			return
+		}
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read SIP phone number: %s", err))
 		return
 	}
 
-	bindSIPPhoneNumberResponse(&data, &sipResp)
+	data.flatten(&sipResp)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-// Update deletes and recreates the SIP trunk phone number.
+// Update updates the SIP trunk phone number in place.
 func (r *VAPISIPTrunkPhoneNumberResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var state VAPISIPTrunkPhoneNumberResourceModel
 	var plan VAPISIPTrunkPhoneNumberResourceModel
@@ -195,34 +164,25 @@ func (r *VAPISIPTrunkPhoneNumberResource) Update(ctx context.Context, req resour
 		return
 	}
 
-	requestData := vapi.ImportSIPTrunkPhoneNumberRequest{
-		Provider:               "byo-phone-number",
-		Name:                   plan.Name.ValueString(),
-		Number:                 plan.Number.ValueString(),
-		CredentialID:           plan.CredentialID.ValueString(),
-		NumberE164CheckEnabled: plan.NumberE164CheckEnabled.ValueBool(),
-	}
-
-	response, responseCode, err := r.client.UpdatePhoneNumber(state.ID.ValueString(), requestData)
-	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update SIP phone number: %s", err))
-		return
-	}
-
-	if responseCode < 200 || responseCode >= 300 {
-		resp.Diagnostics.AddError("API Error", fmt.Sprintf("Unexpected response code [%d]: %s", responseCode, string(response)))
+	id := state.ID.ValueString()
+	if id == "" {
+		resp.Diagnostics.AddError("API Error", "Unexpected response code [404]: ")
 		return
 	}
 
 	var sipResp vapi.ImportSIPTrunkPhoneNumberResponse
-	if err := json.Unmarshal(response, &sipResp); err != nil {
-		resp.Diagnostics.AddError("Unmarshal Error", fmt.Sprintf("Failed to parse API response: %s", err))
+	if err := r.client.Do(http.MethodPatch, "phone-number/"+id, plan.expand(), &sipResp); err != nil {
+		var decErr *vapi.DecodeError
+		if errors.As(err, &decErr) {
+			resp.Diagnostics.AddError("Unmarshal Error", fmt.Sprintf("Failed to parse API response: %s", err))
+			return
+		}
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update SIP phone number: %s", err))
 		return
 	}
 
-	data := plan
-	bindSIPPhoneNumberResponse(&data, &sipResp)
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	plan.flatten(&sipResp)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 // Delete removes the SIP trunk phone number.
@@ -233,10 +193,11 @@ func (r *VAPISIPTrunkPhoneNumberResource) Delete(ctx context.Context, req resour
 		return
 	}
 
-	_, _, err := r.client.DeletePhoneNumber(data.ID.ValueString())
-	if err != nil {
-		resp.Diagnostics.AddError("Delete Error", fmt.Sprintf("Unable to delete SIP phone number: %s", err))
-		return
+	if id := data.ID.ValueString(); id != "" {
+		if err := r.client.Do(http.MethodDelete, "phone-number/"+id, nil, nil); err != nil {
+			resp.Diagnostics.AddError("Delete Error", fmt.Sprintf("Unable to delete SIP phone number: %s", err))
+			return
+		}
 	}
 
 	tflog.Trace(ctx, "deleted SIP trunk phone number resource")
@@ -247,15 +208,26 @@ func (r *VAPISIPTrunkPhoneNumberResource) ImportState(ctx context.Context, req r
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }
 
-// Helper function to bind API response to Terraform model.
-func bindSIPPhoneNumberResponse(data *VAPISIPTrunkPhoneNumberResourceModel, resp *vapi.ImportSIPTrunkPhoneNumberResponse) {
-	data.ID = types.StringValue(resp.ID)
-	data.OrgID = types.StringValue(resp.OrgID)
-	data.Number = types.StringValue(resp.Number)
-	data.Name = types.StringValue(resp.Name)
-	data.PhoneProvider = types.StringValue(resp.Provider)
-	data.CreatedAt = types.StringValue(resp.CreatedAt)
-	data.UpdatedAt = types.StringValue(resp.UpdatedAt)
-	data.CredentialID = types.StringValue(resp.CredentialID)
-	data.NumberE164CheckEnabled = types.BoolValue(resp.NumberE164CheckEnabled)
+// expand builds the API request from the planned model.
+func (m *VAPISIPTrunkPhoneNumberResourceModel) expand() vapi.ImportSIPTrunkPhoneNumberRequest {
+	return vapi.ImportSIPTrunkPhoneNumberRequest{
+		Provider:               "byo-phone-number",
+		Name:                   m.Name.ValueString(),
+		Number:                 m.Number.ValueString(),
+		CredentialID:           m.CredentialID.ValueString(),
+		NumberE164CheckEnabled: m.NumberE164CheckEnabled.ValueBool(),
+	}
+}
+
+// flatten binds the API response to the model.
+func (m *VAPISIPTrunkPhoneNumberResourceModel) flatten(in *vapi.ImportSIPTrunkPhoneNumberResponse) {
+	m.ID = types.StringValue(in.ID)
+	m.OrgID = types.StringValue(in.OrgID)
+	m.Number = types.StringValue(in.Number)
+	m.Name = types.StringValue(in.Name)
+	m.PhoneProvider = types.StringValue(in.Provider)
+	m.CreatedAt = types.StringValue(in.CreatedAt)
+	m.UpdatedAt = types.StringValue(in.UpdatedAt)
+	m.CredentialID = types.StringValue(in.CredentialID)
+	m.NumberE164CheckEnabled = types.BoolValue(in.NumberE164CheckEnabled)
 }

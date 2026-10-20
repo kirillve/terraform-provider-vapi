@@ -1,4 +1,4 @@
-package provider
+package vapiv1
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/attr"

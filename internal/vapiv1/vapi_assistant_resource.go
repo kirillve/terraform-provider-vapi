@@ -1,9 +1,11 @@
-package provider
+package vapiv1
 
 import (
 	"context"
-	"encoding/json"
+	"errors"
 	"fmt"
+	"net/http"
+
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -13,14 +15,17 @@ import (
 
 var _ resource.Resource = &VAPIAssistantResource{}
 
+// NewVAPIAssistantResource returns a new assistant resource.
 func NewVAPIAssistantResource() resource.Resource {
 	return &VAPIAssistantResource{}
 }
 
+// VAPIAssistantResource manages a voice assistant in VAPI.
 type VAPIAssistantResource struct {
 	client *vapi.APIClient
 }
 
+// VAPIAssistantResourceModel maps the schema data.
 type VAPIAssistantResourceModel struct {
 	ID                           types.String                    `tfsdk:"id"`
 	OrgID                        types.String                    `tfsdk:"org_id"`
@@ -63,16 +68,19 @@ type VAPIAssistantResourceModel struct {
 	ParentID                     types.String                    `tfsdk:"parent_id"`
 }
 
+// TranscriberResourceModel is the transcriber block.
 type TranscriberResourceModel struct {
 	Provider types.String `tfsdk:"provider"`
 	Model    types.String `tfsdk:"model"`
 	Language types.String `tfsdk:"language"`
 }
 
+// ArtifactPlanResourceModel is the artifact_plan block.
 type ArtifactPlanResourceModel struct {
 	RecordingFormat types.String `tfsdk:"recording_format"`
 }
 
+// ModelResourceModel is the model block.
 type ModelResourceModel struct {
 	Model         types.String                `tfsdk:"model"`
 	SystemPrompt  types.String                `tfsdk:"system_prompt"`
@@ -83,12 +91,14 @@ type ModelResourceModel struct {
 	KnowledgeBase *KnowledgeBaseResourceModel `tfsdk:"knowledge_base"`
 }
 
+// KnowledgeBaseResourceModel is the knowledge_base block of the model.
 type KnowledgeBaseResourceModel struct {
 	TopK     types.Int64  `tfsdk:"top_k"`
 	FileIDs  types.List   `tfsdk:"file_ids"`
 	Provider types.String `tfsdk:"provider"`
 }
 
+// VoiceResourceModel is the voice block.
 type VoiceResourceModel struct {
 	Model           types.String  `tfsdk:"model"`
 	Provider        types.String  `tfsdk:"provider"`
@@ -97,24 +107,28 @@ type VoiceResourceModel struct {
 	SimilarityBoost types.Float64 `tfsdk:"similarity_boost"`
 }
 
+// StartSpeakingPlanResourceModel is the start_speaking_plan block.
 type StartSpeakingPlanResourceModel struct {
 	WaitSeconds                  types.Float64                              `tfsdk:"wait_seconds"`
 	SmartEndpointingEnabled      types.Bool                                 `tfsdk:"smart_endpointing_enabled"`
 	TranscriptionEndpointingPlan *TranscriptionEndpointingPlanResourceModel `tfsdk:"transcription_endpointing_plan"`
 }
 
+// TranscriptionEndpointingPlanResourceModel is the transcription_endpointing_plan block.
 type TranscriptionEndpointingPlanResourceModel struct {
 	OnPunctuationSeconds   types.Float64 `tfsdk:"on_punctuation_seconds"`
 	OnNoPunctuationSeconds types.Float64 `tfsdk:"on_no_punctuation_seconds"`
 	OnNumberSeconds        types.Float64 `tfsdk:"on_number_seconds"`
 }
 
+// StopSpeakingPlanResourceModel is the stop_speaking_plan block.
 type StopSpeakingPlanResourceModel struct {
 	NumWords       types.Float64 `tfsdk:"num_words"`
 	VoiceSeconds   types.Float64 `tfsdk:"voice_seconds"`
 	BackoffSeconds types.Float64 `tfsdk:"backoff_seconds"`
 }
 
+// AnalysisPlanResourceModel is the analysis_plan block.
 type AnalysisPlanResourceModel struct {
 	SummaryPrompt           types.String                       `tfsdk:"summary_prompt"`
 	StructuredDataPrompt    types.String                       `tfsdk:"structured_data_prompt"`
@@ -123,27 +137,30 @@ type AnalysisPlanResourceModel struct {
 	SuccessEvaluationRubric types.String                       `tfsdk:"success_evaluation_rubric"`
 }
 
+// StructuredDataSchemaResourceModel is the structured_data_schema block of the analysis plan.
 type StructuredDataSchemaResourceModel struct {
 	Type       types.String                     `tfsdk:"type"`
 	Properties map[string]PropertyResourceModel `tfsdk:"properties"`
 }
 
+// PropertyResourceModel is one property of the structured data schema.
 type PropertyResourceModel struct {
 	Type        types.String `tfsdk:"type"`
 	Description types.String `tfsdk:"description"`
 }
 
+// MessagePlanResourceModel is the message_plan block.
 type MessagePlanResourceModel struct {
 	IdleMessages types.List `tfsdk:"idle_messages"`
 }
 
 // Metadata sets the resource type name for Terraform.
-func (r *VAPIAssistantResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+func (r *VAPIAssistantResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_assistant"
 }
 
 // Schema defines the resource schema for the assistant resource.
-func (r *VAPIAssistantResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *VAPIAssistantResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "Manages an assistant resource in the VAPI system.",
 		Attributes: map[string]schema.Attribute{
@@ -518,21 +535,8 @@ func (r *VAPIAssistantResource) Schema(ctx context.Context, req resource.SchemaR
 }
 
 // Configure assigns the configured API client to the resource.
-func (r *VAPIAssistantResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	client, ok := req.ProviderData.(*vapi.APIClient)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *vapi.APIClient, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-
-	r.client = client
+func (r *VAPIAssistantResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+	r.client = configureClient(req, resp)
 }
 
 // Create implements the create operation for the assistant resource.
@@ -543,26 +547,18 @@ func (r *VAPIAssistantResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	requestBody := mapVAPIAssistantRequest(&data)
-
-	response, responseCode, err := r.client.CreateAssistant(requestBody)
-	if err != nil {
+	var assistantResponse vapi.Assistant
+	if err := r.client.Do(http.MethodPost, "assistant", data.expand(), &assistantResponse); err != nil {
+		var decErr *vapi.DecodeError
+		if errors.As(err, &decErr) {
+			resp.Diagnostics.AddError("Parse Error", fmt.Sprintf("Unable to parse response: %s", err))
+			return
+		}
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create assistant: %s", err))
 		return
 	}
 
-	var assistantResponse vapi.Assistant
-	if responseCode >= 200 && responseCode < 300 {
-		if err := json.Unmarshal(response, &assistantResponse); err != nil {
-			resp.Diagnostics.AddError("Parse Error", fmt.Sprintf("Unable to parse response: %s", err))
-			return
-		}
-	} else {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to parse response [%d]: %s", responseCode, string(response)))
-		return
-	}
-
-	mapResponseObject(&data, &assistantResponse)
+	data.flatten(&assistantResponse)
 	tflog.Trace(ctx, "created an assistant resource")
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -576,29 +572,24 @@ func (r *VAPIAssistantResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 
-	response, responseCode, err := r.client.GetAssistant(data.ID.ValueString())
-	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read assistant: %s", err))
-		return
-	}
-
-	if responseCode == 404 {
-		resp.State.RemoveResource(ctx)
+	id := data.ID.ValueString()
+	if id == "" {
+		resp.Diagnostics.AddError("Client Error", "Unable to read assistant: ID cannot be empty")
 		return
 	}
 
 	var assistantResponse vapi.Assistant
-	if responseCode >= 200 && responseCode < 300 {
-		if err := json.Unmarshal(response, &assistantResponse); err != nil {
+	if err := r.client.Do(http.MethodGet, "assistant/"+id, nil, &assistantResponse); err != nil {
+		var decErr *vapi.DecodeError
+		if errors.As(err, &decErr) {
 			resp.Diagnostics.AddError("Parse Error", fmt.Sprintf("Unable to parse response: %s", err))
 			return
 		}
-	} else {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to parse response [%d]: %s", responseCode, string(response)))
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read assistant: %s", err))
 		return
 	}
 
-	mapResponseObject(&data, &assistantResponse)
+	data.flatten(&assistantResponse)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -618,26 +609,24 @@ func (r *VAPIAssistantResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 
-	requestBody := mapVAPIAssistantRequest(&data)
-
-	response, responseCode, err := r.client.UpdateAssistant(state.ID.ValueString(), requestBody)
-	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update assistant: %s", err))
+	id := state.ID.ValueString()
+	if id == "" {
+		resp.Diagnostics.AddError("Client Error", "Unable to update assistant: ID cannot be empty")
 		return
 	}
 
 	var assistantResponse vapi.Assistant
-	if responseCode >= 200 && responseCode < 300 {
-		if err := json.Unmarshal(response, &assistantResponse); err != nil {
+	if err := r.client.Do(http.MethodPatch, "assistant/"+id, data.expand(), &assistantResponse); err != nil {
+		var decErr *vapi.DecodeError
+		if errors.As(err, &decErr) {
 			resp.Diagnostics.AddError("Parse Error", fmt.Sprintf("Unable to parse response: %s", err))
 			return
 		}
-	} else {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to parse response [%d]: %s", responseCode, string(response)))
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update assistant: %s", err))
 		return
 	}
 
-	mapResponseObject(&data, &assistantResponse)
+	data.flatten(&assistantResponse)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -651,8 +640,13 @@ func (r *VAPIAssistantResource) Delete(ctx context.Context, req resource.DeleteR
 		return
 	}
 
-	_, _, err := r.client.DeleteAssistant(data.ID.ValueString())
-	if err != nil {
+	id := data.ID.ValueString()
+	if id == "" {
+		resp.Diagnostics.AddError("Client Error", "Unable to delete assistant: ID cannot be empty")
+		return
+	}
+
+	if err := r.client.Do(http.MethodDelete, "assistant/"+id, nil, nil); err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete assistant: %s", err))
 		return
 	}
@@ -660,296 +654,246 @@ func (r *VAPIAssistantResource) Delete(ctx context.Context, req resource.DeleteR
 	tflog.Trace(ctx, "deleted an assistant resource")
 }
 
-func mapResponseObject(data *VAPIAssistantResourceModel, assistantResponse *vapi.Assistant) {
+// flatten binds the API response to the model. An absent optional block clears the block in the
+// model.
+func (m *VAPIAssistantResourceModel) flatten(in *vapi.Assistant) {
 	// Basic fields
-	data.ID = types.StringValue(assistantResponse.ID)
-	data.OrgID = types.StringValue(assistantResponse.OrgID)
-	data.Name = types.StringValue(assistantResponse.Name)
-	data.FirstMessageMode = types.StringValue(assistantResponse.FirstMessageMode)
-	data.HipaaEnabled = types.BoolValue(assistantResponse.HipaaEnabled)
-	data.BackgroundSound = types.StringValue(assistantResponse.BackgroundSound)
-	data.BackgroundDenoising = types.BoolValue(assistantResponse.BackgroundDenoising)
-	data.ModelOutputEnabled = types.BoolValue(assistantResponse.ModelOutputEnabled)
-	data.Language = types.StringValue(assistantResponse.Language)
-	data.ForwardingPhoneNumber = types.StringValue(assistantResponse.ForwardingPhoneNumber)
-	data.InterruptionsEnabled = types.BoolValue(assistantResponse.InterruptionsEnabled)
-	data.EndCallFunctionEnabled = types.BoolValue(assistantResponse.EndCallFunctionEnabled)
-	data.DialKeypadFunctionEnabled = types.BoolValue(assistantResponse.DialKeypadFunctionEnabled)
-	data.FillersEnabled = types.BoolValue(assistantResponse.FillersEnabled)
-	data.SilenceTimeoutSeconds = types.Float64PointerValue(assistantResponse.SilenceTimeoutSeconds)
-	data.ResponseDelaySeconds = types.Float64PointerValue(assistantResponse.ResponseDelaySeconds)
-	data.NumWordsToInterruptAssistant = types.Int64PointerValue(assistantResponse.NumWordsToInterruptAssistant)
-	data.LiveTranscriptsEnabled = types.BoolPointerValue(assistantResponse.LiveTranscriptsEnabled)
-	data.Keywords = ListValueFromStrings(assistantResponse.Keywords)
-	data.ParentID = types.StringPointerValue(assistantResponse.ParentID)
+	m.ID = types.StringValue(in.ID)
+	m.OrgID = types.StringValue(in.OrgID)
+	m.Name = types.StringValue(in.Name)
+	m.FirstMessageMode = types.StringValue(in.FirstMessageMode)
+	m.HipaaEnabled = types.BoolValue(in.HipaaEnabled)
+	m.BackgroundSound = types.StringValue(in.BackgroundSound)
+	m.BackgroundDenoising = types.BoolValue(in.BackgroundDenoising)
+	m.ModelOutputEnabled = types.BoolValue(in.ModelOutputEnabled)
+	m.Language = types.StringValue(in.Language)
+	m.ForwardingPhoneNumber = types.StringValue(in.ForwardingPhoneNumber)
+	m.InterruptionsEnabled = types.BoolValue(in.InterruptionsEnabled)
+	m.EndCallFunctionEnabled = types.BoolValue(in.EndCallFunctionEnabled)
+	m.DialKeypadFunctionEnabled = types.BoolValue(in.DialKeypadFunctionEnabled)
+	m.FillersEnabled = types.BoolValue(in.FillersEnabled)
+	m.SilenceTimeoutSeconds = types.Float64PointerValue(in.SilenceTimeoutSeconds)
+	m.ResponseDelaySeconds = types.Float64PointerValue(in.ResponseDelaySeconds)
+	m.NumWordsToInterruptAssistant = types.Int64PointerValue(in.NumWordsToInterruptAssistant)
+	m.LiveTranscriptsEnabled = types.BoolPointerValue(in.LiveTranscriptsEnabled)
+	m.Keywords = ListValueFromStrings(in.Keywords)
+	m.ParentID = types.StringPointerValue(in.ParentID)
 
 	// Handle optional Voice struct
-	if assistantResponse.Voice != nil {
-		data.Voice = &VoiceResourceModel{
-			Model:           types.StringValue(assistantResponse.Voice.Model),
-			Provider:        types.StringValue(assistantResponse.Voice.Provider),
-			VoiceID:         types.StringValue(assistantResponse.Voice.VoiceID),
-			Stability:       types.Float64Value(assistantResponse.Voice.Stability),
-			SimilarityBoost: types.Float64Value(assistantResponse.Voice.SimilarityBoost),
+	if in.Voice != nil {
+		m.Voice = &VoiceResourceModel{
+			Model:           types.StringValue(in.Voice.Model),
+			Provider:        types.StringValue(in.Voice.Provider),
+			VoiceID:         types.StringValue(in.Voice.VoiceID),
+			Stability:       types.Float64Value(in.Voice.Stability),
+			SimilarityBoost: types.Float64Value(in.Voice.SimilarityBoost),
 		}
 	} else {
-		data.Voice = nil
+		m.Voice = nil
 	}
 
 	// Handle optional Model struct
-	if assistantResponse.Model != nil {
-		data.Model = &ModelResourceModel{
-			Model:        types.StringValue(assistantResponse.Model.Model),
-			SystemPrompt: types.StringValue(assistantResponse.Model.SystemPrompt),
-			Provider:     types.StringValue(assistantResponse.Model.Provider),
-			MaxTokens:    types.Int64Value(assistantResponse.Model.MaxTokens),
-			Temperature:  types.Float64Value(assistantResponse.Model.Temperature),
-			ToolIDs:      ListValueFromStrings(assistantResponse.Model.ToolIDs),
-			KnowledgeBase: func() *KnowledgeBaseResourceModel {
-				if assistantResponse.Model.KnowledgeBase != nil {
-					return &KnowledgeBaseResourceModel{
-						TopK:     types.Int64Value(assistantResponse.Model.KnowledgeBase.TopK),
-						FileIDs:  ListValueFromStrings(assistantResponse.Model.KnowledgeBase.FileIDs),
-						Provider: types.StringValue(assistantResponse.Model.KnowledgeBase.Provider),
-					}
-				}
-				return nil
-			}(),
+	if in.Model != nil {
+		m.Model = &ModelResourceModel{
+			Model:        types.StringValue(in.Model.Model),
+			SystemPrompt: types.StringValue(in.Model.SystemPrompt),
+			Provider:     types.StringValue(in.Model.Provider),
+			MaxTokens:    types.Int64Value(in.Model.MaxTokens),
+			Temperature:  types.Float64Value(in.Model.Temperature),
+			ToolIDs:      ListValueFromStrings(in.Model.ToolIDs),
+		}
+		if in.Model.KnowledgeBase != nil {
+			m.Model.KnowledgeBase = &KnowledgeBaseResourceModel{
+				TopK:     types.Int64Value(in.Model.KnowledgeBase.TopK),
+				FileIDs:  ListValueFromStrings(in.Model.KnowledgeBase.FileIDs),
+				Provider: types.StringValue(in.Model.KnowledgeBase.Provider),
+			}
 		}
 	} else {
-		data.Model = nil
+		m.Model = nil
 	}
 
-	data.RecordingEnabled = types.BoolValue(assistantResponse.RecordingEnabled)
-	data.FirstMessage = types.StringValue(assistantResponse.FirstMessage)
-	data.VoicemailMessage = types.StringValue(assistantResponse.VoicemailMessage)
-	data.EndCallFunctionEnabled = types.BoolValue(assistantResponse.EndCallFunctionEnabled)
+	m.RecordingEnabled = types.BoolValue(in.RecordingEnabled)
+	m.FirstMessage = types.StringValue(in.FirstMessage)
+	m.VoicemailMessage = types.StringValue(in.VoicemailMessage)
+	m.EndCallFunctionEnabled = types.BoolValue(in.EndCallFunctionEnabled)
 
 	// Handle optional Transcriber struct
-	if assistantResponse.Transcriber != nil {
-		data.Transcriber = &TranscriberResourceModel{
-			Provider: types.StringValue(assistantResponse.Transcriber.Provider),
-			Model:    types.StringValue(assistantResponse.Transcriber.Model),
-			Language: types.StringValue(assistantResponse.Transcriber.Language),
+	if in.Transcriber != nil {
+		m.Transcriber = &TranscriberResourceModel{
+			Provider: types.StringValue(in.Transcriber.Provider),
+			Model:    types.StringValue(in.Transcriber.Model),
+			Language: types.StringValue(in.Transcriber.Language),
 		}
 	} else {
-		data.Transcriber = nil
+		m.Transcriber = nil
 	}
 
-	//data.ServerURL = types.StringValue(assistantResponse.ServerURL)
-	//data.ServerURLSecret = types.StringValue(assistantResponse.ServerURLSecret)
+	m.ClientMessages = ListValueFromStrings(in.ClientMessages)
+	m.ServerMessages = ListValueFromStrings(in.ServerMessages)
+	m.EndCallPhrases = ListValueFromStrings(in.EndCallPhrases)
 
-	data.ClientMessages = ListValueFromStrings(assistantResponse.ClientMessages)
-	data.ServerMessages = ListValueFromStrings(assistantResponse.ServerMessages)
-	data.EndCallPhrases = ListValueFromStrings(assistantResponse.EndCallPhrases)
+	m.MaxDurationSeconds = types.Int64Value(in.MaxDurationSeconds)
 
-	data.MaxDurationSeconds = types.Int64Value(assistantResponse.MaxDurationSeconds)
-
-	if assistantResponse.MessagePlan != nil {
-		data.MessagePlan = &MessagePlanResourceModel{
-			IdleMessages: ListValueFromStrings(assistantResponse.MessagePlan.IdleMessages),
+	if in.MessagePlan != nil {
+		m.MessagePlan = &MessagePlanResourceModel{
+			IdleMessages: ListValueFromStrings(in.MessagePlan.IdleMessages),
 		}
 	} else {
-		data.MessagePlan = nil
+		m.MessagePlan = nil
 	}
 
 	// Handle optional AnalysisPlan struct
-	if assistantResponse.AnalysisPlan != nil {
-		data.AnalysisPlan = &AnalysisPlanResourceModel{
-			SummaryPrompt:           types.StringValue(assistantResponse.AnalysisPlan.SummaryPrompt),
-			StructuredDataPrompt:    types.StringValue(assistantResponse.AnalysisPlan.StructuredDataPrompt),
-			StructuredDataSchema:    mapStructuredDataSchemaRequestToResourceModel(assistantResponse.AnalysisPlan.StructuredDataSchema),
-			SuccessEvaluationPrompt: types.StringValue(assistantResponse.AnalysisPlan.SuccessEvaluationPrompt),
-			SuccessEvaluationRubric: types.StringValue(assistantResponse.AnalysisPlan.SuccessEvaluationRubric),
+	if in.AnalysisPlan != nil {
+		m.AnalysisPlan = &AnalysisPlanResourceModel{
+			SummaryPrompt:           types.StringValue(in.AnalysisPlan.SummaryPrompt),
+			StructuredDataPrompt:    types.StringValue(in.AnalysisPlan.StructuredDataPrompt),
+			StructuredDataSchema:    mapStructuredDataSchemaRequestToResourceModel(in.AnalysisPlan.StructuredDataSchema),
+			SuccessEvaluationPrompt: types.StringValue(in.AnalysisPlan.SuccessEvaluationPrompt),
+			SuccessEvaluationRubric: types.StringValue(in.AnalysisPlan.SuccessEvaluationRubric),
 		}
 	} else {
-		data.AnalysisPlan = nil
+		m.AnalysisPlan = nil
 	}
 
 	// Handle optional StartSpeakingPlan struct
-	if assistantResponse.StartSpeakingPlan != nil {
-		data.StartSpeakingPlan = &StartSpeakingPlanResourceModel{
-			WaitSeconds:             types.Float64Value(assistantResponse.StartSpeakingPlan.WaitSeconds),
-			SmartEndpointingEnabled: types.BoolValue(assistantResponse.StartSpeakingPlan.SmartEndpointingEnabled),
-			TranscriptionEndpointingPlan: func() *TranscriptionEndpointingPlanResourceModel {
-				if assistantResponse.StartSpeakingPlan.TranscriptionEndpointingPlan != nil {
-					return &TranscriptionEndpointingPlanResourceModel{
-						OnPunctuationSeconds:   types.Float64Value(assistantResponse.StartSpeakingPlan.TranscriptionEndpointingPlan.OnPunctuationSeconds),
-						OnNoPunctuationSeconds: types.Float64Value(assistantResponse.StartSpeakingPlan.TranscriptionEndpointingPlan.OnNoPunctuationSeconds),
-						OnNumberSeconds:        types.Float64Value(assistantResponse.StartSpeakingPlan.TranscriptionEndpointingPlan.OnNumberSeconds),
-					}
-				}
-				return nil
-			}(),
+	if in.StartSpeakingPlan != nil {
+		m.StartSpeakingPlan = &StartSpeakingPlanResourceModel{
+			WaitSeconds:             types.Float64Value(in.StartSpeakingPlan.WaitSeconds),
+			SmartEndpointingEnabled: types.BoolValue(in.StartSpeakingPlan.SmartEndpointingEnabled),
+		}
+		if in.StartSpeakingPlan.TranscriptionEndpointingPlan != nil {
+			m.StartSpeakingPlan.TranscriptionEndpointingPlan = &TranscriptionEndpointingPlanResourceModel{
+				OnPunctuationSeconds:   types.Float64Value(in.StartSpeakingPlan.TranscriptionEndpointingPlan.OnPunctuationSeconds),
+				OnNoPunctuationSeconds: types.Float64Value(in.StartSpeakingPlan.TranscriptionEndpointingPlan.OnNoPunctuationSeconds),
+				OnNumberSeconds:        types.Float64Value(in.StartSpeakingPlan.TranscriptionEndpointingPlan.OnNumberSeconds),
+			}
 		}
 	} else {
-		data.StartSpeakingPlan = nil
+		m.StartSpeakingPlan = nil
 	}
 
 	// Handle optional StopSpeakingPlan struct
-	if assistantResponse.StopSpeakingPlan != nil {
-		data.StopSpeakingPlan = &StopSpeakingPlanResourceModel{
-			NumWords:       types.Float64Value(assistantResponse.StopSpeakingPlan.NumWords),
-			VoiceSeconds:   types.Float64Value(assistantResponse.StopSpeakingPlan.VoiceSeconds),
-			BackoffSeconds: types.Float64Value(assistantResponse.StopSpeakingPlan.BackoffSeconds),
+	if in.StopSpeakingPlan != nil {
+		m.StopSpeakingPlan = &StopSpeakingPlanResourceModel{
+			NumWords:       types.Float64Value(in.StopSpeakingPlan.NumWords),
+			VoiceSeconds:   types.Float64Value(in.StopSpeakingPlan.VoiceSeconds),
+			BackoffSeconds: types.Float64Value(in.StopSpeakingPlan.BackoffSeconds),
 		}
 	} else {
-		data.StopSpeakingPlan = nil
+		m.StopSpeakingPlan = nil
 	}
 }
 
-func mapVAPIAssistantRequest(data *VAPIAssistantResourceModel) vapi.CreateAssistantRequest {
-	return vapi.CreateAssistantRequest{
-		Name:                         data.Name.ValueString(),
-		FirstMessageMode:             data.FirstMessageMode.ValueString(),
-		HipaaEnabled:                 data.HipaaEnabled.ValueBool(),
-		BackgroundSound:              data.BackgroundSound.ValueString(),
-		BackgroundDenoising:          data.BackgroundDenoising.ValueBool(),
-		ModelOutputEnabled:           data.ModelOutputEnabled.ValueBool(),
-		Language:                     data.Language.ValueString(),
-		ForwardingPhoneNumber:        data.ForwardingPhoneNumber.ValueString(),
-		InterruptionsEnabled:         data.InterruptionsEnabled.ValueBool(),
-		EndCallFunctionEnabled:       data.EndCallFunctionEnabled.ValueBool(),
-		DialKeypadFunctionEnabled:    data.DialKeypadFunctionEnabled.ValueBool(),
-		FillersEnabled:               data.FillersEnabled.ValueBool(),
-		SilenceTimeoutSeconds:        data.SilenceTimeoutSeconds.ValueFloat64Pointer(),
-		ResponseDelaySeconds:         data.ResponseDelaySeconds.ValueFloat64Pointer(),
-		NumWordsToInterruptAssistant: data.NumWordsToInterruptAssistant.ValueInt64Pointer(),
-		LiveTranscriptsEnabled:       data.LiveTranscriptsEnabled.ValueBoolPointer(),
-		Keywords:                     ElementsAsString(data.Keywords),
-		ServerMessages:               ElementsAsString(data.ServerMessages),
-
-		MessagePlan: func() *vapi.MessagePlan {
-			if data.MessagePlan != nil {
-				return &vapi.MessagePlan{
-					IdleMessages: ElementsAsString(data.MessagePlan.IdleMessages),
-				}
-			}
-			return nil
-		}(),
-
-		Voice: func() *vapi.Voice {
-			if data.Voice != nil {
-				return &vapi.Voice{
-					Model:           data.Voice.Model.ValueString(),
-					VoiceID:         data.Voice.VoiceID.ValueString(),
-					Provider:        data.Voice.Provider.ValueString(),
-					Stability:       data.Voice.Stability.ValueFloat64(),
-					SimilarityBoost: data.Voice.SimilarityBoost.ValueFloat64(),
-				}
-			}
-			return nil
-		}(),
-
-		Model: func() *vapi.Model {
-			if data.Model != nil {
-				return &vapi.Model{
-					Model:        data.Model.Model.ValueString(),
-					SystemPrompt: data.Model.SystemPrompt.ValueString(),
-					Provider:     data.Model.Provider.ValueString(),
-					MaxTokens:    data.Model.MaxTokens.ValueInt64(),
-					Temperature:  data.Model.Temperature.ValueFloat64(),
-					ToolIDs:      ElementsAsString(data.Model.ToolIDs),
-					KnowledgeBase: func() *vapi.KnowledgeBase {
-						if data.Model.KnowledgeBase != nil {
-							return &vapi.KnowledgeBase{
-								TopK:     data.Model.KnowledgeBase.TopK.ValueInt64(),
-								FileIDs:  ElementsAsString(data.Model.KnowledgeBase.FileIDs),
-								Provider: data.Model.KnowledgeBase.Provider.ValueString(),
-							}
-						}
-						return nil
-					}(),
-				}
-			}
-			return nil
-		}(),
-
-		RecordingEnabled: data.RecordingEnabled.ValueBool(),
-		FirstMessage:     data.FirstMessage.ValueString(),
-		VoicemailMessage: data.VoicemailMessage.ValueString(),
-		EndCallMessage:   data.EndCallMessage.ValueString(),
-
-		Transcriber: func() *vapi.Transcriber {
-			if data.Transcriber != nil {
-				return &vapi.Transcriber{
-					Provider: data.Transcriber.Provider.ValueString(),
-					Model:    data.Transcriber.Model.ValueString(),
-					Language: data.Transcriber.Language.ValueString(),
-				}
-			}
-			return nil
-		}(),
-
+// expand builds the API request from the planned model.
+func (m *VAPIAssistantResourceModel) expand() vapi.CreateAssistantRequest {
+	out := vapi.CreateAssistantRequest{
+		Name:                         m.Name.ValueString(),
+		FirstMessageMode:             m.FirstMessageMode.ValueString(),
+		HipaaEnabled:                 m.HipaaEnabled.ValueBool(),
+		BackgroundSound:              m.BackgroundSound.ValueString(),
+		BackgroundDenoising:          m.BackgroundDenoising.ValueBool(),
+		ModelOutputEnabled:           m.ModelOutputEnabled.ValueBool(),
+		Language:                     m.Language.ValueString(),
+		ForwardingPhoneNumber:        m.ForwardingPhoneNumber.ValueString(),
+		InterruptionsEnabled:         m.InterruptionsEnabled.ValueBool(),
+		EndCallFunctionEnabled:       m.EndCallFunctionEnabled.ValueBool(),
+		DialKeypadFunctionEnabled:    m.DialKeypadFunctionEnabled.ValueBool(),
+		FillersEnabled:               m.FillersEnabled.ValueBool(),
+		SilenceTimeoutSeconds:        m.SilenceTimeoutSeconds.ValueFloat64Pointer(),
+		ResponseDelaySeconds:         m.ResponseDelaySeconds.ValueFloat64Pointer(),
+		NumWordsToInterruptAssistant: m.NumWordsToInterruptAssistant.ValueInt64Pointer(),
+		LiveTranscriptsEnabled:       m.LiveTranscriptsEnabled.ValueBoolPointer(),
+		Keywords:                     ElementsAsString(m.Keywords),
+		ServerMessages:               ElementsAsString(m.ServerMessages),
+		RecordingEnabled:             m.RecordingEnabled.ValueBool(),
+		FirstMessage:                 m.FirstMessage.ValueString(),
+		VoicemailMessage:             m.VoicemailMessage.ValueString(),
+		EndCallMessage:               m.EndCallMessage.ValueString(),
 		Server: &vapi.Server{
-			URL:            data.ServerURL.ValueString(),
-			Secret:         data.ServerURLSecret.ValueString(),
+			URL:            m.ServerURL.ValueString(),
+			Secret:         m.ServerURLSecret.ValueString(),
 			TimeoutSeconds: 20,
 		},
-
-		ClientMessages:     ElementsAsString(data.ClientMessages),
-		EndCallPhrases:     ElementsAsString(data.EndCallPhrases),
-		MaxDurationSeconds: data.MaxDurationSeconds.ValueInt64(),
-
-		AnalysisPlan: func() *vapi.AnalysisPlan {
-			if data.AnalysisPlan != nil {
-				return &vapi.AnalysisPlan{
-					SummaryPrompt:           data.AnalysisPlan.SummaryPrompt.ValueString(),
-					StructuredDataPrompt:    data.AnalysisPlan.StructuredDataPrompt.ValueString(),
-					StructuredDataSchema:    createRequestObject(data.AnalysisPlan.StructuredDataSchema),
-					SuccessEvaluationPrompt: data.AnalysisPlan.SuccessEvaluationPrompt.ValueString(),
-					SuccessEvaluationRubric: data.AnalysisPlan.SuccessEvaluationRubric.ValueString(),
-				}
-			}
-			return nil
-		}(),
-
-		StartSpeakingPlan: func() *vapi.StartSpeakingPlan {
-			if data.StartSpeakingPlan != nil {
-				return &vapi.StartSpeakingPlan{
-					WaitSeconds:             data.StartSpeakingPlan.WaitSeconds.ValueFloat64(),
-					SmartEndpointingEnabled: data.StartSpeakingPlan.SmartEndpointingEnabled.ValueBool(),
-					TranscriptionEndpointingPlan: func() *vapi.TranscriptionEndpointingPlan {
-						if data.StartSpeakingPlan.TranscriptionEndpointingPlan != nil {
-							return &vapi.TranscriptionEndpointingPlan{
-								OnPunctuationSeconds:   data.StartSpeakingPlan.TranscriptionEndpointingPlan.OnPunctuationSeconds.ValueFloat64(),
-								OnNoPunctuationSeconds: data.StartSpeakingPlan.TranscriptionEndpointingPlan.OnNoPunctuationSeconds.ValueFloat64(),
-								OnNumberSeconds:        data.StartSpeakingPlan.TranscriptionEndpointingPlan.OnNumberSeconds.ValueFloat64(),
-							}
-						}
-						return nil
-					}(),
-				}
-			}
-			return nil
-		}(),
-
-		StopSpeakingPlan: func() *vapi.StopSpeakingPlan {
-			if data.StopSpeakingPlan != nil {
-				return &vapi.StopSpeakingPlan{
-					NumWords:       data.StopSpeakingPlan.NumWords.ValueFloat64(),
-					VoiceSeconds:   data.StopSpeakingPlan.VoiceSeconds.ValueFloat64(),
-					BackoffSeconds: data.StopSpeakingPlan.BackoffSeconds.ValueFloat64(),
-				}
-			}
-			return nil
-		}(),
-
-		ArtifactPlan: func() *vapi.ArtifactPlan {
-			if data.ArtifactPlan != nil {
-				var recordingFormat string
-				if len(data.ArtifactPlan.RecordingFormat.ValueString()) == 0 {
-					recordingFormat = "mp3"
-				} else {
-					recordingFormat = data.ArtifactPlan.RecordingFormat.ValueString()
-				}
-				return &vapi.ArtifactPlan{
-					RecordingFormat: recordingFormat,
-				}
-			}
-			return nil
-		}(),
+		ClientMessages:     ElementsAsString(m.ClientMessages),
+		EndCallPhrases:     ElementsAsString(m.EndCallPhrases),
+		MaxDurationSeconds: m.MaxDurationSeconds.ValueInt64(),
 	}
+
+	if m.MessagePlan != nil {
+		out.MessagePlan = &vapi.MessagePlan{
+			IdleMessages: ElementsAsString(m.MessagePlan.IdleMessages),
+		}
+	}
+	if m.Voice != nil {
+		out.Voice = &vapi.Voice{
+			Model:           m.Voice.Model.ValueString(),
+			VoiceID:         m.Voice.VoiceID.ValueString(),
+			Provider:        m.Voice.Provider.ValueString(),
+			Stability:       m.Voice.Stability.ValueFloat64(),
+			SimilarityBoost: m.Voice.SimilarityBoost.ValueFloat64(),
+		}
+	}
+	if m.Model != nil {
+		out.Model = &vapi.Model{
+			Model:        m.Model.Model.ValueString(),
+			SystemPrompt: m.Model.SystemPrompt.ValueString(),
+			Provider:     m.Model.Provider.ValueString(),
+			MaxTokens:    m.Model.MaxTokens.ValueInt64(),
+			Temperature:  m.Model.Temperature.ValueFloat64(),
+			ToolIDs:      ElementsAsString(m.Model.ToolIDs),
+		}
+		if m.Model.KnowledgeBase != nil {
+			out.Model.KnowledgeBase = &vapi.KnowledgeBase{
+				TopK:     m.Model.KnowledgeBase.TopK.ValueInt64(),
+				FileIDs:  ElementsAsString(m.Model.KnowledgeBase.FileIDs),
+				Provider: m.Model.KnowledgeBase.Provider.ValueString(),
+			}
+		}
+	}
+	if m.Transcriber != nil {
+		out.Transcriber = &vapi.Transcriber{
+			Provider: m.Transcriber.Provider.ValueString(),
+			Model:    m.Transcriber.Model.ValueString(),
+			Language: m.Transcriber.Language.ValueString(),
+		}
+	}
+	if m.AnalysisPlan != nil {
+		out.AnalysisPlan = &vapi.AnalysisPlan{
+			SummaryPrompt:           m.AnalysisPlan.SummaryPrompt.ValueString(),
+			StructuredDataPrompt:    m.AnalysisPlan.StructuredDataPrompt.ValueString(),
+			StructuredDataSchema:    createRequestObject(m.AnalysisPlan.StructuredDataSchema),
+			SuccessEvaluationPrompt: m.AnalysisPlan.SuccessEvaluationPrompt.ValueString(),
+			SuccessEvaluationRubric: m.AnalysisPlan.SuccessEvaluationRubric.ValueString(),
+		}
+	}
+	if m.StartSpeakingPlan != nil {
+		out.StartSpeakingPlan = &vapi.StartSpeakingPlan{
+			WaitSeconds:             m.StartSpeakingPlan.WaitSeconds.ValueFloat64(),
+			SmartEndpointingEnabled: m.StartSpeakingPlan.SmartEndpointingEnabled.ValueBool(),
+		}
+		if m.StartSpeakingPlan.TranscriptionEndpointingPlan != nil {
+			out.StartSpeakingPlan.TranscriptionEndpointingPlan = &vapi.TranscriptionEndpointingPlan{
+				OnPunctuationSeconds:   m.StartSpeakingPlan.TranscriptionEndpointingPlan.OnPunctuationSeconds.ValueFloat64(),
+				OnNoPunctuationSeconds: m.StartSpeakingPlan.TranscriptionEndpointingPlan.OnNoPunctuationSeconds.ValueFloat64(),
+				OnNumberSeconds:        m.StartSpeakingPlan.TranscriptionEndpointingPlan.OnNumberSeconds.ValueFloat64(),
+			}
+		}
+	}
+	if m.StopSpeakingPlan != nil {
+		out.StopSpeakingPlan = &vapi.StopSpeakingPlan{
+			NumWords:       m.StopSpeakingPlan.NumWords.ValueFloat64(),
+			VoiceSeconds:   m.StopSpeakingPlan.VoiceSeconds.ValueFloat64(),
+			BackoffSeconds: m.StopSpeakingPlan.BackoffSeconds.ValueFloat64(),
+		}
+	}
+	if m.ArtifactPlan != nil {
+		out.ArtifactPlan = &vapi.ArtifactPlan{RecordingFormat: m.ArtifactPlan.RecordingFormat.ValueString()}
+		if out.ArtifactPlan.RecordingFormat == "" {
+			out.ArtifactPlan.RecordingFormat = "mp3"
+		}
+	}
+	return out
 }
 
 func createRequestObject(data *StructuredDataSchemaResourceModel) *vapi.StructuredDataSchema {
