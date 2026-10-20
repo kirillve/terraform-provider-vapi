@@ -101,13 +101,13 @@ linters:
       # baseline B1: Create handlers share one decode-error shape across three resources.
       - path: internal/vapiv1/vapi_assistant_resource\.go
         linters: [dupl]
-        text: "lines are duplicate of"
+        text: "lines are duplicate of `internal/vapiv1/vapi_(assistant|sip_trunk_phone_number|twilio_phone_number)_resource\\.go"
       - path: internal/vapiv1/vapi_sip_trunk_phone_number_resource\.go
         linters: [dupl]
-        text: "lines are duplicate of"
+        text: "lines are duplicate of `internal/vapiv1/vapi_(assistant|sip_trunk_phone_number|twilio_phone_number)_resource\\.go"
       - path: internal/vapiv1/vapi_twilio_phone_number_resource\.go
         linters: [dupl]
-        text: "lines are duplicate of"
+        text: "lines are duplicate of `internal/vapiv1/vapi_(assistant|sip_trunk_phone_number|twilio_phone_number)_resource\\.go"
       # baseline B2: test-harness value converter, complexity 16 (fix by splitting per tftypes kind).
       - path: internal/provider/tfvalue_test\.go
         linters: [gocognit]
@@ -116,10 +116,6 @@ linters:
       - path: internal/provider/tfvalue_test\.go
         linters: [gocognit]
         text: "cognitive complexity 18 of func `tfFingerprintWalk`"
-      # baseline B4: assistant model flatten, complexity 18 (one branch per optional API block).
-      - path: internal/vapiv1/vapi_assistant_resource\.go
-        linters: [gocognit]
-        text: "cognitive complexity 18 of func `\\(\\*VAPIAssistantResourceModel\\)\\.flatten`"
 issues:
   max-issues-per-linter: 0
   max-same-issues: 0
