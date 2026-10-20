@@ -1,4 +1,4 @@
-## Unreleased
+## v0.15.0
 
 CHANGES:
 - a refresh that finds the object missing in VAPI (HTTP 404) now removes the resource from the state instead of failing, for `vapi_assistant`, `vapi_file`, `vapi_twilio_phone_number`, `vapi_sip_trunk_phone_number` and `vapi_tool_function`; the same applies to an import of the four that support it (`vapi_sip_trunk` and `vapi_tool_query_function` already did)
