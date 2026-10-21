@@ -474,121 +474,124 @@ func fakeClient(t *testing.T) *http.Client {
 	return &http.Client{Transport: transport}
 }
 
-func fakeDo(t *testing.T, client *http.Client, method, url, body string) (*http.Response, error) {
+// fakeReply is a fully read and closed HTTP response.
+type fakeReply struct {
+	StatusCode int
+	Body       []byte
+	ReadErr    error
+}
+
+func fakeDo(t *testing.T, client *http.Client, method, url, body string) (*fakeReply, error) {
 	t.Helper()
 	request, err := http.NewRequestWithContext(t.Context(), method, url, strings.NewReader(body))
 	require.NoError(t, err)
 	request.Header.Set("Authorization", "Bearer test-token")
 	request.Header.Set("Content-Type", "application/json")
-	return client.Do(request)
+	response, err := client.Do(request)
+	if err != nil {
+		return nil, err
+	}
+	reply := &fakeReply{StatusCode: response.StatusCode}
+	reply.Body, reply.ReadErr = io.ReadAll(response.Body)
+	require.NoError(t, response.Body.Close())
+	return reply, nil
 }
 
-func fakeRead(t *testing.T, response *http.Response) ([]byte, error) {
-	t.Helper()
-	t.Cleanup(func() { require.NoError(t, response.Body.Close()) })
-	return io.ReadAll(response.Body)
-}
-
-func TestHarness_RequestAndFailure(t *testing.T) {
+func TestHarness_RecordsMethodPathHeadersAndRawBody(t *testing.T) {
 	t.Parallel()
-	t.Run("records_method_path_headers_and_raw_body", func(t *testing.T) {
-		t.Parallel()
-		api := newFakeVAPI(t, []stubResponse{{
-			Method: "POST",
-			Path:   "/file",
-			Status: 201,
+	api := newFakeVAPI(t, []stubResponse{{
+		Method: "POST",
+		Path:   "/file",
+		Status: 201,
+		Body:   `{}`,
+	}})
+	body := " {\"raw\":true}\n"
+	response, err := fakeDo(t, fakeClient(t), "POST", api.srv.URL+"/file?x=1&x=2", body)
+	require.NoError(t, err)
+	require.NoError(t, response.ReadErr)
+	require.Equal(t, 201, response.StatusCode)
+	requests, unmatched, problems, remaining := api.snapshot()
+	require.Equal(t, []recordedRequest{{
+		Method:        "POST",
+		Path:          "/file?x=1&x=2",
+		Authorization: "Bearer test-token",
+		ContentType:   "application/json",
+		Body:          body,
+	}}, requests)
+	require.Empty(t, unmatched)
+	require.Empty(t, problems)
+	require.Empty(t, remaining)
+}
+
+func TestHarness_DisconnectRecordsRequestThenClientError(t *testing.T) {
+	t.Parallel()
+	api := newFakeVAPI(t, []stubResponse{{
+		Method:  "POST",
+		Path:    "/file",
+		Failure: "disconnect",
+	}})
+	response, err := fakeDo(t, fakeClient(t), "POST", api.srv.URL+"/file", "payload")
+	require.Error(t, err)
+	require.Nil(t, response)
+	requests, unmatched, problems, remaining := api.snapshot()
+	require.Len(t, requests, 1)
+	require.Equal(t, "payload", requests[0].Body)
+	require.Empty(t, unmatched)
+	require.Empty(t, problems)
+	require.Empty(t, remaining)
+}
+
+func TestHarness_ShortBodyReturnsStatusThenReadError(t *testing.T) {
+	t.Parallel()
+	api := newFakeVAPI(t, []stubResponse{{
+		Method:  "GET",
+		Path:    "/file",
+		Status:  202,
+		Body:    "partial",
+		Failure: "short_body",
+	}})
+	response, err := fakeDo(t, fakeClient(t), "GET", api.srv.URL+"/file", "")
+	require.NoError(t, err)
+	require.Equal(t, 202, response.StatusCode)
+	require.ErrorIs(t, response.ReadErr, io.ErrUnexpectedEOF)
+	require.Equal(t, "partial", string(response.Body))
+	requests, unmatched, problems, remaining := api.snapshot()
+	require.Len(t, requests, 1)
+	require.Empty(t, unmatched)
+	require.Empty(t, problems)
+	require.Empty(t, remaining)
+}
+
+func TestHarness_GetAfterPrior200RecordsExactlyOneRequest(t *testing.T) {
+	t.Parallel()
+	api := newFakeVAPI(t, []stubResponse{
+		{
+			Method: "GET",
+			Path:   "/prime",
+			Status: 200,
 			Body:   `{}`,
-		}})
-		body := " {\"raw\":true}\n"
-		response, err := fakeDo(t, fakeClient(t), "POST", api.srv.URL+"/file?x=1&x=2", body)
-		require.NoError(t, err)
-		_, err = fakeRead(t, response)
-		require.NoError(t, err)
-		require.Equal(t, 201, response.StatusCode)
-		requests, unmatched, problems, remaining := api.snapshot()
-		require.Equal(t, []recordedRequest{{
-			Method:        "POST",
-			Path:          "/file?x=1&x=2",
-			Authorization: "Bearer test-token",
-			ContentType:   "application/json",
-			Body:          body,
-		}}, requests)
-		require.Empty(t, unmatched)
-		require.Empty(t, problems)
-		require.Empty(t, remaining)
-	})
-	t.Run("disconnect_records_request_then_client_error", func(t *testing.T) {
-		t.Parallel()
-		api := newFakeVAPI(t, []stubResponse{{
-			Method:  "POST",
-			Path:    "/file",
-			Failure: "disconnect",
-		}})
-		response, err := fakeDo(t, fakeClient(t), "POST", api.srv.URL+"/file", "payload")
-		require.Error(t, err)
-		require.Nil(t, response)
-		requests, unmatched, problems, remaining := api.snapshot()
-		require.Len(t, requests, 1)
-		require.Equal(t, "payload", requests[0].Body)
-		require.Empty(t, unmatched)
-		require.Empty(t, problems)
-		require.Empty(t, remaining)
-	})
-	t.Run("short_body_returns_status_then_read_error", func(t *testing.T) {
-		t.Parallel()
-		api := newFakeVAPI(t, []stubResponse{{
+		},
+		{
 			Method:  "GET",
 			Path:    "/file",
-			Status:  202,
-			Body:    "partial",
-			Failure: "short_body",
-		}})
-		response, err := fakeDo(t, fakeClient(t), "GET", api.srv.URL+"/file", "")
-		require.NoError(t, err)
-		require.Equal(t, 202, response.StatusCode)
-		body, err := fakeRead(t, response)
-		require.ErrorIs(t, err, io.ErrUnexpectedEOF)
-		require.Equal(t, "partial", string(body))
-		requests, unmatched, problems, remaining := api.snapshot()
-		require.Len(t, requests, 1)
-		require.Empty(t, unmatched)
-		require.Empty(t, problems)
-		require.Empty(t, remaining)
+			Failure: "disconnect",
+		},
 	})
-	t.Run("get_after_prior_200_records_exactly_one_request", func(t *testing.T) {
-		t.Parallel()
-		api := newFakeVAPI(t, []stubResponse{
-			{
-				Method: "GET",
-				Path:   "/prime",
-				Status: 200,
-				Body:   `{}`,
-			},
-			{
-				Method:  "GET",
-				Path:    "/file",
-				Failure: "disconnect",
-			},
-		})
-		client := fakeClient(t)
-		response, err := fakeDo(t, client, "GET", api.srv.URL+"/prime", "")
-		require.NoError(t, err)
-		require.Equal(t, 200, response.StatusCode)
-		_, err = fakeRead(t, response)
-		require.NoError(t, err)
-		require.NoError(t, response.Body.Close())
-		response, err = fakeDo(t, client, "GET", api.srv.URL+"/file", "")
-		if response != nil {
-			_, readErr := fakeRead(t, response)
-			require.NoError(t, readErr)
-		}
-		require.Error(t, err)
-		requests, unmatched, problems, remaining := api.snapshot()
-		require.Equal(t, []string{"/prime", "/file"}, fakeRequestPaths(requests))
-		require.Empty(t, unmatched)
-		require.Empty(t, problems)
-		require.Empty(t, remaining)
-	})
+	client := fakeClient(t)
+	response, err := fakeDo(t, client, "GET", api.srv.URL+"/prime", "")
+	require.NoError(t, err)
+	require.Equal(t, 200, response.StatusCode)
+	require.NoError(t, response.ReadErr)
+	response, err = fakeDo(t, client, "GET", api.srv.URL+"/file", "")
+	if response != nil {
+		require.NoError(t, response.ReadErr)
+	}
+	require.Error(t, err)
+	requests, unmatched, problems, remaining := api.snapshot()
+	require.Equal(t, []string{"/prime", "/file"}, fakeRequestPaths(requests))
+	require.Empty(t, unmatched)
+	require.Empty(t, problems)
+	require.Empty(t, remaining)
 }
 
 func fakeRequestPaths(requests []recordedRequest) []string {
@@ -609,9 +612,8 @@ func TestHarness_FakeVAPI_WhenNoStubMatches_ReturnsFailureStatusAndRecordsUnmatc
 	response, err := fakeDo(t, fakeClient(t), "GET", api.srv.URL+"/missing?x=1", "")
 	require.NoError(t, err)
 	require.Equal(t, http.StatusNotImplemented, response.StatusCode)
-	body, err := fakeRead(t, response)
-	require.NoError(t, err)
-	require.Equal(t, "unmatched request", string(body))
+	require.NoError(t, response.ReadErr)
+	require.Equal(t, "unmatched request", string(response.Body))
 	requests, unmatched, problems, remaining := api.snapshot()
 	require.Equal(t, []recordedRequest{{
 		Method:        "GET",

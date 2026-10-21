@@ -26,8 +26,10 @@ var update = flag.Bool("update", false, "record characterization goldens")
 var only = flag.String("only", "", "comma-separated case names; with -update, record only these cases")
 
 // v1Types is the explicit, ordered list of pinned types.
-var v1Types = []string{"vapi_assistant", "vapi_file", "vapi_twilio_phone_number",
-	"vapi_sip_trunk_phone_number", "vapi_tool_function", "vapi_tool_query_function", "vapi_sip_trunk"}
+var v1Types = []string{
+	"vapi_assistant", "vapi_file", "vapi_twilio_phone_number",
+	"vapi_sip_trunk_phone_number", "vapi_tool_function", "vapi_tool_query_function", "vapi_sip_trunk",
+}
 
 func TestV1SchemaGolden(t *testing.T) {
 	t.Parallel()
@@ -149,9 +151,10 @@ func loadCases(t testing.TB, path string) []charCase {
 	require.ErrorIs(t, decoder.Decode(&trailing), io.EOF)
 	require.NotNil(t, cases, "cases must be a JSON array")
 	names := make(map[string]bool, len(cases))
-	for _, c := range cases {
-		require.False(t, names[c.Name], "duplicate case name %q in %s", c.Name, path)
-		names[c.Name] = true
+	for i := range cases {
+		name := cases[i].Name
+		require.False(t, names[name], "duplicate case name %q in %s", name, path)
+		names[name] = true
 	}
 	return cases
 }

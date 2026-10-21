@@ -16,8 +16,10 @@ import (
 	"github.com/kirillve/terraform-provider-vapi/internal/vapi"
 )
 
-var _ resource.Resource = &VAPISIPTrunkPhoneNumberResource{}
-var _ resource.ResourceWithImportState = &VAPISIPTrunkPhoneNumberResource{}
+var (
+	_ resource.Resource                = &VAPISIPTrunkPhoneNumberResource{}
+	_ resource.ResourceWithImportState = &VAPISIPTrunkPhoneNumberResource{}
+)
 
 // NewVAPISIPTrunkPhoneNumberResource returns a new SIP trunk phone number resource.
 func NewVAPISIPTrunkPhoneNumberResource() resource.Resource {
@@ -109,7 +111,7 @@ func (r *VAPISIPTrunkPhoneNumberResource) Create(ctx context.Context, req resour
 	}
 
 	var sipResp vapi.ImportSIPTrunkPhoneNumberResponse
-	if err := r.client.Do(http.MethodPost, "phone-number", data.expand(), &sipResp); err != nil {
+	if err := r.client.Do(ctx, http.MethodPost, "phone-number", data.expand(), &sipResp); err != nil {
 		var decErr *vapi.DecodeError
 		if errors.As(err, &decErr) {
 			resp.Diagnostics.AddError("Unmarshal Error", fmt.Sprintf("Failed to parse API response: %s", err))
@@ -140,7 +142,7 @@ func (r *VAPISIPTrunkPhoneNumberResource) Read(ctx context.Context, req resource
 	}
 
 	var sipResp vapi.ImportSIPTrunkPhoneNumberResponse
-	err := r.client.Do(http.MethodGet, "phone-number/"+id, nil, &sipResp)
+	err := r.client.Do(ctx, http.MethodGet, "phone-number/"+id, nil, &sipResp)
 	if vapi.StatusCode(err) == http.StatusNotFound {
 		resp.State.RemoveResource(ctx)
 		return
@@ -177,7 +179,7 @@ func (r *VAPISIPTrunkPhoneNumberResource) Update(ctx context.Context, req resour
 	}
 
 	var sipResp vapi.ImportSIPTrunkPhoneNumberResponse
-	if err := r.client.Do(http.MethodPatch, "phone-number/"+id, plan.expand(), &sipResp); err != nil {
+	if err := r.client.Do(ctx, http.MethodPatch, "phone-number/"+id, plan.expand(), &sipResp); err != nil {
 		var decErr *vapi.DecodeError
 		if errors.As(err, &decErr) {
 			resp.Diagnostics.AddError("Unmarshal Error", fmt.Sprintf("Failed to parse API response: %s", err))
@@ -201,7 +203,7 @@ func (r *VAPISIPTrunkPhoneNumberResource) Delete(ctx context.Context, req resour
 	}
 
 	if id := data.ID.ValueString(); id != "" {
-		if err := r.client.Do(http.MethodDelete, "phone-number/"+id, nil, nil); err != nil && vapi.StatusCode(err) != http.StatusNotFound {
+		if err := r.client.Do(ctx, http.MethodDelete, "phone-number/"+id, nil, nil); err != nil && vapi.StatusCode(err) != http.StatusNotFound {
 			resp.Diagnostics.AddError("Delete Error", fmt.Sprintf("Unable to delete SIP phone number: %s", err))
 			return
 		}

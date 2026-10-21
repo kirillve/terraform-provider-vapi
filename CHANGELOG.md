@@ -1,3 +1,11 @@
+## v0.15.1
+
+CHANGES:
+- built with Go 1.27.3, which fixes GO-2026-6809 in `crypto/x509`
+- `vapi_file` uploads quote the file name in the multipart header, so a name containing a double quote or backslash no longer produces a malformed request
+- API requests are now bound to the Terraform operation context, so a cancelled plan or apply stops in-flight requests to VAPI
+- added stricter quality gates to `make verify`: an architecture gate, goroutine leak checks in every test package, a source policy check, separate security and complexity lint gates, and a trivy filesystem scan
+
 ## v0.15.0
 
 CHANGES:

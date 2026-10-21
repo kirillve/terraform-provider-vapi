@@ -1,0 +1,9 @@
+package p
+
+import (
+	test "testing"
+	leaks "go.uber.org/goleak"
+)
+
+func TestMain(suite *test.M) { leaks.VerifyTestMain(suite) }
+func TestValue(t *test.T) {}

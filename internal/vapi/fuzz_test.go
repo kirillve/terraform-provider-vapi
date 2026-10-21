@@ -1,6 +1,7 @@
 package vapi
 
 import (
+	"context"
 	"errors"
 	"net/http"
 	"testing"
@@ -23,7 +24,7 @@ func FuzzFileResponseUnmarshal(f *testing.F) {
 	addJSONSeeds(f)
 	f.Fuzz(func(_ *testing.T, data []byte) {
 		var fr FileResponse
-		_ = fr.UnmarshalJSON(data)
+		_ = fr.UnmarshalJSON(data) //nolint:errcheck // fuzz target: only panics matter
 	})
 }
 
@@ -53,7 +54,7 @@ func FuzzDoDecode(f *testing.F) {
 			&ToolFunctionResponse{}, &ToolQueryFunctionResponse{}, &ImportSIPTrunkPhoneNumberResponse{},
 		}
 		for _, out := range outs {
-			err := client.Do(http.MethodGet, "x", nil, out)
+			err := client.Do(context.Background(), http.MethodGet, "x", nil, out)
 			var decodeErr *DecodeError
 			if err != nil && !errors.As(err, &decodeErr) {
 				t.Fatalf("Do(%T) returned %T, want nil or *DecodeError", out, err)

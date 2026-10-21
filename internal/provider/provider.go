@@ -19,8 +19,10 @@ import (
 )
 
 // Ensure VAPIProvider satisfies various provider interfaces.
-var _ provider.Provider = &VAPIProvider{}
-var _ provider.ProviderWithFunctions = &VAPIProvider{}
+var (
+	_ provider.Provider              = &VAPIProvider{}
+	_ provider.ProviderWithFunctions = &VAPIProvider{}
+)
 
 // VAPIProvider defines the provider implementation.
 type VAPIProvider struct {

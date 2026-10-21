@@ -1,0 +1,34 @@
+# Dedicated gosec security gate — BLOCKING.
+#
+# Runs ONLY gosec, with every rule enabled and WITHOUT exclusion presets (presets
+# blanket-suppress G104/G204/G301/G304). Run via `the lint-security target`; also wired into
+#
+# Inline exceptions MUST use gosec-native `// #nosec Gxxx -- <justification>`.
+# A bare `// #nosec`, a missing rule id, or `//nolint:gosec` is rejected (pre-commit).
+version: "2"
+run:
+  go: "1.27"
+  issues-exit-code: 1
+linters:
+  default: none
+  enable:
+    - gosec
+  settings:
+    gosec:
+      severity: low
+      confidence: low
+      config:
+        global:
+          audit: true
+          nosec: false
+          show-ignored: true
+  exclusions:
+    rules:
+      # Test files legitimately spawn subprocesses (G204), read fixture paths
+      # (G304), and create scratch dirs (G301). Production code gets no exemption.
+      - path: _test\.go
+        linters:
+          - gosec
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0

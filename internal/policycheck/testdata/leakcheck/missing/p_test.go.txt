@@ -1,0 +1,6 @@
+package p
+
+import "testing"
+
+// goleak.VerifyTestMain(m) in a comment is not a check.
+func TestValue(t *testing.T) {}

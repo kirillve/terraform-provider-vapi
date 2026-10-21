@@ -1,0 +1,11 @@
+package p
+
+import (
+	"testing"
+	"go.uber.org/goleak"
+)
+
+type other struct{}
+
+func (other) TestMain(m *testing.M) { goleak.VerifyTestMain(m) }
+func TestValue(t *testing.T) {}

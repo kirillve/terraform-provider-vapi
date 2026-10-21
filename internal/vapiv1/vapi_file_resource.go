@@ -17,8 +17,10 @@ import (
 	"github.com/kirillve/terraform-provider-vapi/internal/vapi"
 )
 
-var _ resource.Resource = &VAPIFileResource{}
-var _ resource.ResourceWithImportState = &VAPIFileResource{}
+var (
+	_ resource.Resource                = &VAPIFileResource{}
+	_ resource.ResourceWithImportState = &VAPIFileResource{}
+)
 
 // NewVAPIFileResource returns a new file resource.
 func NewVAPIFileResource() resource.Resource {
@@ -149,20 +151,19 @@ func (r *VAPIFileResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
-	response, responseCode, err := r.client.UploadData("file", data.Filename.ValueString(), []byte(data.Content.ValueString()))
+	response, responseCode, err := r.client.UploadData(ctx, "file", data.Filename.ValueString(), []byte(data.Content.ValueString()))
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to upload file: %s", err))
 		return
 	}
 
 	var fileResponse vapi.FileResponse
-	if responseCode >= 200 && responseCode < 300 {
-		if err := json.Unmarshal(response, &fileResponse); err != nil {
-			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to unmarshal response: %s", err))
-			return
-		}
-	} else {
+	if responseCode < 200 || responseCode >= 300 {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to parse response [%d]: %s", responseCode, string(response)))
+		return
+	}
+	if err := json.Unmarshal(response, &fileResponse); err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to unmarshal response: %s", err))
 		return
 	}
 
@@ -189,7 +190,7 @@ func (r *VAPIFileResource) Read(ctx context.Context, req resource.ReadRequest, r
 	}
 
 	var fileResponse vapi.FileResponse
-	err := r.client.Do(http.MethodGet, "file/"+id, nil, &fileResponse)
+	err := r.client.Do(ctx, http.MethodGet, "file/"+id, nil, &fileResponse)
 	if vapi.StatusCode(err) == http.StatusNotFound {
 		resp.State.RemoveResource(ctx)
 		return
@@ -217,27 +218,26 @@ func (r *VAPIFileResource) Update(ctx context.Context, req resource.UpdateReques
 	}
 
 	if id := data.ID.ValueString(); id != "" {
-		if err := r.client.Do(http.MethodDelete, "file/"+id, nil, nil); err != nil && vapi.StatusCode(err) != http.StatusNotFound {
+		if err := r.client.Do(ctx, http.MethodDelete, "file/"+id, nil, nil); err != nil && vapi.StatusCode(err) != http.StatusNotFound {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete file: %s", err))
 			return
 		}
 	}
 	data.flatten(&vapi.FileResponse{})
 
-	response, responseCode, err := r.client.UploadData("file", data.Filename.ValueString(), []byte(data.Content.ValueString()))
+	response, responseCode, err := r.client.UploadData(ctx, "file", data.Filename.ValueString(), []byte(data.Content.ValueString()))
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to upload file: %s", err))
 		return
 	}
 
 	var fileResponse vapi.FileResponse
-	if responseCode >= 200 && responseCode < 300 {
-		if err := json.Unmarshal(response, &fileResponse); err != nil {
-			resp.Diagnostics.AddWarning("Parse Error", fmt.Sprintf("Unable to parse file response: %s", err))
-		}
-	} else {
+	if responseCode < 200 || responseCode >= 300 {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to parse response [%d]: %s", responseCode, string(response)))
 		return
+	}
+	if err := json.Unmarshal(response, &fileResponse); err != nil {
+		resp.Diagnostics.AddWarning("Parse Error", fmt.Sprintf("Unable to parse file response: %s", err))
 	}
 
 	data.flatten(&fileResponse)
@@ -254,7 +254,7 @@ func (r *VAPIFileResource) Delete(ctx context.Context, req resource.DeleteReques
 	}
 
 	if id := data.ID.ValueString(); id != "" {
-		if err := r.client.Do(http.MethodDelete, "file/"+id, nil, nil); err != nil && vapi.StatusCode(err) != http.StatusNotFound {
+		if err := r.client.Do(ctx, http.MethodDelete, "file/"+id, nil, nil); err != nil && vapi.StatusCode(err) != http.StatusNotFound {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete file: %s", err))
 			return
 		}
