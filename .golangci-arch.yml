@@ -1,0 +1,221 @@
+# Architecture gate: depguard layering + tagged forbidigo rules. BLOCKING.
+#
+# Layering (docs/quality/STANDARD.md, "Layer rules"):
+#   main.go -> internal/provider -> internal/vapiv1 -> internal/vapi (HTTP client)
+#   internal/provider and internal/vapiv1 also import internal/providerdata (leaf, imports nothing).
+#   Third-party SDKs: the Terraform plugin libraries live only in main.go, internal/provider and
+#   internal/vapiv1; net/http lives only in internal/vapi and internal/vapiv1. This file changes in
+#   the same commit as any layout change. $MOD below is spelled out as the module path
+#   github.com/kirillve/terraform-provider-vapi (depguard has no module variable).
+#
+# depguard matches `files:` globs against ABSOLUTE file paths. Layout rule (fail-closed with the
+# source policy in internal/policycheck):
+#   - every EXEMPTION ("!" glob) is anchored to this file's directory (the module root) with
+#     golangci's ${config-path} placeholder, so a nested directory named internal never inherits
+#     an exemption meant for the root one;
+#   - every POSITIVE glob stays unanchored ("**/<dir>/**"), so it never matches LESS than intended.
+# A glob metacharacter in the module path is spliced into the exemptions as a live pattern; the
+# policycheck ARCH-GLOBMETA check refuses such a path.
+#
+# Run via `make lint-arch` or scripts/hooks/pre-commit, after `policycheck -check arch`
+# (internal/policycheck/doc.go): it refuses a glob module path, source this run would not see the
+# way the toolchain builds it, and every directive that silences or redirects it (//nolint lists,
+# //permit:, generated markers, //line, //go:linkname). A hand-run golangci-lint skips that policy.
+version: "2"
+
+run:
+  go: "1.27"
+  issues-exit-code: 1
+
+linters:
+  default: none
+  enable:
+    - depguard
+    - forbidigo
+
+  settings:
+    depguard:
+      rules:
+        # The composition root (main.go and anything else outside internal/): the standard
+        # library, the provider server and internal/provider only.
+        main-allowlist:
+          list-mode: strict
+          files:
+            - "$all"
+            - "!${config-path}/internal/**"
+            - "!$test"
+          allow:
+            - $gostd
+            - github.com/hashicorp/terraform-plugin-framework/providerserver
+            - github.com/kirillve/terraform-provider-vapi/internal/provider
+
+        # The provider: Terraform plugin framework, the config leaf and the resource set. It
+        # never reaches the HTTP client directly and never speaks HTTP itself.
+        provider-allowlist:
+          list-mode: strict
+          files:
+            - "**/internal/provider/**"
+            - "!$test"
+          allow:
+            - $gostd
+            - github.com/hashicorp/terraform-plugin-framework
+            - github.com/hashicorp/terraform-plugin-go
+            - github.com/kirillve/terraform-provider-vapi/internal/providerdata
+            - github.com/kirillve/terraform-provider-vapi/internal/vapiv1
+          deny:
+            - pkg: net/http
+              desc: "internal/provider does not speak HTTP; the client is internal/vapi, used by internal/vapiv1"
+
+        # The v1 resource set: plugin framework, the config leaf and the API client.
+        vapiv1-allowlist:
+          list-mode: strict
+          files:
+            - "**/internal/vapiv1/**"
+            - "!$test"
+          allow:
+            - $gostd
+            - github.com/hashicorp/terraform-plugin-framework
+            - github.com/hashicorp/terraform-plugin-log
+            - github.com/kirillve/terraform-provider-vapi/internal/providerdata
+            - github.com/kirillve/terraform-provider-vapi/internal/vapi
+
+        # The VAPI HTTP client: standard library only, no Terraform types, no internal package.
+        vapi-stdlib-only:
+          list-mode: strict
+          files:
+            - "**/internal/vapi/**"
+            - "!$test"
+          allow:
+            - $gostd
+
+        # The provider configuration leaf: standard library only, no HTTP and no storage. policycheck
+        # DOMAIN-TRANSITIVE (internal/policycheck/domain.go) applies the same denies to every
+        # dependency; change both together.
+        providerdata-leaf:
+          list-mode: strict
+          files:
+            - "**/internal/providerdata/**"
+            - "!$test"
+          allow:
+            - $gostd
+          deny:
+            - pkg: net/http
+              desc: "internal/providerdata must not know about HTTP"
+            - pkg: database/sql
+              desc: "internal/providerdata must not know about storage"
+
+        # The repository tools: standard library only.
+        policycheck-stdlib-only:
+          list-mode: strict
+          files:
+            - "**/internal/policycheck/**"
+            - "!$test"
+          allow:
+            - $gostd
+
+        # Terraform plugin libraries stay in the composition root and the two provider layers.
+        terraform-libs-only-in-provider-layers:
+          list-mode: lax
+          files:
+            - "$all"
+            - "!${config-path}/main.go"
+            - "!${config-path}/internal/provider/**"
+            - "!${config-path}/internal/vapiv1/**"
+            - "!$test"
+          deny:
+            - pkg: github.com/hashicorp/terraform-plugin-framework
+              desc: "the plugin framework is imported only in main.go, internal/provider and internal/vapiv1"
+            - pkg: github.com/hashicorp/terraform-plugin-go
+              desc: "terraform-plugin-go is imported only in main.go, internal/provider and internal/vapiv1"
+            - pkg: github.com/hashicorp/terraform-plugin-log
+              desc: "terraform-plugin-log is imported only in internal/vapiv1"
+
+        # net/http only where HTTP is spoken or its status and method constants are named.
+        net-http-only-in-client-layers:
+          list-mode: lax
+          files:
+            - "$all"
+            - "!${config-path}/internal/vapi/**"
+            - "!${config-path}/internal/vapiv1/**"
+            - "!$test"
+          deny:
+            - pkg: net/http
+              desc: "net/http is imported only in internal/vapi and internal/vapiv1"
+
+        # Test libraries never leak into production code.
+        test-libs-only-in-tests:
+          list-mode: lax
+          files:
+            - "$all"
+            - "!$test"
+          deny:
+            - pkg: github.com/stretchr/testify
+              desc: "testify is for _test.go files only"
+            - pkg: go.uber.org/goleak
+              desc: "goleak is for _test.go files only"
+
+        # Banned everywhere (tests included): superseded, unsafe or rejected packages.
+        banned-everywhere:
+          list-mode: lax
+          files:
+            - "$all"
+          deny:
+            - pkg: io/ioutil
+              desc: "deprecated; use io and os"
+            - pkg: math/rand$
+              desc: "use math/rand/v2 (or crypto/rand for anything security-relevant)"
+            - pkg: github.com/pkg/errors
+              desc: "use the standard library errors and fmt.Errorf with %w"
+            - pkg: github.com/sirupsen/logrus
+              desc: "use terraform-plugin-log (tflog) in the provider layers, log/slog elsewhere"
+            - pkg: go.uber.org/zap
+              desc: "use terraform-plugin-log (tflog) in the provider layers, log/slog elsewhere"
+            - pkg: github.com/hashicorp/terraform-plugin-sdk
+              desc: "this provider is built on the plugin framework, not SDKv2"
+
+    # Every msg starts with a scope tag; the exclusions below scope each tag.
+    #   [prod]       fires only in production files (not _test.go).
+    #   [entrypoint] fires only in production files outside the two entry points (main.go and
+    #                internal/policycheck/main.go), the only places allowed to exit or own a root context.
+    forbidigo:
+      forbid:
+        - pattern: ^fmt\.(Print|Printf|Println)$
+          pkg: ^fmt$
+          msg: "[prod] stdout carries the plugin handshake; log with tflog (provider layers) or write to an explicit io.Writer"
+        - pattern: ^(print|println)$
+          msg: "[prod] builtin print/println write to stderr unstructured; log with tflog"
+        - pattern: ^http\.(DefaultClient|DefaultTransport|DefaultServeMux|Get|Head|Post|PostForm)$
+          pkg: ^net/http$
+          msg: "[prod] default client/transport has no timeout and no auth; use the configured *vapi.APIClient"
+        - pattern: ^os\.Exit$
+          pkg: ^os$
+          msg: "[entrypoint] exit only from an entry point; return an error"
+        - pattern: ^log\.(Fatal|Fatalf|Fatalln|Panic|Panicf|Panicln)$
+          pkg: ^log$
+          msg: "[entrypoint] exits the process; return an error to the caller"
+        - pattern: ^context\.(Background|TODO)$
+          pkg: ^context$
+          msg: "[entrypoint] a root context belongs to an entry point; pass the caller's ctx"
+      analyze-types: true
+      # Godoc Example functions in _test.go are checked too (the forbidigo default skips them).
+      exclude-godoc-examples: false
+
+  exclusions:
+    rules:
+      - path: _test\.go$
+        linters:
+          - forbidigo
+        text: '\[(prod|entrypoint)\]'
+      - path: ^(main|internal/policycheck/main)\.go$
+        linters:
+          - forbidigo
+        text: '\[entrypoint\]'
+
+severity:
+  default: error
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  # One import can break several rules; report every rule so a finding names its rule.
+  uniq-by-line: false

@@ -1,0 +1,11 @@
+# Trivy waivers. Empty by default: any known CVE or finding fails `make trivy-fs`.
+# A waiver is allowed only for a finding with NO fixed version upstream, and every entry
+# carries an expiry and a justification on the line above it:
+#   # exp:YYYY-MM-DD <why it is not exploitable here> - <upstream tracking link>
+#   CVE-YYYY-NNNNN
+# W-1: golang.org/x/crypto/openpgp is unmaintained and has no upstream fix. It is linked only into
+# the tfplugindocs documentation generator (tools/go.mod), which runs in development and CI on the
+# provider's own schema and is never shipped. The provider binary (root go.mod) has no x/crypto
+# requirement. Re-check when tfplugindocs moves to a release without it.
+# exp:2027-01-20 not exploitable here - https://pkg.go.dev/vuln/GO-2026-5932
+GO-2026-5932 exp:2027-01-20

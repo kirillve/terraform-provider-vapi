@@ -1,0 +1,9 @@
+package p
+
+import (
+	"testing"
+	goleak "runtime"
+)
+
+func TestMain(m *testing.M) { goleak.Gosched(); m.Run() }
+func TestValue(t *testing.T) {}

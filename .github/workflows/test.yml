@@ -47,6 +47,18 @@ jobs:
         run: |
           go run github.com/zricethezav/gitleaks/v8@v8.30.1 git --redact --no-banner \
             --log-opts="origin/${{ github.base_ref }}..HEAD" .
+      # `make verify` runs trivy-fs; install the version pinned in GNUmakefile (TRIVY_VERSION),
+      # checked against the checksums file published with the same release.
+      - name: Install trivy
+        run: |
+          v="$(make -s print-trivy-version)"
+          base="https://github.com/aquasecurity/trivy/releases/download/v${v}"
+          tarball="trivy_${v}_Linux-64bit.tar.gz"
+          curl -fsSLO "${base}/${tarball}"
+          curl -fsSLO "${base}/trivy_${v}_checksums.txt"
+          grep " ${tarball}\$" "trivy_${v}_checksums.txt" | sha256sum --check --strict -
+          sudo tar -xzf "${tarball}" -C /usr/local/bin trivy
+          trivy --version
       - run: make verify
 
   generate:
