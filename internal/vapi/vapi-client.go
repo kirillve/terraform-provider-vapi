@@ -4,13 +4,14 @@
 // (UploadData), typed non-2xx/body-read errors (APIError, StatusCode), typed decode errors
 // (DecodeError), and the v1 payload/response structs whose JSON encoding is a frozen wire
 // contract pinned by the internal/provider goldens.
-// Out of scope: Terraform types, retries, context propagation, logging of bodies.
+// Out of scope: Terraform types, retries, logging of bodies.
 // v1 only: the v2 resource set uses the official VAPI SDK and MUST NOT import this package.
 // Tier 1.
 package vapi
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -29,7 +30,7 @@ type APIClient struct {
 }
 
 // UploadData Uploads a file using multipart/form-data.
-func (c *APIClient) UploadData(fieldName, filename string, content []byte) ([]byte, int, error) {
+func (c *APIClient) UploadData(ctx context.Context, fieldName, filename string, content []byte) ([]byte, int, error) {
 	// Create a buffer to write our multipart data into
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
@@ -37,30 +38,30 @@ func (c *APIClient) UploadData(fieldName, filename string, content []byte) ([]by
 	// Create the file field in the multipart form
 	part, err := writer.CreatePart(
 		textproto.MIMEHeader{
-			"Content-Disposition": []string{fmt.Sprintf(`form-data; name="%s"; filename="%s"`, fieldName, filepath.Base(filename))},
+			"Content-Disposition": []string{fmt.Sprintf(`form-data; name=%q; filename=%q`, fieldName, filepath.Base(filename))},
 			"Content-Type":        []string{getMimeType(filename)},
 		},
 	)
 	if err != nil {
-		return nil, 0, fmt.Errorf("error creating form file: %v", err)
+		return nil, 0, fmt.Errorf("error creating form file: %w", err)
 	}
 
 	// Write the file content to the form field
 	_, err = part.Write(content)
 	if err != nil {
-		return nil, 0, fmt.Errorf("error writing file content: %v", err)
+		return nil, 0, fmt.Errorf("error writing file content: %w", err)
 	}
 
 	// Close the multipart writer to finalize the request body
 	err = writer.Close()
 	if err != nil {
-		return nil, 0, fmt.Errorf("error closing writer: %v", err)
+		return nil, 0, fmt.Errorf("error closing writer: %w", err)
 	}
 
 	// Create the HTTP request
-	req, err := http.NewRequest("POST", c.BaseURL+"/file", body)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.BaseURL+"/file", body)
 	if err != nil {
-		return nil, 0, fmt.Errorf("error creating request: %v", err)
+		return nil, 0, fmt.Errorf("error creating request: %w", err)
 	}
 
 	// Set the headers
@@ -77,22 +78,30 @@ func (c *APIClient) UploadData(fieldName, filename string, content []byte) ([]by
 	if err != nil {
 		return nil, 0, fmt.Errorf("error sending request: %v", err)
 	}
-	defer func() { _ = resp.Body.Close() }()
+	defer closeBody(resp.Body)
 
 	// Read the response body
 	responseData, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, resp.StatusCode, fmt.Errorf("error reading response body: %v", err)
+		return nil, resp.StatusCode, fmt.Errorf("error reading response body: %w", err)
 	}
 
 	// Return the response body and status code
 	return responseData, resp.StatusCode, nil
 }
 
+// closeBody closes a response body after it was read. A close failure cannot lose data and
+// carries no actionable information, so it is dropped by design.
+func closeBody(body io.Closer) {
+	if err := body.Close(); err != nil {
+		return
+	}
+}
+
 // SendRequest sends one JSON request and returns the response body and HTTP status. A non-2xx
 // status and a body-read failure are returned as *APIError; transport, encode and request-build
 // failures are plain wrapped errors with status 0.
-func (c *APIClient) SendRequest(method, endpoint string, body interface{}) ([]byte, int, error) {
+func (c *APIClient) SendRequest(ctx context.Context, method, endpoint string, body interface{}) ([]byte, int, error) {
 	var buf bytes.Buffer
 	if body != nil {
 		if err := json.NewEncoder(&buf).Encode(body); err != nil {
@@ -100,7 +109,7 @@ func (c *APIClient) SendRequest(method, endpoint string, body interface{}) ([]by
 		}
 	}
 
-	req, err := http.NewRequest(method, c.BaseURL+"/"+endpoint, &buf)
+	req, err := http.NewRequestWithContext(ctx, method, c.BaseURL+"/"+endpoint, &buf)
 	if err != nil {
 		return nil, 0, fmt.Errorf("failed to create HTTP request: %w", err)
 	}
@@ -112,7 +121,7 @@ func (c *APIClient) SendRequest(method, endpoint string, body interface{}) ([]by
 	if err != nil {
 		return nil, 0, fmt.Errorf("request failed: %w", err)
 	}
-	defer func() { _ = resp.Body.Close() }()
+	defer closeBody(resp.Body)
 
 	responseData, readErr := io.ReadAll(resp.Body)
 	if readErr != nil {
@@ -132,8 +141,8 @@ func (c *APIClient) SendRequest(method, endpoint string, body interface{}) ([]by
 // Do sends one JSON request via SendRequest. On a 2xx status with out != nil it unmarshals the
 // response body into out; a decode failure is returned as *DecodeError and out keeps the partial
 // value. With out == nil the response body is discarded.
-func (c *APIClient) Do(method, endpoint string, in, out any) error {
-	body, _, err := c.SendRequest(method, endpoint, in)
+func (c *APIClient) Do(ctx context.Context, method, endpoint string, in, out any) error {
+	body, _, err := c.SendRequest(ctx, method, endpoint, in)
 	if err != nil {
 		return err
 	}

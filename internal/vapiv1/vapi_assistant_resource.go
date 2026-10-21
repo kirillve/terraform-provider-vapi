@@ -553,7 +553,7 @@ func (r *VAPIAssistantResource) Create(ctx context.Context, req resource.CreateR
 	}
 
 	var assistantResponse vapi.Assistant
-	if err := r.client.Do(http.MethodPost, "assistant", data.expand(), &assistantResponse); err != nil {
+	if err := r.client.Do(ctx, http.MethodPost, "assistant", data.expand(), &assistantResponse); err != nil {
 		var decErr *vapi.DecodeError
 		if errors.As(err, &decErr) {
 			resp.Diagnostics.AddError("Parse Error", fmt.Sprintf("Unable to parse response: %s", err))
@@ -585,7 +585,7 @@ func (r *VAPIAssistantResource) Read(ctx context.Context, req resource.ReadReque
 	}
 
 	var assistantResponse vapi.Assistant
-	err := r.client.Do(http.MethodGet, "assistant/"+id, nil, &assistantResponse)
+	err := r.client.Do(ctx, http.MethodGet, "assistant/"+id, nil, &assistantResponse)
 	if vapi.StatusCode(err) == http.StatusNotFound {
 		resp.State.RemoveResource(ctx)
 		return
@@ -627,7 +627,7 @@ func (r *VAPIAssistantResource) Update(ctx context.Context, req resource.UpdateR
 	}
 
 	var assistantResponse vapi.Assistant
-	if err := r.client.Do(http.MethodPatch, "assistant/"+id, data.expand(), &assistantResponse); err != nil {
+	if err := r.client.Do(ctx, http.MethodPatch, "assistant/"+id, data.expand(), &assistantResponse); err != nil {
 		var decErr *vapi.DecodeError
 		if errors.As(err, &decErr) {
 			resp.Diagnostics.AddError("Parse Error", fmt.Sprintf("Unable to parse response: %s", err))
@@ -658,7 +658,7 @@ func (r *VAPIAssistantResource) Delete(ctx context.Context, req resource.DeleteR
 		return
 	}
 
-	if err := r.client.Do(http.MethodDelete, "assistant/"+id, nil, nil); err != nil && vapi.StatusCode(err) != http.StatusNotFound {
+	if err := r.client.Do(ctx, http.MethodDelete, "assistant/"+id, nil, nil); err != nil && vapi.StatusCode(err) != http.StatusNotFound {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete assistant: %s", err))
 		return
 	}
@@ -896,6 +896,13 @@ func (m *VAPIAssistantResourceModel) expand() vapi.CreateAssistantRequest {
 			IdleMessages: ElementsAsString(m.MessagePlan.IdleMessages),
 		}
 	}
+	m.expandVoiceAndModel(&out)
+	m.expandPlans(&out)
+	return out
+}
+
+// expandVoiceAndModel fills the voice and model sections of the request.
+func (m *VAPIAssistantResourceModel) expandVoiceAndModel(out *vapi.CreateAssistantRequest) {
 	if m.Voice != nil {
 		out.Voice = &vapi.Voice{
 			Model:           m.Voice.Model.ValueString(),
@@ -922,6 +929,10 @@ func (m *VAPIAssistantResourceModel) expand() vapi.CreateAssistantRequest {
 			}
 		}
 	}
+}
+
+// expandPlans fills the transcriber and the speaking/analysis/artifact plans of the request.
+func (m *VAPIAssistantResourceModel) expandPlans(out *vapi.CreateAssistantRequest) {
 	if m.Transcriber != nil {
 		out.Transcriber = &vapi.Transcriber{
 			Provider: m.Transcriber.Provider.ValueString(),
@@ -964,7 +975,6 @@ func (m *VAPIAssistantResourceModel) expand() vapi.CreateAssistantRequest {
 			out.ArtifactPlan.RecordingFormat = "mp3"
 		}
 	}
-	return out
 }
 
 func createRequestObject(data *StructuredDataSchemaResourceModel) *vapi.StructuredDataSchema {

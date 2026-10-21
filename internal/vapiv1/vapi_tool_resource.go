@@ -21,9 +21,11 @@ import (
 	"github.com/kirillve/terraform-provider-vapi/internal/vapi"
 )
 
-var _ resource.Resource = &VAPIToolFunctionResource{}
-var _ resource.ResourceWithValidateConfig = &VAPIToolFunctionResource{}
-var _ resource.ResourceWithImportState = &VAPIToolFunctionResource{}
+var (
+	_ resource.Resource                   = &VAPIToolFunctionResource{}
+	_ resource.ResourceWithValidateConfig = &VAPIToolFunctionResource{}
+	_ resource.ResourceWithImportState    = &VAPIToolFunctionResource{}
+)
 
 // NewVAPIToolFunctionResource returns a new tool function resource.
 func NewVAPIToolFunctionResource() resource.Resource {
@@ -273,7 +275,7 @@ func (r *VAPIToolFunctionResource) Create(ctx context.Context, req resource.Crea
 	}
 
 	var functionResponse vapi.ToolFunctionResponse
-	if err := r.client.Do(http.MethodPost, "tool", data.expand(), &functionResponse); err != nil {
+	if err := r.client.Do(ctx, http.MethodPost, "tool", data.expand(), &functionResponse); err != nil {
 		var decErr *vapi.DecodeError
 		if errors.As(err, &decErr) {
 			resp.Diagnostics.AddError("Parse Error", fmt.Sprintf("Unable to parse response: %s", err))
@@ -306,7 +308,7 @@ func (r *VAPIToolFunctionResource) Read(ctx context.Context, req resource.ReadRe
 	}
 
 	var functionResponse vapi.ToolFunctionResponse
-	err := r.client.Do(http.MethodGet, "tool/"+id, nil, &functionResponse)
+	err := r.client.Do(ctx, http.MethodGet, "tool/"+id, nil, &functionResponse)
 	if vapi.StatusCode(err) == http.StatusNotFound {
 		resp.State.RemoveResource(ctx)
 		return
@@ -344,7 +346,7 @@ func (r *VAPIToolFunctionResource) Update(ctx context.Context, req resource.Upda
 	}
 
 	var functionResponse vapi.ToolFunctionResponse
-	if err := r.client.Do(http.MethodPatch, "tool/"+id, plan.expand(), &functionResponse); err != nil {
+	if err := r.client.Do(ctx, http.MethodPatch, "tool/"+id, plan.expand(), &functionResponse); err != nil {
 		var decErr *vapi.DecodeError
 		if errors.As(err, &decErr) {
 			resp.Diagnostics.AddError("Parse Error", fmt.Sprintf("Unable to parse response: %s", err))
@@ -369,7 +371,7 @@ func (r *VAPIToolFunctionResource) Delete(ctx context.Context, req resource.Dele
 	}
 
 	if id := data.ID.ValueString(); id != "" {
-		if err := r.client.Do(http.MethodDelete, "tool/"+id, nil, nil); err != nil && vapi.StatusCode(err) != http.StatusNotFound {
+		if err := r.client.Do(ctx, http.MethodDelete, "tool/"+id, nil, nil); err != nil && vapi.StatusCode(err) != http.StatusNotFound {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete file: %s", err))
 			return
 		}
@@ -405,7 +407,8 @@ func (m *VAPIToolFunctionResourceModel) expand() vapi.ToolFunctionRequest {
 		return request
 	case "transferCall":
 		var destinations []vapi.Destination
-		for _, dst := range m.Destinations {
+		for i := range m.Destinations {
+			dst := &m.Destinations[i]
 			destinations = append(destinations, vapi.Destination{
 				Type:                   dst.Type.ValueString(),
 				Number:                 dst.Number.ValueString(),
@@ -439,7 +442,7 @@ func (m *VAPIToolFunctionResourceModel) flatten(_ context.Context, in *vapi.Tool
 	m.UpdatedAt = types.StringValue(in.UpdatedAt)
 	m.Type = types.StringValue(in.Type)
 	m.Async = types.BoolValue(in.Async)
-	if len(in.Server.URL) > 0 {
+	if in.Server.URL != "" {
 		m.ServerURL = types.StringValue(in.Server.URL)
 	}
 
@@ -522,11 +525,11 @@ func (r *VAPIToolFunctionResource) ValidateConfig(ctx context.Context, req resou
 
 // Import into the legacy model only when doing so preserves the entire schema.
 func flatToolParameters(raw json.RawMessage) bool {
-	var schema map[string]json.RawMessage
-	if err := json.Unmarshal(raw, &schema); err != nil || schema == nil {
+	var top map[string]json.RawMessage
+	if err := json.Unmarshal(raw, &top); err != nil || top == nil {
 		return false
 	}
-	for key := range schema {
+	for key := range top {
 		switch key {
 		case "type", "properties", "required":
 		default:
@@ -538,7 +541,7 @@ func flatToolParameters(raw json.RawMessage) bool {
 		return false
 	}
 	var properties map[string]map[string]json.RawMessage
-	if err := json.Unmarshal(schema["properties"], &properties); err != nil && len(schema["properties"]) > 0 {
+	if err := json.Unmarshal(top["properties"], &properties); err != nil && len(top["properties"]) > 0 {
 		return false
 	}
 	for _, property := range properties {

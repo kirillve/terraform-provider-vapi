@@ -67,7 +67,6 @@ func main() {
 	}
 
 	err := providerserver.Serve(context.Background(), provider.New(v), opts)
-
 	if err != nil {
 		log.Fatal(err.Error())
 	}

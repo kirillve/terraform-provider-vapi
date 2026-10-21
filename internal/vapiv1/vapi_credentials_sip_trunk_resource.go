@@ -15,8 +15,10 @@ import (
 	"github.com/kirillve/terraform-provider-vapi/internal/vapi"
 )
 
-var _ resource.Resource = &VAPISIPTrunkResource{}
-var _ resource.ResourceWithImportState = &VAPISIPTrunkResource{}
+var (
+	_ resource.Resource                = &VAPISIPTrunkResource{}
+	_ resource.ResourceWithImportState = &VAPISIPTrunkResource{}
+)
 
 // NewVAPISIPTrunkResource returns a new SIP trunk resource.
 func NewVAPISIPTrunkResource() resource.Resource {
@@ -134,7 +136,7 @@ func (r *VAPISIPTrunkResource) Create(ctx context.Context, req resource.CreateRe
 	}
 
 	var created vapi.SIPTrunk
-	if err := r.client.Do(http.MethodPost, "credential", data.expand(), &created); err != nil {
+	if err := r.client.Do(ctx, http.MethodPost, "credential", data.expand(), &created); err != nil {
 		var decErr *vapi.DecodeError
 		if errors.As(err, &decErr) {
 			resp.Diagnostics.AddError("Unmarshal Error", err.Error())
@@ -163,7 +165,7 @@ func (r *VAPISIPTrunkResource) Read(ctx context.Context, req resource.ReadReques
 	}
 
 	var fetched vapi.SIPTrunk
-	err := r.client.Do(http.MethodGet, "credential/"+id, nil, &fetched)
+	err := r.client.Do(ctx, http.MethodGet, "credential/"+id, nil, &fetched)
 	if vapi.StatusCode(err) == http.StatusNotFound {
 		resp.State.RemoveResource(ctx)
 		return
@@ -200,7 +202,7 @@ func (r *VAPISIPTrunkResource) Update(ctx context.Context, req resource.UpdateRe
 	}
 
 	var updated vapi.SIPTrunk
-	if err := r.client.Do(http.MethodPatch, "credential/"+id, plan.expand(), &updated); err != nil {
+	if err := r.client.Do(ctx, http.MethodPatch, "credential/"+id, plan.expand(), &updated); err != nil {
 		var decErr *vapi.DecodeError
 		if errors.As(err, &decErr) {
 			resp.Diagnostics.AddError("Unmarshal Error", err.Error())
@@ -228,7 +230,7 @@ func (r *VAPISIPTrunkResource) Delete(ctx context.Context, req resource.DeleteRe
 		return
 	}
 
-	if err := r.client.Do(http.MethodDelete, "credential/"+id, nil, nil); err != nil && vapi.StatusCode(err) != http.StatusNotFound {
+	if err := r.client.Do(ctx, http.MethodDelete, "credential/"+id, nil, nil); err != nil && vapi.StatusCode(err) != http.StatusNotFound {
 		resp.Diagnostics.AddError("Delete Failed", fmt.Sprintf("Status: %d, Error: %v", vapi.StatusCode(err), err))
 	}
 }

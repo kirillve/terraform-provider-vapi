@@ -1,0 +1,29 @@
+# Dedicated code-complexity gate — gocyclo + gocognit, both @ min-complexity 14
+# (flags >= 15, the same set the authoritative `-over 14` inventory flags).
+#
+# CO-RUN cross-check inside the lint-complexity target. The AUTHORITATIVE blocking
+# measurement is the standalone gocyclo+gocognit inventory that runs first (it
+# ignores //nolint and golangci cache). Test files are excluded.
+version: "2"
+run:
+  go: "1.27"
+  issues-exit-code: 1
+linters:
+  default: none
+  enable:
+    - gocyclo
+    - gocognit
+  settings:
+    gocyclo:
+      min-complexity: 14
+    gocognit:
+      min-complexity: 14
+  exclusions:
+    rules:
+      - path: _test\.go
+        linters:
+          - gocyclo
+          - gocognit
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0

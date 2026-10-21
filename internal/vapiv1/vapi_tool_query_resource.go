@@ -17,8 +17,10 @@ import (
 	"github.com/kirillve/terraform-provider-vapi/internal/vapi"
 )
 
-var _ resource.Resource = &VAPIToolQueryFunctionResource{}
-var _ resource.ResourceWithImportState = &VAPIToolQueryFunctionResource{}
+var (
+	_ resource.Resource                = &VAPIToolQueryFunctionResource{}
+	_ resource.ResourceWithImportState = &VAPIToolQueryFunctionResource{}
+)
 
 // NewVAPIToolQueryFunctionResource returns a new tool query function resource.
 func NewVAPIToolQueryFunctionResource() resource.Resource {
@@ -137,7 +139,7 @@ func (r *VAPIToolQueryFunctionResource) Create(ctx context.Context, req resource
 	request.Type = "query"
 
 	var res vapi.ToolQueryFunctionResponse
-	if err := r.client.Do(http.MethodPost, "tool", request, &res); err != nil {
+	if err := r.client.Do(ctx, http.MethodPost, "tool", request, &res); err != nil {
 		var decErr *vapi.DecodeError
 		if errors.As(err, &decErr) {
 			resp.Diagnostics.AddError("Response Error", fmt.Sprintf("Error parsing response: %v", err))
@@ -169,7 +171,7 @@ func (r *VAPIToolQueryFunctionResource) Read(ctx context.Context, req resource.R
 	}
 
 	var res vapi.ToolQueryFunctionResponse
-	err := r.client.Do(http.MethodGet, "tool/"+id, nil, &res)
+	err := r.client.Do(ctx, http.MethodGet, "tool/"+id, nil, &res)
 	if vapi.StatusCode(err) == http.StatusNotFound {
 		resp.State.RemoveResource(ctx)
 		return
@@ -188,40 +190,7 @@ func (r *VAPIToolQueryFunctionResource) Read(ctx context.Context, req resource.R
 	data.flattenDescription(&res)
 	data.OrgID = types.StringValue(res.OrgID)
 
-	var kbElements []attr.Value
-	for i, kb := range res.KnowledgeBases {
-		fileIDVals := make([]attr.Value, len(kb.FileIDs))
-		for i, fid := range kb.FileIDs {
-			fileIDVals[i] = types.StringValue(fid)
-		}
-		fileIDList, _ := types.ListValue(types.StringType, fileIDVals)
-
-		kbObj, _ := types.ObjectValue(
-			map[string]attr.Type{
-				"provider":    types.StringType,
-				"name":        types.StringType,
-				"model":       types.StringType,
-				"description": types.StringType,
-				"file_ids":    types.ListType{ElemType: types.StringType},
-			},
-			map[string]attr.Value{
-				"provider":    types.StringValue(kb.Provider),
-				"name":        types.StringValue(kb.Name),
-				"model":       types.StringValue(kb.Model),
-				"description": optionalString(priorKnowledgeBaseDescription(data.KnowledgeBases, i), kb.Description),
-				"file_ids":    fileIDList,
-			},
-		)
-		kbElements = append(kbElements, kbObj)
-	}
-
-	data.KnowledgeBases, _ = types.ListValue(types.ObjectType{AttrTypes: map[string]attr.Type{
-		"provider":    types.StringType,
-		"name":        types.StringType,
-		"model":       types.StringType,
-		"description": types.StringType,
-		"file_ids":    types.ListType{ElemType: types.StringType},
-	}}, kbElements)
+	data.flattenKnowledgeBases(&res)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -248,7 +217,7 @@ func (r *VAPIToolQueryFunctionResource) Update(ctx context.Context, req resource
 	}
 
 	var res vapi.ToolQueryFunctionResponse
-	if err := r.client.Do(http.MethodPatch, "tool/"+id, request, &res); err != nil {
+	if err := r.client.Do(ctx, http.MethodPatch, "tool/"+id, request, &res); err != nil {
 		var decErr *vapi.DecodeError
 		if errors.As(err, &decErr) {
 			resp.Diagnostics.AddError("Response Error", fmt.Sprintf("Error parsing update response: %v", err))
@@ -275,7 +244,7 @@ func (r *VAPIToolQueryFunctionResource) Delete(ctx context.Context, req resource
 		return
 	}
 
-	if err := r.client.Do(http.MethodDelete, "tool/"+id, nil, nil); err != nil && vapi.StatusCode(err) != http.StatusNotFound {
+	if err := r.client.Do(ctx, http.MethodDelete, "tool/"+id, nil, nil); err != nil && vapi.StatusCode(err) != http.StatusNotFound {
 		resp.Diagnostics.AddError("API Error", fmt.Sprintf("Error deleting resource: %v", err))
 	}
 }
@@ -364,4 +333,42 @@ func priorKnowledgeBaseDescription(prior types.List, i int) types.String {
 // flattenDescription binds the response description to the model.
 func (m *VAPIToolQueryFunctionResourceModel) flattenDescription(in *vapi.ToolQueryFunctionResponse) {
 	m.Description = optionalString(m.Description, in.Function.Description)
+}
+
+// flattenKnowledgeBases maps the response knowledge bases into state, keeping prior descriptions.
+func (m *VAPIToolQueryFunctionResourceModel) flattenKnowledgeBases(res *vapi.ToolQueryFunctionResponse) {
+	var kbElements []attr.Value
+	for i, kb := range res.KnowledgeBases {
+		fileIDVals := make([]attr.Value, len(kb.FileIDs))
+		for i, fid := range kb.FileIDs {
+			fileIDVals[i] = types.StringValue(fid)
+		}
+		fileIDList, _ := types.ListValue(types.StringType, fileIDVals)
+
+		kbObj, _ := types.ObjectValue(
+			map[string]attr.Type{
+				"provider":    types.StringType,
+				"name":        types.StringType,
+				"model":       types.StringType,
+				"description": types.StringType,
+				"file_ids":    types.ListType{ElemType: types.StringType},
+			},
+			map[string]attr.Value{
+				"provider":    types.StringValue(kb.Provider),
+				"name":        types.StringValue(kb.Name),
+				"model":       types.StringValue(kb.Model),
+				"description": optionalString(priorKnowledgeBaseDescription(m.KnowledgeBases, i), kb.Description),
+				"file_ids":    fileIDList,
+			},
+		)
+		kbElements = append(kbElements, kbObj)
+	}
+
+	m.KnowledgeBases, _ = types.ListValue(types.ObjectType{AttrTypes: map[string]attr.Type{
+		"provider":    types.StringType,
+		"name":        types.StringType,
+		"model":       types.StringType,
+		"description": types.StringType,
+		"file_ids":    types.ListType{ElemType: types.StringType},
+	}}, kbElements)
 }

@@ -39,7 +39,7 @@ func TestUploadData(t *testing.T) {
 	}
 
 	body := []byte("content")
-	resp, status, err := client.UploadData("file", "example.txt", body)
+	resp, status, err := client.UploadData(t.Context(), "file", "example.txt", body)
 	if err != nil {
 		t.Fatalf("upload error: %v", err)
 	}
@@ -49,7 +49,7 @@ func TestUploadData(t *testing.T) {
 	if string(resp) != `{"id":"abc"}` {
 		t.Fatalf("unexpected response %s", string(resp))
 	}
-	if snapshot.filename != "example.txt" || string(snapshot.payload) != string(body) {
+	if snapshot.filename != "example.txt" || !bytes.Equal(snapshot.payload, body) {
 		t.Fatalf("unexpected multipart snapshot: %#v", snapshot)
 	}
 }
@@ -67,7 +67,7 @@ func TestSendRequestHandlesErrorStatus(t *testing.T) {
 		HTTPClient: &http.Client{Transport: transport},
 	}
 
-	_, status, err := client.SendRequest(http.MethodGet, "resource", nil)
+	_, status, err := client.SendRequest(t.Context(), http.MethodGet, "resource", nil)
 	if err == nil {
 		t.Fatalf("expected error for non-2xx status")
 	}
@@ -91,7 +91,7 @@ func TestSendRequest_NonSuccessReturnsAPIErrorWithLegacyText(t *testing.T) {
 		return jsonResponse(http.StatusInternalServerError, "boom"), nil
 	}))
 
-	body, status, err := client.SendRequest(http.MethodGet, "resource", nil)
+	body, status, err := client.SendRequest(t.Context(), http.MethodGet, "resource", nil)
 
 	var apiErr *APIError
 	require.ErrorAs(t, err, &apiErr)
@@ -110,7 +110,7 @@ func TestSendRequest_ReadBodyErrorKeepsStatus(t *testing.T) {
 		return resp, nil
 	}))
 
-	body, status, err := client.SendRequest(http.MethodGet, "resource", nil)
+	body, status, err := client.SendRequest(t.Context(), http.MethodGet, "resource", nil)
 
 	var apiErr *APIError
 	require.ErrorAs(t, err, &apiErr)
@@ -137,7 +137,7 @@ func TestAPIClientDo_DecodesSuccess(t *testing.T) {
 		ID   string `json:"id"`
 		Name string `json:"name"`
 	}
-	err := client.Do(http.MethodPost, "credential", map[string]string{"k": "v"}, &out)
+	err := client.Do(t.Context(), http.MethodPost, "credential", map[string]string{"k": "v"}, &out)
 
 	require.NoError(t, err)
 	assert.Equal(t, http.MethodPost, gotMethod)
@@ -157,7 +157,7 @@ func TestAPIClientDo_NilInNilOut(t *testing.T) {
 		return jsonResponse(http.StatusNoContent, ""), nil
 	}))
 
-	err := client.Do(http.MethodDelete, "file/file-1", nil, nil)
+	err := client.Do(t.Context(), http.MethodDelete, "file/file-1", nil, nil)
 
 	require.NoError(t, err)
 	assert.Empty(t, gotBody)
@@ -176,7 +176,7 @@ func TestAPIClientDo_HeadersAndTrailingNewline(t *testing.T) {
 		return jsonResponse(http.StatusOK, `{}`), nil
 	}))
 
-	err := client.Do(http.MethodPatch, "tool/t-1", struct {
+	err := client.Do(t.Context(), http.MethodPatch, "tool/t-1", struct {
 		Name string `json:"name"`
 	}{Name: "a<b"}, &struct{}{})
 
@@ -197,7 +197,7 @@ func TestAPIClientDo_DecodeFailureReturnsDecodeErrorWithPartialValue(t *testing.
 		ID   string `json:"id"`
 		Size int    `json:"size"`
 	}
-	err := client.Do(http.MethodGet, "file/x", nil, &out)
+	err := client.Do(t.Context(), http.MethodGet, "file/x", nil, &out)
 
 	var decErr *DecodeError
 	require.ErrorAs(t, err, &decErr)
@@ -215,7 +215,7 @@ func TestAPIClientDo_TransportErrorText(t *testing.T) {
 		return nil, boom
 	}))
 
-	err := client.Do(http.MethodGet, "assistant/a-1", nil, &struct{}{})
+	err := client.Do(t.Context(), http.MethodGet, "assistant/a-1", nil, &struct{}{})
 
 	require.Error(t, err)
 	assert.True(t, strings.HasPrefix(err.Error(), "request failed: "), err.Error())
@@ -232,7 +232,7 @@ func TestUploadData_TransportErrorText(t *testing.T) {
 		return nil, boom
 	}))
 
-	body, status, err := client.UploadData("file", "example.txt", []byte("content"))
+	body, status, err := client.UploadData(t.Context(), "file", "example.txt", []byte("content"))
 
 	require.Error(t, err)
 	assert.True(t, strings.HasPrefix(err.Error(), "error sending request: "), err.Error())

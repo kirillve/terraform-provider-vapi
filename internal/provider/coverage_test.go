@@ -167,8 +167,8 @@ func caseNames(t *testing.T, path string) []string {
 	t.Helper()
 	cases := loadCases(t, path)
 	names := make([]string, 0, len(cases))
-	for _, c := range cases {
-		names = append(names, c.Name)
+	for i := range cases {
+		names = append(names, cases[i].Name)
 	}
 	return names
 }

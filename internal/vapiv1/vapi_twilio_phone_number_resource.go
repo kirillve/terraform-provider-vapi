@@ -17,8 +17,10 @@ import (
 	"github.com/kirillve/terraform-provider-vapi/internal/vapi"
 )
 
-var _ resource.Resource = &VAPITwilioPhoneNumberResource{}
-var _ resource.ResourceWithImportState = &VAPITwilioPhoneNumberResource{}
+var (
+	_ resource.Resource                = &VAPITwilioPhoneNumberResource{}
+	_ resource.ResourceWithImportState = &VAPITwilioPhoneNumberResource{}
+)
 
 // NewVAPIPhoneNumberResource constructor.
 func NewVAPIPhoneNumberResource() resource.Resource {
@@ -157,7 +159,7 @@ func (r *VAPITwilioPhoneNumberResource) Create(ctx context.Context, req resource
 	}
 
 	var twilioPhoneNumberResp vapi.TwilioPhoneNumber
-	if err := r.client.Do(http.MethodPost, "phone-number", data.expand(), &twilioPhoneNumberResp); err != nil {
+	if err := r.client.Do(ctx, http.MethodPost, "phone-number", data.expand(), &twilioPhoneNumberResp); err != nil {
 		var decErr *vapi.DecodeError
 		if errors.As(err, &decErr) {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to unmarshal response: %s", err))
@@ -188,7 +190,7 @@ func (r *VAPITwilioPhoneNumberResource) Read(ctx context.Context, req resource.R
 	}
 
 	var phoneNumberResp vapi.TwilioPhoneNumber
-	err := r.client.Do(http.MethodGet, "phone-number/"+id, nil, &phoneNumberResp)
+	err := r.client.Do(ctx, http.MethodGet, "phone-number/"+id, nil, &phoneNumberResp)
 	if vapi.StatusCode(err) == http.StatusNotFound {
 		resp.State.RemoveResource(ctx)
 		return
@@ -225,7 +227,7 @@ func (r *VAPITwilioPhoneNumberResource) Update(ctx context.Context, req resource
 	}
 
 	var phoneNumberResp vapi.TwilioPhoneNumber
-	if err := r.client.Do(http.MethodPatch, "phone-number/"+id, plan.expand(), &phoneNumberResp); err != nil {
+	if err := r.client.Do(ctx, http.MethodPatch, "phone-number/"+id, plan.expand(), &phoneNumberResp); err != nil {
 		var decErr *vapi.DecodeError
 		if errors.As(err, &decErr) {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Update :: Unable to unmarshal response: %s", err))
@@ -249,7 +251,7 @@ func (r *VAPITwilioPhoneNumberResource) Delete(ctx context.Context, req resource
 	}
 
 	if id := data.ID.ValueString(); id != "" {
-		if err := r.client.Do(http.MethodDelete, "phone-number/"+id, nil, nil); err != nil && vapi.StatusCode(err) != http.StatusNotFound {
+		if err := r.client.Do(ctx, http.MethodDelete, "phone-number/"+id, nil, nil); err != nil && vapi.StatusCode(err) != http.StatusNotFound {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete phone number: %s", err))
 			return
 		}
