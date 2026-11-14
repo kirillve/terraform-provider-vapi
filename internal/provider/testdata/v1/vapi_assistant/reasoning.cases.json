@@ -1,0 +1,777 @@
+[
+  {
+    "api": [],
+    "name": "upgrade_v0_13_0_state",
+    "op": "upgrade",
+    "raw_state": {
+      "analysis_plan": null,
+      "artifact_plan": null,
+      "background_denoising": null,
+      "background_sound": null,
+      "client_messages": null,
+      "dial_keypad_function_enabled": null,
+      "end_call_function_enabled": null,
+      "end_call_message": null,
+      "end_call_phrases": null,
+      "fillers_enabled": null,
+      "first_message": null,
+      "first_message_mode": null,
+      "forwarding_phone_number": null,
+      "hipaa_enabled": null,
+      "id": "asst-legacy",
+      "interruptions_enabled": null,
+      "keywords": null,
+      "language": null,
+      "live_transcripts_enabled": null,
+      "max_duration_seconds": null,
+      "message_plan": null,
+      "model": {
+        "knowledge_base": null,
+        "max_tokens": 512,
+        "model": "gpt-6-luna",
+        "provider": "openai",
+        "system_prompt": "legacy prompt",
+        "temperature": 0.3,
+        "tool_ids": []
+      },
+      "model_output_enabled": null,
+      "name": "reasoning-assistant",
+      "num_words_to_interrupt_assistant": null,
+      "org_id": "org-legacy",
+      "parent_id": null,
+      "phone_number_id": null,
+      "recording_enabled": null,
+      "response_delay_seconds": null,
+      "server_messages": null,
+      "server_url": null,
+      "server_url_secret": null,
+      "silence_timeout_seconds": null,
+      "start_speaking_plan": null,
+      "stop_speaking_plan": null,
+      "transcriber": null,
+      "voice": null,
+      "voicemail_message": null
+    }
+  },
+  {
+    "api": [],
+    "name": "upgrade_v0_13_0_state_no_model",
+    "op": "upgrade",
+    "raw_state": {
+      "analysis_plan": null,
+      "artifact_plan": null,
+      "background_denoising": null,
+      "background_sound": null,
+      "client_messages": null,
+      "dial_keypad_function_enabled": null,
+      "end_call_function_enabled": null,
+      "end_call_message": null,
+      "end_call_phrases": null,
+      "fillers_enabled": null,
+      "first_message": null,
+      "first_message_mode": null,
+      "forwarding_phone_number": null,
+      "hipaa_enabled": null,
+      "id": "asst-legacy",
+      "interruptions_enabled": null,
+      "keywords": null,
+      "language": null,
+      "live_transcripts_enabled": null,
+      "max_duration_seconds": null,
+      "message_plan": null,
+      "model": null,
+      "model_output_enabled": null,
+      "name": "reasoning-assistant",
+      "num_words_to_interrupt_assistant": null,
+      "org_id": "org-legacy",
+      "parent_id": null,
+      "phone_number_id": null,
+      "recording_enabled": null,
+      "response_delay_seconds": null,
+      "server_messages": null,
+      "server_url": null,
+      "server_url_secret": null,
+      "silence_timeout_seconds": null,
+      "start_speaking_plan": null,
+      "stop_speaking_plan": null,
+      "transcriber": null,
+      "voice": null,
+      "voicemail_message": null
+    }
+  },
+  {
+    "api": [],
+    "name": "upgrade_v0_15_1_state",
+    "op": "upgrade",
+    "raw_state": {
+      "analysis_plan": null,
+      "artifact_plan": null,
+      "background_denoising": null,
+      "background_sound": null,
+      "client_messages": null,
+      "dial_keypad_function_enabled": null,
+      "end_call_function_enabled": null,
+      "end_call_message": null,
+      "end_call_phrases": null,
+      "fillers_enabled": null,
+      "first_message": null,
+      "first_message_mode": null,
+      "forwarding_phone_number": null,
+      "hipaa_enabled": null,
+      "id": "asst-legacy",
+      "interruptions_enabled": null,
+      "keywords": null,
+      "language": null,
+      "live_transcripts_enabled": null,
+      "max_duration_seconds": null,
+      "message_plan": null,
+      "model": {
+        "knowledge_base": null,
+        "max_tokens": 512,
+        "model": "gpt-6-luna",
+        "provider": "openai",
+        "system_prompt": "legacy prompt",
+        "temperature": 0.3,
+        "tool_ids": []
+      },
+      "model_output_enabled": null,
+      "name": "reasoning-assistant",
+      "num_words_to_interrupt_assistant": null,
+      "org_id": "org-legacy",
+      "parent_id": null,
+      "phone_number_id": null,
+      "recording_enabled": null,
+      "response_delay_seconds": null,
+      "server_messages": null,
+      "server_url": null,
+      "server_url_secret": null,
+      "silence_timeout_seconds": null,
+      "start_speaking_plan": null,
+      "stop_speaking_plan": null,
+      "transcriber": null,
+      "voice": null,
+      "voicemail_message": null
+    }
+  },
+  {
+    "api": [],
+    "name": "upgrade_v0_15_1_state_no_model",
+    "op": "upgrade",
+    "raw_state": {
+      "analysis_plan": null,
+      "artifact_plan": null,
+      "background_denoising": null,
+      "background_sound": null,
+      "client_messages": null,
+      "dial_keypad_function_enabled": null,
+      "end_call_function_enabled": null,
+      "end_call_message": null,
+      "end_call_phrases": null,
+      "fillers_enabled": null,
+      "first_message": null,
+      "first_message_mode": null,
+      "forwarding_phone_number": null,
+      "hipaa_enabled": null,
+      "id": "asst-legacy",
+      "interruptions_enabled": null,
+      "keywords": null,
+      "language": null,
+      "live_transcripts_enabled": null,
+      "max_duration_seconds": null,
+      "message_plan": null,
+      "model": null,
+      "model_output_enabled": null,
+      "name": "reasoning-assistant",
+      "num_words_to_interrupt_assistant": null,
+      "org_id": "org-legacy",
+      "parent_id": null,
+      "phone_number_id": null,
+      "recording_enabled": null,
+      "response_delay_seconds": null,
+      "server_messages": null,
+      "server_url": null,
+      "server_url_secret": null,
+      "silence_timeout_seconds": null,
+      "start_speaking_plan": null,
+      "stop_speaking_plan": null,
+      "transcriber": null,
+      "voice": null,
+      "voicemail_message": null
+    }
+  },
+  {
+    "name": "validate_reasoning_effort_valid_minimal",
+    "op": "validate",
+    "config": {
+      "name": "support-bot",
+      "model": {
+        "model": "gpt-6-luna",
+        "reasoning_effort": "minimal"
+      }
+    },
+    "api": []
+  },
+  {
+    "name": "validate_reasoning_effort_valid_none",
+    "op": "validate",
+    "config": {
+      "name": "support-bot",
+      "model": {
+        "model": "gpt-6-luna",
+        "reasoning_effort": "none"
+      }
+    },
+    "api": []
+  },
+  {
+    "name": "validate_reasoning_effort_valid_low",
+    "op": "validate",
+    "config": {
+      "name": "support-bot",
+      "model": {
+        "model": "gpt-6-luna",
+        "reasoning_effort": "low"
+      }
+    },
+    "api": []
+  },
+  {
+    "name": "validate_reasoning_effort_valid_medium",
+    "op": "validate",
+    "config": {
+      "name": "support-bot",
+      "model": {
+        "model": "gpt-6-luna",
+        "reasoning_effort": "medium"
+      }
+    },
+    "api": []
+  },
+  {
+    "name": "validate_reasoning_effort_valid_high",
+    "op": "validate",
+    "config": {
+      "name": "support-bot",
+      "model": {
+        "model": "gpt-6-luna",
+        "reasoning_effort": "high"
+      }
+    },
+    "api": []
+  },
+  {
+    "name": "validate_reasoning_effort_valid_xhigh",
+    "op": "validate",
+    "config": {
+      "name": "support-bot",
+      "model": {
+        "model": "gpt-6-luna",
+        "reasoning_effort": "xhigh"
+      }
+    },
+    "api": []
+  },
+  {
+    "name": "validate_reasoning_effort_null",
+    "op": "validate",
+    "config": {
+      "name": "support-bot",
+      "model": {
+        "model": "gpt-6-luna",
+        "reasoning_effort": null
+      }
+    },
+    "api": []
+  },
+  {
+    "name": "validate_reasoning_effort_unknown",
+    "op": "validate",
+    "config": {
+      "name": "support-bot",
+      "model": {
+        "model": "gpt-6-luna",
+        "reasoning_effort": "<unknown>"
+      }
+    },
+    "api": []
+  },
+  {
+    "name": "validate_reasoning_effort_invalid",
+    "op": "validate",
+    "config": {
+      "name": "support-bot",
+      "model": {
+        "model": "gpt-6-luna",
+        "reasoning_effort": "ultra"
+      }
+    },
+    "api": []
+  },
+  {
+    "name": "validate_reasoning_effort_case",
+    "op": "validate",
+    "config": {
+      "name": "support-bot",
+      "model": {
+        "model": "gpt-6-luna",
+        "reasoning_effort": "None"
+      }
+    },
+    "api": []
+  },
+  {
+    "name": "validate_reasoning_effort_empty",
+    "op": "validate",
+    "config": {
+      "name": "support-bot",
+      "model": {
+        "model": "gpt-6-luna",
+        "reasoning_effort": ""
+      }
+    },
+    "api": []
+  },
+  {
+    "name": "validate_reasoning_effort_max",
+    "op": "validate",
+    "config": {
+      "name": "support-bot",
+      "model": {
+        "model": "gpt-6-luna",
+        "reasoning_effort": "max"
+      }
+    },
+    "api": []
+  },
+  {
+    "name": "validate_reasoning_effort_whitespace",
+    "op": "validate",
+    "config": {
+      "name": "support-bot",
+      "model": {
+        "model": "gpt-6-luna",
+        "reasoning_effort": " high "
+      }
+    },
+    "api": []
+  },
+  {
+    "name": "read_unmanaged_default",
+    "op": "read",
+    "prior_state": {
+      "id": "asst-1",
+      "org_id": "org-1",
+      "name": "support-bot",
+      "model": {
+        "model": "gpt-6-luna",
+        "system_prompt": "System prompt",
+        "provider": "openai",
+        "max_tokens": 512,
+        "temperature": 0.3,
+        "tool_ids": [],
+        "reasoning_effort": null
+      }
+    },
+    "api": [
+      {
+        "method": "GET",
+        "path": "/assistant/asst-1",
+        "status": 200,
+        "body": "{\"id\":\"asst-1\",\"orgId\":\"org-1\",\"name\":\"support-bot\",\"firstMessageMode\":\"\",\"hipaaEnabled\":false,\"backgroundSound\":\"\",\"backgroundDenoisingEnabled\":false,\"modelOutputInMessagesEnabled\":false,\"forwardingPhoneNumber\":\"\",\"endCallFunctionEnabled\":false,\"recordingEnabled\":false,\"firstMessage\":\"\",\"voicemailMessage\":\"\",\"endCallPhrases\":[],\"maxDurationSeconds\":0,\"messagePlan\":{\"idleMessages\":[]},\"stopSpeakingPlan\":{},\"startSpeakingPlan\":{},\"model\":{\"model\":\"gpt-6-luna\",\"systemPrompt\":\"System prompt\",\"provider\":\"openai\",\"maxTokens\":512,\"temperature\":0.3,\"toolIds\":[],\"reasoningEffort\":\"none\"}}"
+      }
+    ]
+  },
+  {
+    "name": "read_unmanaged_empty",
+    "op": "read",
+    "prior_state": {
+      "id": "asst-1",
+      "org_id": "org-1",
+      "name": "support-bot",
+      "model": {
+        "model": "gpt-6-luna",
+        "system_prompt": "System prompt",
+        "provider": "openai",
+        "max_tokens": 512,
+        "temperature": 0.3,
+        "tool_ids": [],
+        "reasoning_effort": null
+      }
+    },
+    "api": [
+      {
+        "method": "GET",
+        "path": "/assistant/asst-1",
+        "status": 200,
+        "body": "{\"id\":\"asst-1\",\"orgId\":\"org-1\",\"name\":\"support-bot\",\"firstMessageMode\":\"\",\"hipaaEnabled\":false,\"backgroundSound\":\"\",\"backgroundDenoisingEnabled\":false,\"modelOutputInMessagesEnabled\":false,\"forwardingPhoneNumber\":\"\",\"endCallFunctionEnabled\":false,\"recordingEnabled\":false,\"firstMessage\":\"\",\"voicemailMessage\":\"\",\"endCallPhrases\":[],\"maxDurationSeconds\":0,\"messagePlan\":{\"idleMessages\":[]},\"stopSpeakingPlan\":{},\"startSpeakingPlan\":{},\"model\":{\"model\":\"gpt-6-luna\",\"systemPrompt\":\"System prompt\",\"provider\":\"openai\",\"maxTokens\":512,\"temperature\":0.3,\"toolIds\":[]}}"
+      }
+    ]
+  },
+  {
+    "name": "read_effort_only_unmanaged_model",
+    "op": "read",
+    "prior_state": {
+      "id": "asst-1",
+      "org_id": "org-1",
+      "name": "support-bot"
+    },
+    "api": [
+      {
+        "method": "GET",
+        "path": "/assistant/asst-1",
+        "status": 200,
+        "body": "{\"id\":\"asst-1\",\"orgId\":\"org-1\",\"name\":\"support-bot\",\"firstMessageMode\":\"\",\"hipaaEnabled\":false,\"backgroundSound\":\"\",\"backgroundDenoisingEnabled\":false,\"modelOutputInMessagesEnabled\":false,\"forwardingPhoneNumber\":\"\",\"endCallFunctionEnabled\":false,\"recordingEnabled\":false,\"firstMessage\":\"\",\"voicemailMessage\":\"\",\"endCallPhrases\":[],\"maxDurationSeconds\":0,\"messagePlan\":{\"idleMessages\":[]},\"stopSpeakingPlan\":{},\"startSpeakingPlan\":{},\"model\":{\"reasoningEffort\":\"none\"}}"
+      }
+    ]
+  },
+  {
+    "name": "plan_update_reasoning_effort_absent_noop",
+    "op": "plan_update",
+    "config": {
+      "name": "support-bot",
+      "model": {
+        "model": "gpt-6-luna",
+        "system_prompt": "System prompt",
+        "provider": "openai",
+        "max_tokens": 512,
+        "temperature": 0.3,
+        "tool_ids": [],
+        "reasoning_effort": null
+      }
+    },
+    "prior_state": {
+      "id": "asst-1",
+      "org_id": "org-1",
+      "name": "support-bot",
+      "model": {
+        "model": "gpt-6-luna",
+        "system_prompt": "System prompt",
+        "provider": "openai",
+        "max_tokens": 512,
+        "temperature": 0.3,
+        "tool_ids": [],
+        "reasoning_effort": null
+      }
+    },
+    "api": []
+  },
+  {
+    "name": "plan_update_reasoning_effort_absent_other_change",
+    "op": "plan_update",
+    "config": {
+      "name": "support-bot-v2",
+      "model": {
+        "model": "gpt-6-luna",
+        "system_prompt": "System prompt",
+        "provider": "openai",
+        "max_tokens": 512,
+        "temperature": 0.3,
+        "tool_ids": [],
+        "reasoning_effort": null
+      }
+    },
+    "prior_state": {
+      "id": "asst-1",
+      "org_id": "org-1",
+      "name": "support-bot",
+      "model": {
+        "model": "gpt-6-luna",
+        "system_prompt": "System prompt",
+        "provider": "openai",
+        "max_tokens": 512,
+        "temperature": 0.3,
+        "tool_ids": [],
+        "reasoning_effort": null
+      }
+    },
+    "api": []
+  },
+  {
+    "name": "create_none",
+    "op": "create",
+    "config": {
+      "name": "support-bot",
+      "model": {
+        "model": "gpt-6-luna",
+        "system_prompt": "System prompt",
+        "provider": "openai",
+        "max_tokens": 512,
+        "temperature": 0.3,
+        "tool_ids": [],
+        "reasoning_effort": "none"
+      }
+    },
+    "api": [
+      {
+        "method": "POST",
+        "path": "/assistant",
+        "status": 200,
+        "body": "{\"id\":\"asst-1\",\"orgId\":\"org-1\",\"name\":\"support-bot\",\"firstMessageMode\":\"\",\"hipaaEnabled\":false,\"backgroundSound\":\"\",\"backgroundDenoisingEnabled\":false,\"modelOutputInMessagesEnabled\":false,\"forwardingPhoneNumber\":\"\",\"endCallFunctionEnabled\":false,\"recordingEnabled\":false,\"firstMessage\":\"\",\"voicemailMessage\":\"\",\"endCallPhrases\":[],\"maxDurationSeconds\":0,\"messagePlan\":{\"idleMessages\":[]},\"stopSpeakingPlan\":{},\"startSpeakingPlan\":{},\"model\":{\"model\":\"gpt-6-luna\",\"systemPrompt\":\"System prompt\",\"provider\":\"openai\",\"maxTokens\":512,\"temperature\":0.3,\"toolIds\":[],\"reasoningEffort\":\"none\"}}"
+      }
+    ]
+  },
+  {
+    "name": "update_high",
+    "op": "update",
+    "config": {
+      "name": "support-bot",
+      "model": {
+        "model": "gpt-6-luna",
+        "system_prompt": "System prompt",
+        "provider": "openai",
+        "max_tokens": 512,
+        "temperature": 0.3,
+        "tool_ids": [],
+        "reasoning_effort": "high"
+      }
+    },
+    "prior_state": {
+      "id": "asst-1",
+      "org_id": "org-1",
+      "name": "support-bot",
+      "model": {
+        "model": "gpt-6-luna",
+        "system_prompt": "System prompt",
+        "provider": "openai",
+        "max_tokens": 512,
+        "temperature": 0.3,
+        "tool_ids": [],
+        "reasoning_effort": "none"
+      }
+    },
+    "api": [
+      {
+        "method": "PATCH",
+        "path": "/assistant/asst-1",
+        "status": 200,
+        "body": "{\"id\":\"asst-1\",\"orgId\":\"org-1\",\"name\":\"support-bot\",\"firstMessageMode\":\"\",\"hipaaEnabled\":false,\"backgroundSound\":\"\",\"backgroundDenoisingEnabled\":false,\"modelOutputInMessagesEnabled\":false,\"forwardingPhoneNumber\":\"\",\"endCallFunctionEnabled\":false,\"recordingEnabled\":false,\"firstMessage\":\"\",\"voicemailMessage\":\"\",\"endCallPhrases\":[],\"maxDurationSeconds\":0,\"messagePlan\":{\"idleMessages\":[]},\"stopSpeakingPlan\":{},\"startSpeakingPlan\":{},\"model\":{\"model\":\"gpt-6-luna\",\"systemPrompt\":\"System prompt\",\"provider\":\"openai\",\"maxTokens\":512,\"temperature\":0.3,\"toolIds\":[],\"reasoningEffort\":\"high\"}}"
+      }
+    ]
+  },
+  {
+    "name": "create_unset",
+    "op": "create",
+    "config": {
+      "name": "support-bot",
+      "model": {
+        "model": "gpt-6-luna",
+        "system_prompt": "System prompt",
+        "provider": "openai",
+        "max_tokens": 512,
+        "temperature": 0.3,
+        "tool_ids": []
+      }
+    },
+    "api": [
+      {
+        "method": "POST",
+        "path": "/assistant",
+        "status": 200,
+        "body": "{\"id\":\"asst-1\",\"orgId\":\"org-1\",\"name\":\"support-bot\",\"firstMessageMode\":\"\",\"hipaaEnabled\":false,\"backgroundSound\":\"\",\"backgroundDenoisingEnabled\":false,\"modelOutputInMessagesEnabled\":false,\"forwardingPhoneNumber\":\"\",\"endCallFunctionEnabled\":false,\"recordingEnabled\":false,\"firstMessage\":\"\",\"voicemailMessage\":\"\",\"endCallPhrases\":[],\"maxDurationSeconds\":0,\"messagePlan\":{\"idleMessages\":[]},\"stopSpeakingPlan\":{},\"startSpeakingPlan\":{},\"model\":{\"model\":\"gpt-6-luna\",\"systemPrompt\":\"System prompt\",\"provider\":\"openai\",\"maxTokens\":512,\"temperature\":0.3,\"toolIds\":[],\"reasoningEffort\":\"none\"}}"
+      }
+    ]
+  },
+  {
+    "name": "read_managed_echo",
+    "op": "read",
+    "prior_state": {
+      "id": "asst-1",
+      "org_id": "org-1",
+      "name": "support-bot",
+      "model": {
+        "model": "gpt-6-luna",
+        "system_prompt": "System prompt",
+        "provider": "openai",
+        "max_tokens": 512,
+        "temperature": 0.3,
+        "tool_ids": [],
+        "reasoning_effort": "none"
+      }
+    },
+    "api": [
+      {
+        "method": "GET",
+        "path": "/assistant/asst-1",
+        "status": 200,
+        "body": "{\"id\":\"asst-1\",\"orgId\":\"org-1\",\"name\":\"support-bot\",\"firstMessageMode\":\"\",\"hipaaEnabled\":false,\"backgroundSound\":\"\",\"backgroundDenoisingEnabled\":false,\"modelOutputInMessagesEnabled\":false,\"forwardingPhoneNumber\":\"\",\"endCallFunctionEnabled\":false,\"recordingEnabled\":false,\"firstMessage\":\"\",\"voicemailMessage\":\"\",\"endCallPhrases\":[],\"maxDurationSeconds\":0,\"messagePlan\":{\"idleMessages\":[]},\"stopSpeakingPlan\":{},\"startSpeakingPlan\":{},\"model\":{\"model\":\"gpt-6-luna\",\"systemPrompt\":\"System prompt\",\"provider\":\"openai\",\"maxTokens\":512,\"temperature\":0.3,\"toolIds\":[],\"reasoningEffort\":\"none\"}}"
+      }
+    ]
+  },
+  {
+    "name": "read_managed_drift",
+    "op": "read",
+    "prior_state": {
+      "id": "asst-1",
+      "org_id": "org-1",
+      "name": "support-bot",
+      "model": {
+        "model": "gpt-6-luna",
+        "system_prompt": "System prompt",
+        "provider": "openai",
+        "max_tokens": 512,
+        "temperature": 0.3,
+        "tool_ids": [],
+        "reasoning_effort": "none"
+      }
+    },
+    "api": [
+      {
+        "method": "GET",
+        "path": "/assistant/asst-1",
+        "status": 200,
+        "body": "{\"id\":\"asst-1\",\"orgId\":\"org-1\",\"name\":\"support-bot\",\"firstMessageMode\":\"\",\"hipaaEnabled\":false,\"backgroundSound\":\"\",\"backgroundDenoisingEnabled\":false,\"modelOutputInMessagesEnabled\":false,\"forwardingPhoneNumber\":\"\",\"endCallFunctionEnabled\":false,\"recordingEnabled\":false,\"firstMessage\":\"\",\"voicemailMessage\":\"\",\"endCallPhrases\":[],\"maxDurationSeconds\":0,\"messagePlan\":{\"idleMessages\":[]},\"stopSpeakingPlan\":{},\"startSpeakingPlan\":{},\"model\":{\"model\":\"gpt-6-luna\",\"systemPrompt\":\"System prompt\",\"provider\":\"openai\",\"maxTokens\":512,\"temperature\":0.3,\"toolIds\":[],\"reasoningEffort\":\"low\"}}"
+      }
+    ]
+  },
+  {
+    "name": "read_managed_missing",
+    "op": "read",
+    "prior_state": {
+      "id": "asst-1",
+      "org_id": "org-1",
+      "name": "support-bot",
+      "model": {
+        "model": "gpt-6-luna",
+        "system_prompt": "System prompt",
+        "provider": "openai",
+        "max_tokens": 512,
+        "temperature": 0.3,
+        "tool_ids": [],
+        "reasoning_effort": "none"
+      }
+    },
+    "api": [
+      {
+        "method": "GET",
+        "path": "/assistant/asst-1",
+        "status": 200,
+        "body": "{\"id\":\"asst-1\",\"orgId\":\"org-1\",\"name\":\"support-bot\",\"firstMessageMode\":\"\",\"hipaaEnabled\":false,\"backgroundSound\":\"\",\"backgroundDenoisingEnabled\":false,\"modelOutputInMessagesEnabled\":false,\"forwardingPhoneNumber\":\"\",\"endCallFunctionEnabled\":false,\"recordingEnabled\":false,\"firstMessage\":\"\",\"voicemailMessage\":\"\",\"endCallPhrases\":[],\"maxDurationSeconds\":0,\"messagePlan\":{\"idleMessages\":[]},\"stopSpeakingPlan\":{},\"startSpeakingPlan\":{},\"model\":{\"model\":\"gpt-6-luna\",\"systemPrompt\":\"System prompt\",\"provider\":\"openai\",\"maxTokens\":512,\"temperature\":0.3,\"toolIds\":[]}}"
+      }
+    ]
+  },
+  {
+    "name": "create_managed_missing",
+    "op": "create",
+    "config": {
+      "name": "support-bot",
+      "model": {
+        "model": "gpt-6-luna",
+        "system_prompt": "System prompt",
+        "provider": "openai",
+        "max_tokens": 512,
+        "temperature": 0.3,
+        "tool_ids": [],
+        "reasoning_effort": "none"
+      }
+    },
+    "api": [
+      {
+        "method": "POST",
+        "path": "/assistant",
+        "status": 200,
+        "body": "{\"id\":\"asst-1\",\"orgId\":\"org-1\",\"name\":\"support-bot\",\"firstMessageMode\":\"\",\"hipaaEnabled\":false,\"backgroundSound\":\"\",\"backgroundDenoisingEnabled\":false,\"modelOutputInMessagesEnabled\":false,\"forwardingPhoneNumber\":\"\",\"endCallFunctionEnabled\":false,\"recordingEnabled\":false,\"firstMessage\":\"\",\"voicemailMessage\":\"\",\"endCallPhrases\":[],\"maxDurationSeconds\":0,\"messagePlan\":{\"idleMessages\":[]},\"stopSpeakingPlan\":{},\"startSpeakingPlan\":{},\"model\":{\"model\":\"gpt-6-luna\",\"systemPrompt\":\"System prompt\",\"provider\":\"openai\",\"maxTokens\":512,\"temperature\":0.3,\"toolIds\":[]}}"
+      }
+    ]
+  },
+  {
+    "name": "update_managed_different",
+    "op": "update",
+    "config": {
+      "name": "support-bot",
+      "model": {
+        "model": "gpt-6-luna",
+        "system_prompt": "System prompt",
+        "provider": "openai",
+        "max_tokens": 512,
+        "temperature": 0.3,
+        "tool_ids": [],
+        "reasoning_effort": "high"
+      }
+    },
+    "prior_state": {
+      "id": "asst-1",
+      "org_id": "org-1",
+      "name": "support-bot",
+      "model": {
+        "model": "gpt-6-luna",
+        "system_prompt": "System prompt",
+        "provider": "openai",
+        "max_tokens": 512,
+        "temperature": 0.3,
+        "tool_ids": [],
+        "reasoning_effort": "none"
+      }
+    },
+    "api": [
+      {
+        "method": "PATCH",
+        "path": "/assistant/asst-1",
+        "status": 200,
+        "body": "{\"id\":\"asst-1\",\"orgId\":\"org-1\",\"name\":\"support-bot\",\"firstMessageMode\":\"\",\"hipaaEnabled\":false,\"backgroundSound\":\"\",\"backgroundDenoisingEnabled\":false,\"modelOutputInMessagesEnabled\":false,\"forwardingPhoneNumber\":\"\",\"endCallFunctionEnabled\":false,\"recordingEnabled\":false,\"firstMessage\":\"\",\"voicemailMessage\":\"\",\"endCallPhrases\":[],\"maxDurationSeconds\":0,\"messagePlan\":{\"idleMessages\":[]},\"stopSpeakingPlan\":{},\"startSpeakingPlan\":{},\"model\":{\"model\":\"gpt-6-luna\",\"systemPrompt\":\"System prompt\",\"provider\":\"openai\",\"maxTokens\":512,\"temperature\":0.3,\"toolIds\":[],\"reasoningEffort\":\"low\"}}"
+      }
+    ]
+  },
+  {
+    "name": "update_remove",
+    "op": "update",
+    "config": {
+      "name": "support-bot",
+      "model": {
+        "model": "gpt-6-luna",
+        "system_prompt": "System prompt",
+        "provider": "openai",
+        "max_tokens": 512,
+        "temperature": 0.3,
+        "tool_ids": []
+      }
+    },
+    "prior_state": {
+      "id": "asst-1",
+      "org_id": "org-1",
+      "name": "support-bot",
+      "model": {
+        "model": "gpt-6-luna",
+        "system_prompt": "System prompt",
+        "provider": "openai",
+        "max_tokens": 512,
+        "temperature": 0.3,
+        "tool_ids": [],
+        "reasoning_effort": "high"
+      }
+    },
+    "api": [
+      {
+        "method": "PATCH",
+        "path": "/assistant/asst-1",
+        "status": 200,
+        "body": "{\"id\":\"asst-1\",\"orgId\":\"org-1\",\"name\":\"support-bot\",\"firstMessageMode\":\"\",\"hipaaEnabled\":false,\"backgroundSound\":\"\",\"backgroundDenoisingEnabled\":false,\"modelOutputInMessagesEnabled\":false,\"forwardingPhoneNumber\":\"\",\"endCallFunctionEnabled\":false,\"recordingEnabled\":false,\"firstMessage\":\"\",\"voicemailMessage\":\"\",\"endCallPhrases\":[],\"maxDurationSeconds\":0,\"messagePlan\":{\"idleMessages\":[]},\"stopSpeakingPlan\":{},\"startSpeakingPlan\":{},\"model\":{\"model\":\"gpt-6-luna\",\"systemPrompt\":\"System prompt\",\"provider\":\"openai\",\"maxTokens\":512,\"temperature\":0.3,\"toolIds\":[],\"reasoningEffort\":\"high\"}}"
+      }
+    ]
+  },
+  {
+    "name": "read_bad_effort_type",
+    "op": "read",
+    "prior_state": {
+      "id": "asst-1",
+      "org_id": "org-1",
+      "name": "support-bot",
+      "model": {
+        "model": "gpt-6-luna",
+        "system_prompt": "System prompt",
+        "provider": "openai",
+        "max_tokens": 512,
+        "temperature": 0.3,
+        "tool_ids": [],
+        "reasoning_effort": "none"
+      }
+    },
+    "api": [
+      {
+        "method": "GET",
+        "path": "/assistant/asst-1",
+        "status": 200,
+        "body": "{\"id\":\"asst-1\",\"orgId\":\"org-1\",\"name\":\"support-bot\",\"firstMessageMode\":\"\",\"hipaaEnabled\":false,\"backgroundSound\":\"\",\"backgroundDenoisingEnabled\":false,\"modelOutputInMessagesEnabled\":false,\"forwardingPhoneNumber\":\"\",\"endCallFunctionEnabled\":false,\"recordingEnabled\":false,\"firstMessage\":\"\",\"voicemailMessage\":\"\",\"endCallPhrases\":[],\"maxDurationSeconds\":0,\"messagePlan\":{\"idleMessages\":[]},\"stopSpeakingPlan\":{},\"startSpeakingPlan\":{},\"model\":{\"model\":\"gpt-6-luna\",\"systemPrompt\":\"System prompt\",\"provider\":\"openai\",\"maxTokens\":512,\"temperature\":0.3,\"toolIds\":[],\"reasoningEffort\":7}}"
+      }
+    ]
+  }
+]

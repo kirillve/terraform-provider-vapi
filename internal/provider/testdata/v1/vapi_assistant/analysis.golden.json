@@ -42,6 +42,7 @@
         "max_tokens": "<unknown>",
         "model": "gpt-4o",
         "provider": "<unknown>",
+        "reasoning_effort": null,
         "system_prompt": null,
         "temperature": null,
         "tool_ids": "<unknown>"
@@ -97,6 +98,7 @@
         "max_tokens": 0,
         "model": "gpt-4o",
         "provider": "openai",
+        "reasoning_effort": null,
         "system_prompt": null,
         "temperature": null,
         "tool_ids": []

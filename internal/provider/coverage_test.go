@@ -4,9 +4,14 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 
+	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -57,6 +62,38 @@ var requiredCasesByType = map[string][]string{
 		"update_minimal_rename",
 		"read_minimal_zero_values",
 		"read_explicit_zero_kept",
+		"upgrade_v0_13_0_state",
+		"upgrade_v0_13_0_state_no_model",
+		"upgrade_v0_15_1_state",
+		"upgrade_v0_15_1_state_no_model",
+		"validate_reasoning_effort_valid_minimal",
+		"validate_reasoning_effort_valid_none",
+		"validate_reasoning_effort_valid_low",
+		"validate_reasoning_effort_valid_medium",
+		"validate_reasoning_effort_valid_high",
+		"validate_reasoning_effort_valid_xhigh",
+		"validate_reasoning_effort_null",
+		"validate_reasoning_effort_unknown",
+		"validate_reasoning_effort_invalid",
+		"validate_reasoning_effort_case",
+		"validate_reasoning_effort_empty",
+		"validate_reasoning_effort_max",
+		"validate_reasoning_effort_whitespace",
+		"read_unmanaged_default",
+		"read_unmanaged_empty",
+		"read_effort_only_unmanaged_model",
+		"plan_update_reasoning_effort_absent_noop",
+		"plan_update_reasoning_effort_absent_other_change",
+		"create_none",
+		"update_high",
+		"create_unset",
+		"read_managed_echo",
+		"read_managed_drift",
+		"read_managed_missing",
+		"create_managed_missing",
+		"update_managed_different",
+		"update_remove",
+		"read_bad_effort_type",
 	},
 	"vapi_file": {
 		"import",
@@ -184,4 +221,29 @@ func goldenKeys(t *testing.T, path string) []string {
 		keys = append(keys, key)
 	}
 	return keys
+}
+
+func TestAssistantExampleReasoningEffortInEnum(t *testing.T) {
+	t.Parallel()
+
+	raw, err := os.ReadFile("../../examples/resources/vapi_assistant/resource.tf")
+	require.NoError(t, err)
+	literals := regexp.MustCompile(`(?m)^\s*reasoning_effort\s*=\s*"([^"\r\n]*)"`).FindAllStringSubmatch(string(raw), -1)
+	require.NotEmpty(t, literals, "example must configure reasoning_effort")
+	p := New("test")()
+	response := characterizationSchema(t, "vapi_assistant", p.Resources(t.Context()))
+	model, ok := response.Schema.Attributes["model"].(schema.SingleNestedAttribute)
+	require.True(t, ok, "model must be a single nested attribute")
+	effort, ok := model.Attributes["reasoning_effort"].(schema.StringAttribute)
+	require.True(t, ok, "reasoning_effort must be a string attribute")
+	for _, literal := range literals {
+		for _, check := range effort.Validators {
+			var result validator.StringResponse
+			check.ValidateString(t.Context(), validator.StringRequest{
+				Path:        tfpath.Root("model").AtName("reasoning_effort"),
+				ConfigValue: types.StringValue(literal[1]),
+			}, &result)
+			assert.False(t, result.Diagnostics.HasError(), "example effort %q: %v", literal[1], result.Diagnostics)
+		}
+	}
 }
