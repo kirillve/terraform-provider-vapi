@@ -6,7 +6,7 @@
         "path": "/assistant",
         "authorization": "Bearer test-token",
         "content_type": "application/json",
-        "body": "{\"name\":\"support-bot\",\"responseDelaySeconds\":0,\"numWordsToInterruptAssistant\":0,\"liveTranscriptsEnabled\":false,\"model\":{\"model\":\"gpt-6-luna\",\"systemPrompt\":\"System prompt\",\"provider\":\"openai\",\"maxTokens\":512,\"temperature\":0.3},\"server\":{\"timeoutSeconds\":20}}\n"
+        "body": "{\"name\":\"support-bot\",\"responseDelaySeconds\":0,\"numWordsToInterruptAssistant\":0,\"liveTranscriptsEnabled\":false,\"model\":{\"model\":\"gpt-6-luna\",\"systemPrompt\":\"System prompt\",\"provider\":\"openai\",\"maxTokens\":512,\"temperature\":0.3,\"reasoningEffort\":\"none\"},\"server\":{\"timeoutSeconds\":20}}\n"
       }
     ],
     "planned_state": {
@@ -121,7 +121,7 @@
         "path": "/assistant",
         "authorization": "Bearer test-token",
         "content_type": "application/json",
-        "body": "{\"name\":\"support-bot\",\"responseDelaySeconds\":0,\"numWordsToInterruptAssistant\":0,\"liveTranscriptsEnabled\":false,\"model\":{\"model\":\"gpt-6-luna\",\"systemPrompt\":\"System prompt\",\"provider\":\"openai\",\"maxTokens\":512,\"temperature\":0.3},\"server\":{\"timeoutSeconds\":20}}\n"
+        "body": "{\"name\":\"support-bot\",\"responseDelaySeconds\":0,\"numWordsToInterruptAssistant\":0,\"liveTranscriptsEnabled\":false,\"model\":{\"model\":\"gpt-6-luna\",\"systemPrompt\":\"System prompt\",\"provider\":\"openai\",\"maxTokens\":512,\"temperature\":0.3,\"reasoningEffort\":\"none\"},\"server\":{\"timeoutSeconds\":20}}\n"
       }
     ],
     "planned_state": {
@@ -174,9 +174,6 @@
       "voice": null,
       "voicemail_message": null
     },
-    "plan_apply_diff": [
-      "model.reasoning_effort"
-    ],
     "new_state": {
       "analysis_plan": null,
       "artifact_plan": null,
@@ -204,7 +201,7 @@
         "max_tokens": 512,
         "model": "gpt-6-luna",
         "provider": "openai",
-        "reasoning_effort": null,
+        "reasoning_effort": "none",
         "system_prompt": "System prompt",
         "temperature": 0.3,
         "tool_ids": []
@@ -606,7 +603,7 @@
         "max_tokens": 512,
         "model": "gpt-6-luna",
         "provider": "openai",
-        "reasoning_effort": null,
+        "reasoning_effort": "low",
         "system_prompt": "System prompt",
         "temperature": 0.3,
         "tool_ids": []
@@ -667,7 +664,7 @@
         "max_tokens": 512,
         "model": "gpt-6-luna",
         "provider": "openai",
-        "reasoning_effort": null,
+        "reasoning_effort": "none",
         "system_prompt": "System prompt",
         "temperature": 0.3,
         "tool_ids": []
@@ -882,7 +879,7 @@
         "path": "/assistant/asst-1",
         "authorization": "Bearer test-token",
         "content_type": "application/json",
-        "body": "{\"name\":\"support-bot\",\"responseDelaySeconds\":0,\"numWordsToInterruptAssistant\":0,\"liveTranscriptsEnabled\":false,\"model\":{\"model\":\"gpt-6-luna\",\"systemPrompt\":\"System prompt\",\"provider\":\"openai\",\"maxTokens\":512,\"temperature\":0.3},\"server\":{\"timeoutSeconds\":20}}\n"
+        "body": "{\"name\":\"support-bot\",\"responseDelaySeconds\":0,\"numWordsToInterruptAssistant\":0,\"liveTranscriptsEnabled\":false,\"model\":{\"model\":\"gpt-6-luna\",\"systemPrompt\":\"System prompt\",\"provider\":\"openai\",\"maxTokens\":512,\"temperature\":0.3,\"reasoningEffort\":\"high\"},\"server\":{\"timeoutSeconds\":20}}\n"
       }
     ],
     "planned_state": {
@@ -935,9 +932,6 @@
       "voice": null,
       "voicemail_message": null
     },
-    "plan_apply_diff": [
-      "model.reasoning_effort"
-    ],
     "new_state": {
       "analysis_plan": null,
       "artifact_plan": null,
@@ -965,7 +959,7 @@
         "max_tokens": 512,
         "model": "gpt-6-luna",
         "provider": "openai",
-        "reasoning_effort": null,
+        "reasoning_effort": "high",
         "system_prompt": "System prompt",
         "temperature": 0.3,
         "tool_ids": []
@@ -997,7 +991,7 @@
         "path": "/assistant/asst-1",
         "authorization": "Bearer test-token",
         "content_type": "application/json",
-        "body": "{\"name\":\"support-bot\",\"responseDelaySeconds\":0,\"numWordsToInterruptAssistant\":0,\"liveTranscriptsEnabled\":false,\"model\":{\"model\":\"gpt-6-luna\",\"systemPrompt\":\"System prompt\",\"provider\":\"openai\",\"maxTokens\":512,\"temperature\":0.3},\"server\":{\"timeoutSeconds\":20}}\n"
+        "body": "{\"name\":\"support-bot\",\"responseDelaySeconds\":0,\"numWordsToInterruptAssistant\":0,\"liveTranscriptsEnabled\":false,\"model\":{\"model\":\"gpt-6-luna\",\"systemPrompt\":\"System prompt\",\"provider\":\"openai\",\"maxTokens\":512,\"temperature\":0.3,\"reasoningEffort\":\"high\"},\"server\":{\"timeoutSeconds\":20}}\n"
       }
     ],
     "planned_state": {
@@ -1080,7 +1074,7 @@
         "max_tokens": 512,
         "model": "gpt-6-luna",
         "provider": "openai",
-        "reasoning_effort": null,
+        "reasoning_effort": "low",
         "system_prompt": "System prompt",
         "temperature": 0.3,
         "tool_ids": []
@@ -1418,22 +1412,50 @@
   "validate_reasoning_effort_case": {
     "requests": [],
     "new_state": null,
-    "diagnostics": []
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Invalid Attribute Value Match",
+        "detail": "Attribute model.reasoning_effort value must be one of: [\"minimal\" \"none\" \"low\" \"medium\" \"high\" \"xhigh\"], got: \"None\"",
+        "path": "model.reasoning_effort"
+      }
+    ]
   },
   "validate_reasoning_effort_empty": {
     "requests": [],
     "new_state": null,
-    "diagnostics": []
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Invalid Attribute Value Match",
+        "detail": "Attribute model.reasoning_effort value must be one of: [\"minimal\" \"none\" \"low\" \"medium\" \"high\" \"xhigh\"], got: \"\"",
+        "path": "model.reasoning_effort"
+      }
+    ]
   },
   "validate_reasoning_effort_invalid": {
     "requests": [],
     "new_state": null,
-    "diagnostics": []
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Invalid Attribute Value Match",
+        "detail": "Attribute model.reasoning_effort value must be one of: [\"minimal\" \"none\" \"low\" \"medium\" \"high\" \"xhigh\"], got: \"ultra\"",
+        "path": "model.reasoning_effort"
+      }
+    ]
   },
   "validate_reasoning_effort_max": {
     "requests": [],
     "new_state": null,
-    "diagnostics": []
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Invalid Attribute Value Match",
+        "detail": "Attribute model.reasoning_effort value must be one of: [\"minimal\" \"none\" \"low\" \"medium\" \"high\" \"xhigh\"], got: \"max\"",
+        "path": "model.reasoning_effort"
+      }
+    ]
   },
   "validate_reasoning_effort_null": {
     "requests": [],
@@ -1478,6 +1500,13 @@
   "validate_reasoning_effort_whitespace": {
     "requests": [],
     "new_state": null,
-    "diagnostics": []
+    "diagnostics": [
+      {
+        "severity": "error",
+        "summary": "Invalid Attribute Value Match",
+        "detail": "Attribute model.reasoning_effort value must be one of: [\"minimal\" \"none\" \"low\" \"medium\" \"high\" \"xhigh\"], got: \" high \"",
+        "path": "model.reasoning_effort"
+      }
+    ]
   }
 }
