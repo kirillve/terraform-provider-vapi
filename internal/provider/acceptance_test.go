@@ -15,3 +15,7 @@ func TestAccToolFunctionNested(t *testing.T) {
 	}
 	t.Skip("acceptance stub: configure VAPI credentials via environment before exercising live nested tools")
 }
+
+func TestAccAssistantReasoningEffort(t *testing.T) {
+	runAssistantReasoningAcceptance(t)
+}
