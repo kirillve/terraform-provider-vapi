@@ -6,10 +6,12 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/kirillve/terraform-provider-vapi/internal/vapi"
@@ -295,7 +297,8 @@ func (r *VAPIAssistantResource) Schema(_ context.Context, _ resource.SchemaReque
 						MarkdownDescription: "Reasoning effort for the model: one of minimal, none, low, medium, high, xhigh. " +
 							"Not every model accepts every value. When unset, the provider sends nothing and the attribute stays null " +
 							"whatever VAPI returns. Removing it stops Terraform managing the value and does not reset the value stored in VAPI.",
-						Optional: true,
+						Optional:   true,
+						Validators: []validator.String{stringvalidator.OneOf("minimal", "none", "low", "medium", "high", "xhigh")},
 					},
 					"tool_ids": schema.ListAttribute{
 						ElementType:         types.StringType,
@@ -753,14 +756,19 @@ func flattenModel(prior *ModelResourceModel, in *vapi.Model) *ModelResourceModel
 	if prior == nil {
 		prior = &ModelResourceModel{}
 	}
+	reasoningEffort := types.StringNull()
+	if !prior.ReasoningEffort.IsNull() && in.ReasoningEffort != "" {
+		reasoningEffort = types.StringValue(in.ReasoningEffort)
+	}
 	return &ModelResourceModel{
-		Model:         types.StringValue(in.Model),
-		SystemPrompt:  optionalString(prior.SystemPrompt, in.SystemPrompt),
-		Provider:      types.StringValue(in.Provider),
-		MaxTokens:     types.Int64Value(in.MaxTokens),
-		Temperature:   optionalFloat64(prior.Temperature, in.Temperature),
-		ToolIDs:       ListValueFromStrings(in.ToolIDs),
-		KnowledgeBase: flattenKnowledgeBase(prior.KnowledgeBase, in.KnowledgeBase),
+		Model:           types.StringValue(in.Model),
+		SystemPrompt:    optionalString(prior.SystemPrompt, in.SystemPrompt),
+		Provider:        types.StringValue(in.Provider),
+		MaxTokens:       types.Int64Value(in.MaxTokens),
+		Temperature:     optionalFloat64(prior.Temperature, in.Temperature),
+		ToolIDs:         ListValueFromStrings(in.ToolIDs),
+		KnowledgeBase:   flattenKnowledgeBase(prior.KnowledgeBase, in.KnowledgeBase),
+		ReasoningEffort: reasoningEffort,
 	}
 }
 
@@ -921,12 +929,13 @@ func (m *VAPIAssistantResourceModel) expandVoiceAndModel(out *vapi.CreateAssista
 	}
 	if m.Model != nil {
 		out.Model = &vapi.Model{
-			Model:        m.Model.Model.ValueString(),
-			SystemPrompt: m.Model.SystemPrompt.ValueString(),
-			Provider:     m.Model.Provider.ValueString(),
-			MaxTokens:    m.Model.MaxTokens.ValueInt64(),
-			Temperature:  m.Model.Temperature.ValueFloat64(),
-			ToolIDs:      ElementsAsString(m.Model.ToolIDs),
+			Model:           m.Model.Model.ValueString(),
+			SystemPrompt:    m.Model.SystemPrompt.ValueString(),
+			Provider:        m.Model.Provider.ValueString(),
+			MaxTokens:       m.Model.MaxTokens.ValueInt64(),
+			Temperature:     m.Model.Temperature.ValueFloat64(),
+			ToolIDs:         ElementsAsString(m.Model.ToolIDs),
+			ReasoningEffort: m.Model.ReasoningEffort.ValueString(),
 		}
 		if m.Model.KnowledgeBase != nil {
 			out.Model.KnowledgeBase = &vapi.KnowledgeBase{
