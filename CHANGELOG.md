@@ -1,3 +1,11 @@
+## v0.16.0
+
+CHANGES:
+- added the optional `reasoning_effort` argument to the `model` block of `vapi_assistant`; it is sent to VAPI as `model.reasoningEffort` only when set and accepts `minimal`, `none`, `low`, `medium`, `high` or `xhigh`, any other value is rejected during validation, and not every model accepts every value
+- `reasoning_effort` stays null in the state when it is not set, whatever effort VAPI returns, so existing configurations and state written by v0.13.0 or v0.15.1 plan as no changes; when it is set, a value that VAPI changes or drops shows up as a difference on the next refresh
+- removing `reasoning_effort` from a configuration stops Terraform managing it and does not reset the effort stored in VAPI
+- built with Go 1.27.4, which fixes GO-2026-6859, and updated golang.org/x/net to v0.62.0, which fixes CVE-2026-78661
+
 ## v0.15.1
 
 CHANGES:
