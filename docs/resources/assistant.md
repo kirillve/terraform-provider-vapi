@@ -62,10 +62,11 @@ resource "vapi_assistant" "example_assistant" {
   }
 
   model = {
-    model         = "gpt-4o"
-    system_prompt = "System prompt"
-    temperature   = 0.3
-    provider      = "openai"
+    model            = "gpt-6-luna"
+    system_prompt    = "System prompt"
+    temperature      = 0.3
+    provider         = "openai"
+    reasoning_effort = "none"
     knowledge_base = {
       file_ids = [
         "920f2f78-1234-5678-afec-9a3a79b8f687"
@@ -238,6 +239,7 @@ Optional:
 - `knowledge_base` (Attributes) Knowledge base configuration for the assistant model. (see [below for nested schema](#nestedatt--model--knowledge_base))
 - `max_tokens` (Number) The maximum number of tokens allowed for the model's response.
 - `provider` (String) Provider for the assistant model: openai, azure-openai, together-ai, anyscale, openrouter, perplexity-ai, deepinfra, custom-llm, runpod, groq, vapi, anthropic, google
+- `reasoning_effort` (String) Reasoning effort for the model: one of minimal, none, low, medium, high, xhigh. Not every model accepts every value. When unset, the provider sends nothing and the attribute stays null whatever VAPI returns. Removing it stops Terraform managing the value and does not reset the value stored in VAPI.
 - `system_prompt` (String) Prompt text used to guide the assistant model.
 - `temperature` (Number) Temperature setting for the model's response randomness.
 - `tool_ids` (List of String) List of tool IDs used by the model.

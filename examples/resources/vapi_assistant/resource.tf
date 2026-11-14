@@ -47,10 +47,11 @@ resource "vapi_assistant" "example_assistant" {
   }
 
   model = {
-    model         = "gpt-4o"
-    system_prompt = "System prompt"
-    temperature   = 0.3
-    provider      = "openai"
+    model            = "gpt-6-luna"
+    system_prompt    = "System prompt"
+    temperature      = 0.3
+    provider         = "openai"
+    reasoning_effort = "none"
     knowledge_base = {
       file_ids = [
         "920f2f78-1234-5678-afec-9a3a79b8f687"
