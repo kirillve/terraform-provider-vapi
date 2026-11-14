@@ -84,13 +84,14 @@ type ArtifactPlanResourceModel struct {
 
 // ModelResourceModel is the model block.
 type ModelResourceModel struct {
-	Model         types.String                `tfsdk:"model"`
-	SystemPrompt  types.String                `tfsdk:"system_prompt"`
-	Provider      types.String                `tfsdk:"provider"`
-	Temperature   types.Float64               `tfsdk:"temperature"`
-	MaxTokens     types.Int64                 `tfsdk:"max_tokens"`
-	ToolIDs       types.List                  `tfsdk:"tool_ids"`
-	KnowledgeBase *KnowledgeBaseResourceModel `tfsdk:"knowledge_base"`
+	Model           types.String                `tfsdk:"model"`
+	SystemPrompt    types.String                `tfsdk:"system_prompt"`
+	Provider        types.String                `tfsdk:"provider"`
+	Temperature     types.Float64               `tfsdk:"temperature"`
+	MaxTokens       types.Int64                 `tfsdk:"max_tokens"`
+	ToolIDs         types.List                  `tfsdk:"tool_ids"`
+	KnowledgeBase   *KnowledgeBaseResourceModel `tfsdk:"knowledge_base"`
+	ReasoningEffort types.String                `tfsdk:"reasoning_effort"`
 }
 
 // KnowledgeBaseResourceModel is the knowledge_base block of the model.
@@ -289,6 +290,12 @@ func (r *VAPIAssistantResource) Schema(_ context.Context, _ resource.SchemaReque
 					"temperature": schema.Float64Attribute{
 						MarkdownDescription: "Temperature setting for the model's response randomness.",
 						Optional:            true,
+					},
+					"reasoning_effort": schema.StringAttribute{
+						MarkdownDescription: "Reasoning effort for the model: one of minimal, none, low, medium, high, xhigh. " +
+							"Not every model accepts every value. When unset, the provider sends nothing and the attribute stays null " +
+							"whatever VAPI returns. Removing it stops Terraform managing the value and does not reset the value stored in VAPI.",
+						Optional: true,
 					},
 					"tool_ids": schema.ListAttribute{
 						ElementType:         types.StringType,

@@ -28,6 +28,7 @@
         "max_tokens": 512,
         "model": "gpt-6-luna",
         "provider": "openai",
+        "reasoning_effort": null,
         "system_prompt": "legacy prompt",
         "temperature": 0.3,
         "tool_ids": []
@@ -126,6 +127,7 @@
         "max_tokens": 512,
         "model": "gpt-6-luna",
         "provider": "openai",
+        "reasoning_effort": null,
         "system_prompt": "legacy prompt",
         "temperature": 0.3,
         "tool_ids": []

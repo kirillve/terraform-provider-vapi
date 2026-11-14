@@ -334,6 +334,7 @@
         "max_tokens": 0,
         "model": "gpt-4o",
         "provider": "openai",
+        "reasoning_effort": null,
         "system_prompt": "System prompt",
         "temperature": 0.3,
         "tool_ids": []
@@ -771,6 +772,7 @@
         "max_tokens": 0,
         "model": "gpt-4o",
         "provider": "openai",
+        "reasoning_effort": null,
         "system_prompt": null,
         "temperature": null,
         "tool_ids": []

@@ -484,6 +484,7 @@
           "max_tokens": "number",
           "model": "string",
           "provider": "string",
+          "reasoning_effort": "string",
           "system_prompt": "string",
           "temperature": "number",
           "tool_ids": [
@@ -583,6 +584,18 @@
       "deprecated": false,
       "deprecation_message": "",
       "description": "Provider for the assistant model: openai, azure-openai, together-ai, anyscale, openrouter, perplexity-ai, deepinfra, custom-llm, runpod, groq, vapi, anthropic, google",
+      "description_kind": 1,
+      "nesting": "",
+      "optional": true,
+      "required": false,
+      "sensitive": false,
+      "type": "string"
+    },
+    "model.reasoning_effort": {
+      "computed": false,
+      "deprecated": false,
+      "deprecation_message": "",
+      "description": "Reasoning effort for the model: one of minimal, none, low, medium, high, xhigh. Not every model accepts every value. When unset, the provider sends nothing and the attribute stays null whatever VAPI returns. Removing it stops Terraform managing the value and does not reset the value stored in VAPI.",
       "description_kind": 1,
       "nesting": "",
       "optional": true,

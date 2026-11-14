@@ -123,14 +123,15 @@ type Voice struct {
 
 // Model struct.
 type Model struct {
-	Model         string         `json:"model"`
-	SystemPrompt  string         `json:"systemPrompt"`
-	Provider      string         `json:"provider"`
-	MaxTokens     int64          `json:"maxTokens,omitempty"`
-	Temperature   float64        `json:"temperature,omitempty"`
-	ToolIDs       []string       `json:"toolIds,omitempty"`
-	Messages      []Message      `json:"messages,omitempty"`
-	KnowledgeBase *KnowledgeBase `json:"knowledgeBase,omitempty"`
+	Model           string         `json:"model"`
+	SystemPrompt    string         `json:"systemPrompt"`
+	Provider        string         `json:"provider"`
+	MaxTokens       int64          `json:"maxTokens,omitempty"`
+	Temperature     float64        `json:"temperature,omitempty"`
+	ToolIDs         []string       `json:"toolIds,omitempty"`
+	Messages        []Message      `json:"messages,omitempty"`
+	KnowledgeBase   *KnowledgeBase `json:"knowledgeBase,omitempty"`
+	ReasoningEffort string         `json:"reasoningEffort,omitempty"`
 }
 
 // Message struct.
